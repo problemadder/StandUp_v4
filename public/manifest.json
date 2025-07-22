@@ -1,0 +1,28 @@
+{
+  "name": "StehAuf! Büro-Challenge",
+  "short_name": "StehAuf!",
+  "description": "Deine tägliche Büro-Challenge für mehr Bewegung und Belohnungen.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#66ff00",
+  "icons": [
+    {
+      "src": "/smiley.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "/smiley-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/smiley-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
