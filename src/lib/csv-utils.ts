@@ -1,4 +1,5 @@
 import { Session } from "@/hooks/use-session-manager";
+import { QuestionAnswerReward } from "@/lib/rewards-data"; // Import the new interface
 
 export const exportToCsv = (data: Session[]): void => {
   if (data.length === 0) {
@@ -12,7 +13,7 @@ export const exportToCsv = (data: Session[]): void => {
     ...data.map(session => {
       const rewardContent = typeof session.reward.content === 'string'
         ? session.reward.content
-        : `${session.reward.content.question} ||| ${session.reward.content.answer}`; // Use a distinct separator for Q&A
+        : `${(session.reward.content as QuestionAnswerReward).question} ||| ${(session.reward.content as QuestionAnswerReward).answer}`; // Use a distinct separator for Q&A
       return [
         session.date,
         session.time,
@@ -60,7 +61,7 @@ export const importFromCsv = (csvString: string): Session[] => {
 
   const sessions: Session[] = [];
   for (let i = 1; i < lines.length; i++) {
-    const values = lines[i].split(";").map(v => v.trim());
+    const values = lines[i].split(";").map(v => v.trim().replace(/^"|"$/g, '').replace(/""/g, '"')); // Unescape quotes
     if (values.length !== headers.length) {
       console.warn(`Zeile ${i + 1} übersprungen: Ungültige Spaltenanzahl.`);
       continue;
@@ -68,18 +69,18 @@ export const importFromCsv = (csvString: string): Session[] => {
 
     const rowData: { [key: string]: string } = {};
     headers.forEach((header, index) => {
-      rowData[header] = values[index].replace(/^"|"$/g, '').replace(/""/g, '"'); // Unescape quotes
+      rowData[header] = values[index];
     });
 
     try {
-      let rewardContent: string | { question: string; answer: string };
+      let rewardContent: string | QuestionAnswerReward;
       const contentString = rowData["Belohnungsinhalt"];
-      if (rowData["Belohnungstyp"] === "countryCapital") {
+      if (rowData["Belohnungstyp"] === "questionsAnswers") {
         const parts = contentString.split(" ||| ");
         if (parts.length === 2) {
           rewardContent = { question: parts[0], answer: parts[1] };
         } else {
-          console.warn(`Ungültiges Format für Länder-Hauptstadt-Belohnung in Zeile ${i + 1}.`);
+          console.warn(`Ungültiges Format für Frage-Antwort-Belohnung in Zeile ${i + 1}.`);
           rewardContent = { question: contentString, answer: "Antwort nicht verfügbar" };
         }
       } else {

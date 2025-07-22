@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Reward, CountryCapitalReward } from "@/lib/rewards-data";
+import { Reward, QuestionAnswerReward } from "@/lib/rewards-data";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
@@ -35,17 +35,17 @@ const RewardDisplay: React.FC<RewardDisplayProps> = ({ reward }) => {
       case "energyFacts":
       case "energyLaws":
         return <p>{reward.content as string}</p>;
-      case "countryCapital":
-        const ccReward = reward.content as CountryCapitalReward;
+      case "questionsAnswers":
+        const qaReward = reward.content as QuestionAnswerReward;
         return (
           <div>
-            <p className="font-semibold mb-2">{ccReward.question}</p>
+            <p className="font-semibold mb-2">{qaReward.question}</p>
             {!showAnswer ? (
               <Button onClick={() => setShowAnswer(true)} className="mt-2 bg-secondary text-secondary-foreground hover:bg-secondary/90">
                 Antwort anzeigen
               </Button>
             ) : (
-              <p className="mt-2 text-lg font-bold text-primary">{ccReward.answer}</p>
+              <p className="mt-2 text-lg font-bold text-primary">{qaReward.answer}</p>
             )}
           </div>
         );
@@ -59,7 +59,7 @@ const RewardDisplay: React.FC<RewardDisplayProps> = ({ reward }) => {
       case "historical": return "Historische Tatsache";
       case "science": return "Wissenschaftlicher Fakt";
       case "trivia": return "Allgemeinwissen";
-      case "countryCapital": return "Land & Hauptstadt Frage";
+      case "questionsAnswers": return "Frage & Antwort";
       case "energyFacts": return "Energie-Fakt";
       case "energyLaws": return "Energiegesetz-Wissen";
       default: return "Belohnung";

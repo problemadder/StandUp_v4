@@ -1,13 +1,13 @@
-export type RewardType = "historical" | "science" | "trivia" | "countryCapital" | "energyFacts" | "energyLaws";
+export type RewardType = "historical" | "science" | "trivia" | "questionsAnswers" | "energyFacts" | "energyLaws";
 
-export interface CountryCapitalReward {
+export interface QuestionAnswerReward {
   question: string;
   answer: string;
 }
 
 export interface Reward {
   type: RewardType;
-  content: string | CountryCapitalReward;
+  content: string | QuestionAnswerReward;
 }
 
 const historicalFacts: string[] = [
@@ -107,7 +107,7 @@ const generalTrivia: string[] = [
   "Wombats machen eckigen Kot – damit er nicht wegrollt."
 ];
 
-const countryCapitalQuestions: CountryCapitalReward[] = [
+const questionsAnswersData: QuestionAnswerReward[] = [
   { question: "Was ist die Hauptstadt von Australien?", answer: "Canberra" },
   { question: "Was ist die Hauptstadt von Kanada?", answer: "Ottawa" },
   { question: "Was ist die Hauptstadt von Brasilien?", answer: "Brasília" },
@@ -284,19 +284,19 @@ const energyLawsFacts: string[] = [
 ];
 
 
-const allRewards: { [key in RewardType]: (string | CountryCapitalReward)[] } = {
+const allRewards: { [key in RewardType]: (string | QuestionAnswerReward)[] } = {
   historical: historicalFacts,
   science: scienceTidbits,
   trivia: generalTrivia,
-  countryCapital: countryCapitalQuestions,
+  questionsAnswers: questionsAnswersData,
   energyFacts: energyFacts,
   energyLaws: energyLawsFacts,
 };
 
 export const getRandomReward = (exclude?: Reward): Reward => {
-  const types: RewardType[] = ["historical", "science", "trivia", "countryCapital", "energyFacts", "energyLaws"];
+  const types: RewardType[] = ["historical", "science", "trivia", "questionsAnswers", "energyFacts", "energyLaws"];
   let randomType: RewardType;
-  let randomContent: string | CountryCapitalReward;
+  let randomContent: string | QuestionAnswerReward;
 
   do {
     randomType = types[Math.floor(Math.random() * types.length)];
