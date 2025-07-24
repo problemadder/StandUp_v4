@@ -29,11 +29,7 @@ const RewardDisplay: React.FC<RewardDisplayProps> = ({ reward }) => {
 
   const renderContent = () => {
     switch (reward.type) {
-      case "historical":
-      case "science":
-      case "trivia":
-      case "energyFacts":
-      case "energyLaws":
+      case "facts":
         return <p>{reward.content as string}</p>;
       case "questionsAnswers":
         const qaReward = reward.content as QuestionAnswerReward;
@@ -56,12 +52,8 @@ const RewardDisplay: React.FC<RewardDisplayProps> = ({ reward }) => {
 
   const getTitle = () => {
     switch (reward.type) {
-      case "historical": return "Historische Tatsache";
-      case "science": return "Wissenschaftlicher Fakt";
-      case "trivia": return "Allgemeinwissen";
+      case "facts": return "Fakten";
       case "questionsAnswers": return "Frage & Antwort";
-      case "energyFacts": return "Energie-Fakt";
-      case "energyLaws": return "Energiegesetz-Wissen";
       default: return "Belohnung";
     }
   };

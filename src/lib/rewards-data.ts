@@ -1,4 +1,4 @@
-export type RewardType = "historical" | "science" | "trivia" | "questionsAnswers" | "energyFacts" | "energyLaws";
+export type RewardType = "facts" | "questionsAnswers";
 
 export interface QuestionAnswerReward {
   question: string;
@@ -283,18 +283,21 @@ const energyLawsFacts: string[] = [
   "Der deutsche Erdgasverbrauch liegt aktuell bei 740 TWh und könnte bis 2030 nur auf 690-720 TWh zurückgehen."
 ];
 
+const allFacts: string[] = [
+  ...historicalFacts,
+  ...scienceTidbits,
+  ...generalTrivia,
+  ...energyFacts,
+  ...energyLawsFacts, // Corrected variable name
+];
 
 const allRewards: { [key in RewardType]: (string | QuestionAnswerReward)[] } = {
-  historical: historicalFacts,
-  science: scienceTidbits,
-  trivia: generalTrivia,
+  facts: allFacts,
   questionsAnswers: questionsAnswersData,
-  energyFacts: energyFacts,
-  energyLaws: energyLawsFacts,
 };
 
 export const getRandomReward = (exclude?: Reward): Reward => {
-  const types: RewardType[] = ["historical", "science", "trivia", "questionsAnswers", "energyFacts", "energyLaws"];
+  const types: RewardType[] = ["facts", "questionsAnswers"];
   let randomType: RewardType;
   let randomContent: string | QuestionAnswerReward;
 
