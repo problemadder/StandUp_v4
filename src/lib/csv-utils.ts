@@ -1,5 +1,5 @@
 import { Session } from "@/hooks/use-session-manager";
-import { QuestionAnswerReward } from "@/lib/rewards-data"; // Import the new interface
+import { QuestionAnswerReward, FlagReward } from "@/lib/rewards-data"; // Import new interfaces
 
 export const exportToCsv = (data: Session[]): void => {
   if (data.length === 0) {
@@ -7,20 +7,33 @@ export const exportToCsv = (data: Session[]): void => {
     return;
   }
 
-  const headers = ["Datum", "Uhrzeit", "Dauer (Minuten)", "Abgeschlossen", "Belohnungstyp", "Belohnungsinhalt"];
+  const headers = ["Datum", "Uhrzeit", "Dauer (Minuten)", "Abgeschlossen", "Belohnungstyp", "Belohnungsinhalt1", "Belohnungsinhalt2"];
   const csvRows = [
     headers.join(";"), // Use semicolon as separator for German Excel compatibility
     ...data.map(session => {
-      const rewardContent = typeof session.reward.content === 'string'
-        ? session.reward.content
-        : `${(session.reward.content as QuestionAnswerReward).question} ||| ${(session.reward.content as QuestionAnswerReward).answer}`; // Use a distinct separator for Q&A
+      let content1 = "";
+      let content2 = "";
+
+      if (session.reward.type === 'questionsAnswers') {
+        const qaReward = session.reward.content as QuestionAnswerReward;
+        content1 = qaReward.question;
+        content2 = qaReward.answer;
+      } else if (session.reward.type === 'flags') {
+        const flagReward = session.reward.content as FlagReward;
+        content1 = flagReward.countryName;
+        content2 = flagReward.flagCode;
+      } else { // facts
+        content1 = session.reward.content as string;
+      }
+
       return [
         session.date,
         session.time,
         session.durationMinutes.toString(),
         session.completed ? "Ja" : "Nein",
         session.reward.type,
-        `"${rewardContent.replace(/"/g, '""')}"` // Escape double quotes
+        `"${content1.replace(/"/g, '""')}"`, // Escape double quotes
+        `"${content2.replace(/"/g, '""')}"`  // Escape double quotes
       ].join(";");
     })
   ];
@@ -51,7 +64,7 @@ export const importFromCsv = (csvString: string): Session[] => {
   }
 
   const headers = lines[0].split(";").map(h => h.trim());
-  const expectedHeaders = ["Datum", "Uhrzeit", "Dauer (Minuten)", "Abgeschlossen", "Belohnungstyp", "Belohnungsinhalt"];
+  const expectedHeaders = ["Datum", "Uhrzeit", "Dauer (Minuten)", "Abgeschlossen", "Belohnungstyp", "Belohnungsinhalt1", "Belohnungsinhalt2"];
 
   if (!expectedHeaders.every(h => headers.includes(h))) {
     console.error("CSV-Header stimmen nicht überein. Erwartet:", expectedHeaders, "Gefunden:", headers);
@@ -73,18 +86,17 @@ export const importFromCsv = (csvString: string): Session[] => {
     });
 
     try {
-      let rewardContent: string | QuestionAnswerReward;
-      const contentString = rowData["Belohnungsinhalt"];
-      if (rowData["Belohnungstyp"] === "questionsAnswers") {
-        const parts = contentString.split(" ||| ");
-        if (parts.length === 2) {
-          rewardContent = { question: parts[0], answer: parts[1] };
-        } else {
-          console.warn(`Ungültiges Format für Frage-Antwort-Belohnung in Zeile ${i + 1}.`);
-          rewardContent = { question: contentString, answer: "Antwort nicht verfügbar" };
-        }
-      } else {
-        rewardContent = contentString;
+      let rewardContent: string | QuestionAnswerReward | FlagReward;
+      const type = rowData["Belohnungstyp"];
+      const content1 = rowData["Belohnungsinhalt1"];
+      const content2 = rowData["Belohnungsinhalt2"];
+
+      if (type === "questionsAnswers") {
+        rewardContent = { question: content1, answer: content2 };
+      } else if (type === "flags") {
+        rewardContent = { countryName: content1, flagCode: content2 };
+      } else { // facts
+        rewardContent = content1;
       }
 
       sessions.push({
@@ -94,7 +106,7 @@ export const importFromCsv = (csvString: string): Session[] => {
         durationMinutes: parseInt(rowData["Dauer (Minuten)"], 10),
         completed: rowData["Abgeschlossen"] === "Ja",
         reward: {
-          type: rowData["Belohnungstyp"] as any, // Type assertion, handle carefully
+          type: type as any, // Type assertion, handle carefully
           content: rewardContent,
         },
       });

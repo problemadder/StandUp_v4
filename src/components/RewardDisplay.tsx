@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Reward, QuestionAnswerReward } from "@/lib/rewards-data";
+import { Reward, QuestionAnswerReward, FlagReward } from "@/lib/rewards-data";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
@@ -45,6 +45,28 @@ const RewardDisplay: React.FC<RewardDisplayProps> = ({ reward }) => {
             )}
           </div>
         );
+      case "flags":
+        const flagReward = reward.content as FlagReward;
+        return (
+          <div className="flex flex-col items-center">
+            <p className="font-semibold mb-4 text-center">Wozu gehört diese Flagge?</p>
+            <img
+              src={`https://flagcdn.com/72x54/${flagReward.flagCode}.png`}
+              srcSet={`https://flagcdn.com/144x108/${flagReward.flagCode}.png 2x, https://flagcdn.com/216x162/${flagReward.flagCode}.png 3x`}
+              width="72"
+              height="54"
+              alt={`Flagge von ${flagReward.countryName}`}
+              className="mb-4 border border-border shadow-md"
+            />
+            {!showAnswer ? (
+              <Button onClick={() => setShowAnswer(true)} className="mt-2 bg-secondary text-secondary-foreground hover:bg-secondary/90">
+                Antwort anzeigen
+              </Button>
+            ) : (
+              <p className="mt-2 text-lg font-bold text-primary">{flagReward.countryName}</p>
+            )}
+          </div>
+        );
       default:
         return <p>Unbekannte Belohnung.</p>;
     }
@@ -54,6 +76,7 @@ const RewardDisplay: React.FC<RewardDisplayProps> = ({ reward }) => {
     switch (reward.type) {
       case "facts": return "Fakten";
       case "questionsAnswers": return "Frage & Antwort";
+      case "flags": return "Flaggen-Quiz";
       default: return "Belohnung";
     }
   };

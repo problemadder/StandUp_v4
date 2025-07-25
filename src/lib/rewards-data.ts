@@ -1,13 +1,18 @@
-export type RewardType = "facts" | "questionsAnswers";
+export type RewardType = "facts" | "questionsAnswers" | "flags";
 
 export interface QuestionAnswerReward {
   question: string;
   answer: string;
 }
 
+export interface FlagReward {
+  countryName: string;
+  flagCode: string; // e.g., 'de', 'us', 'al'
+}
+
 export interface Reward {
   type: RewardType;
-  content: string | QuestionAnswerReward;
+  content: string | QuestionAnswerReward | FlagReward;
 }
 
 const historicalFacts: string[] = [
@@ -288,18 +293,144 @@ const allFacts: string[] = [
   ...scienceTidbits,
   ...generalTrivia,
   ...energyFacts,
-  ...energyLawsFacts, // Corrected variable name
+  ...energyLawsFacts,
 ];
 
-const allRewards: { [key in RewardType]: (string | QuestionAnswerReward)[] } = {
+const flagData: FlagReward[] = [
+  { countryName: "Albanien", flagCode: "al" },
+  { countryName: "Deutschland", flagCode: "de" },
+  { countryName: "Frankreich", flagCode: "fr" },
+  { countryName: "Italien", flagCode: "it" },
+  { countryName: "Spanien", flagCode: "es" },
+  { countryName: "Vereinigte Staaten", flagCode: "us" },
+  { countryName: "Kanada", flagCode: "ca" },
+  { countryName: "Mexiko", flagCode: "mx" },
+  { countryName: "Brasilien", flagCode: "br" },
+  { countryName: "Argentinien", flagCode: "ar" },
+  { countryName: "Australien", flagCode: "au" },
+  { countryName: "Neuseeland", flagCode: "nz" },
+  { countryName: "Japan", flagCode: "jp" },
+  { countryName: "China", flagCode: "cn" },
+  { countryName: "Indien", flagCode: "in" },
+  { countryName: "Südkorea", flagCode: "kr" },
+  { countryName: "Russland", flagCode: "ru" },
+  { countryName: "Vereinigtes Königreich", flagCode: "gb" },
+  { countryName: "Schweiz", flagCode: "ch" },
+  { countryName: "Österreich", flagCode: "at" },
+  { countryName: "Niederlande", flagCode: "nl" },
+  { countryName: "Belgien", flagCode: "be" },
+  { countryName: "Schweden", flagCode: "se" },
+  { countryName: "Norwegen", flagCode: "no" },
+  { countryName: "Dänemark", flagCode: "dk" },
+  { countryName: "Finnland", flagCode: "fi" },
+  { countryName: "Polen", flagCode: "pl" },
+  { countryName: "Ukraine", flagCode: "ua" },
+  { countryName: "Griechenland", flagCode: "gr" },
+  { countryName: "Portugal", flagCode: "pt" },
+  { countryName: "Irland", flagCode: "ie" },
+  { countryName: "Ägypten", flagCode: "eg" },
+  { countryName: "Südafrika", flagCode: "za" },
+  { countryName: "Nigeria", flagCode: "ng" },
+  { countryName: "Kenia", flagCode: "ke" },
+  { countryName: "Marokko", flagCode: "ma" },
+  { countryName: "Türkei", flagCode: "tr" },
+  { countryName: "Saudi-Arabien", flagCode: "sa" },
+  { countryName: "Thailand", flagCode: "th" },
+  { countryName: "Vietnam", flagCode: "vn" },
+  { countryName: "Indonesien", flagCode: "id" },
+  { countryName: "Philippinen", flagCode: "ph" },
+  { countryName: "Singapur", flagCode: "sg" },
+  { countryName: "Malaysia", flagCode: "my" },
+  { countryName: "Israel", flagCode: "il" },
+  { countryName: "Äthiopien", flagCode: "et" },
+  { countryName: "Kolumbien", flagCode: "co" },
+  { countryName: "Peru", flagCode: "pe" },
+  { countryName: "Chile", flagCode: "cl" },
+  { countryName: "Venezuela", flagCode: "ve" },
+  { countryName: "Kuba", flagCode: "cu" },
+  { countryName: "Tschechien", flagCode: "cz" },
+  { countryName: "Ungarn", flagCode: "hu" },
+  { countryName: "Rumänien", flagCode: "ro" },
+  { countryName: "Bulgarien", flagCode: "bg" },
+  { countryName: "Kroatien", flagCode: "hr" },
+  { countryName: "Serbien", flagCode: "rs" },
+  { countryName: "Bosnien und Herzegowina", flagCode: "ba" },
+  { countryName: "Slowenien", flagCode: "si" },
+  { countryName: "Slowakei", flagCode: "sk" },
+  { countryName: "Litauen", flagCode: "lt" },
+  { countryName: "Lettland", flagCode: "lv" },
+  { countryName: "Estland", flagCode: "ee" },
+  { countryName: "Island", flagCode: "is" },
+  { countryName: "Zypern", flagCode: "cy" },
+  { countryName: "Malta", flagCode: "mt" },
+  { countryName: "Mongolei", flagCode: "mn" },
+  { countryName: "Nepal", flagCode: "np" },
+  { countryName: "Sri Lanka", flagCode: "lk" },
+  { countryName: "Myanmar", flagCode: "mm" },
+  { countryName: "Laos", flagCode: "la" },
+  { countryName: "Kambodscha", flagCode: "kh" },
+  { countryName: "Brunei", flagCode: "bn" },
+  { countryName: "Osttimor", flagCode: "tl" },
+  { countryName: "Fidschi", flagCode: "fj" },
+  { countryName: "Papua-Neuguinea", flagCode: "pg" },
+  { countryName: "Afghanistan", flagCode: "af" },
+  { countryName: "Armenien", flagCode: "am" },
+  { countryName: "Aserbaidschan", flagCode: "az" },
+  { countryName: "Georgien", flagCode: "ge" },
+  { countryName: "Jordanien", flagCode: "jo" },
+  { countryName: "Libanon", flagCode: "lb" },
+  { countryName: "Syrien", flagCode: "sy" },
+  { countryName: "Palästina", flagCode: "ps" },
+  { countryName: "Belarus", flagCode: "by" },
+  { countryName: "Moldawien", flagCode: "md" },
+  { countryName: "Montenegro", flagCode: "me" },
+  { countryName: "Albanien", flagCode: "al" },
+  { countryName: "Nordmazedonien", flagCode: "mk" },
+  { countryName: "Kosovo", flagCode: "xk" }, // Kosovo uses XK as a temporary code
+  { countryName: "Usbekistan", flagCode: "uz" },
+  { countryName: "Kasachstan", flagCode: "kz" },
+  { countryName: "Algerien", flagCode: "dz" },
+  { countryName: "Tunesien", flagCode: "tn" },
+  { countryName: "Libyen", flagCode: "ly" },
+  { countryName: "Sudan", flagCode: "sd" },
+  { countryName: "Südsudan", flagCode: "ss" },
+  { countryName: "Kongo (Demokratische Republik)", flagCode: "cd" },
+  { countryName: "Tansania", flagCode: "tz" },
+  { countryName: "Uganda", flagCode: "ug" },
+  { countryName: "Ruanda", flagCode: "rw" },
+  { countryName: "Burundi", flagCode: "bi" },
+  { countryName: "Sambia", flagCode: "zm" },
+  { countryName: "Simbabwe", flagCode: "zw" },
+  { countryName: "Mosambik", flagCode: "mz" },
+  { countryName: "Angola", flagCode: "ao" },
+  { countryName: "Namibia", flagCode: "na" },
+  { countryName: "Botswana", flagCode: "bw" },
+  { countryName: "Madagaskar", flagCode: "mg" },
+  { countryName: "Ecuador", flagCode: "ec" },
+  { countryName: "Bolivien", flagCode: "bo" },
+  { countryName: "Paraguay", flagCode: "py" },
+  { countryName: "Uruguay", flagCode: "uy" },
+  { countryName: "Dominikanische Republik", flagCode: "do" },
+  { countryName: "Haiti", flagCode: "ht" },
+  { countryName: "Guatemala", flagCode: "gt" },
+  { countryName: "Honduras", flagCode: "hn" },
+  { countryName: "El Salvador", flagCode: "sv" },
+  { countryName: "Nicaragua", flagCode: "ni" },
+  { countryName: "Costa Rica", flagCode: "cr" },
+  { countryName: "Panama", flagCode: "pa" },
+];
+
+
+const allRewards: { [key in RewardType]: (string | QuestionAnswerReward | FlagReward)[] } = {
   facts: allFacts,
   questionsAnswers: questionsAnswersData,
+  flags: flagData,
 };
 
 export const getRandomReward = (exclude?: Reward): Reward => {
-  const types: RewardType[] = ["facts", "questionsAnswers"];
+  const types: RewardType[] = ["facts", "questionsAnswers", "flags"];
   let randomType: RewardType;
-  let randomContent: string | QuestionAnswerReward;
+  let randomContent: string | QuestionAnswerReward | FlagReward;
 
   do {
     randomType = types[Math.floor(Math.random() * types.length)];

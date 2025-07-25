@@ -1,4 +1,4 @@
-import { Reward, RewardType, QuestionAnswerReward } from "@/lib/rewards-data";
+import { Reward, RewardType, QuestionAnswerReward, FlagReward } from "@/lib/rewards-data";
 
 export const exportRewardsToCsv = (rewards: Reward[]): void => {
   if (rewards.length === 0) {
@@ -13,11 +13,16 @@ export const exportRewardsToCsv = (rewards: Reward[]): void => {
       let content1 = "";
       let content2 = "";
 
-      if (typeof reward.content === 'string') {
-        content1 = reward.content;
-      } else {
-        content1 = (reward.content as QuestionAnswerReward).question;
-        content2 = (reward.content as QuestionAnswerReward).answer;
+      if (reward.type === 'questionsAnswers') {
+        const qaReward = reward.content as QuestionAnswerReward;
+        content1 = qaReward.question;
+        content2 = qaReward.answer;
+      } else if (reward.type === 'flags') {
+        const flagReward = reward.content as FlagReward;
+        content1 = flagReward.countryName;
+        content2 = flagReward.flagCode;
+      } else { // facts
+        content1 = reward.content as string;
       }
 
       return [
@@ -77,12 +82,17 @@ export const importRewardsFromCsv = (csvString: string): Reward[] => {
 
     try {
       const type = rowData["Type"] as RewardType;
-      let content: string | QuestionAnswerReward;
+      let content: string | QuestionAnswerReward | FlagReward;
 
       if (type === "questionsAnswers") {
         content = {
           question: rowData["Content1"],
           answer: rowData["Content2"],
+        };
+      } else if (type === "flags") {
+        content = {
+          countryName: rowData["Content1"],
+          flagCode: rowData["Content2"],
         };
       } else {
         content = rowData["Content1"];
