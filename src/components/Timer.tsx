@@ -7,7 +7,7 @@ interface TimerProps {
   onSessionComplete: () => void;
 }
 
-const SESSION_DURATION_SECONDS = 1 * 60; // 1 Minute für Testzwecke
+const SESSION_DURATION_SECONDS = 15 * 60; // 15 Minuten
 
 const Timer: React.FC<TimerProps> = ({ onSessionComplete }) => {
   const [timeRemaining, setTimeRemaining] = useState(SESSION_DURATION_SECONDS);
@@ -53,7 +53,7 @@ const Timer: React.FC<TimerProps> = ({ onSessionComplete }) => {
       onSessionComplete();
       if (Notification.permission === "granted") {
         const notification = new Notification("StehAuf! Büro-Challenge", {
-          body: "Glückwunsch! 1 Minute geschafft! Zeit für deine Belohnung.",
+          body: "Glückwunsch! 15 Minuten geschafft! Zeit für deine Belohnung.",
           icon: "/smiley.svg",
         });
         notification.onclick = () => {
