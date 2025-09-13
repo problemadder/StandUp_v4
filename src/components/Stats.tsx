@@ -39,7 +39,7 @@ const Stats: React.FC<StatsProps> = ({
           <div>
             <p className="text-lg font-medium">Durchschnitt pro Tag:</p>
             <p className="text-2xl font-bold text-primary">
-              {averageSessionsPerDay.toFixed(1)}
+              {averageSessionsPerDay.toFixed(3)}
             </p>
           </div>
         )}
