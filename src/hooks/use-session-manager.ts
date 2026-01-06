@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { getLocalStorageItem, setLocalStorageItem, removeLocalStorageItem } from "@/lib/local-storage";
 import { fetchGermanPublicHolidays, isGermanPublicHoliday, PublicHoliday } from "@/lib/holiday-api"; // Import PublicHoliday
 import { Reward } from "@/lib/rewards-data";
-import { startOfWeek, endOfWeek, startOfMonth, endOfMonth, startOfYear, endOfYear, isWithinInterval, getMonth } from 'date-fns';
+import { startOfWeek, endOfWeek, startOfMonth, endOfMonth, startOfYear, endOfYear, isWithinInterval, getMonth, subYears } from 'date-fns';
 import { de } from 'date-fns/locale';
 
 export interface Session {
@@ -14,7 +14,7 @@ export interface Session {
   reward: Reward;
 }
 
-interface MonthlySessionsData {
+export interface MonthlySessionsData {
   name: string; // Month name
   sessions: number;
 }
@@ -28,7 +28,8 @@ interface UseSessionManagerResult {
   sessionsPerWeek: number;
   sessionsPerMonth: number;
   sessionsPerYear: number;
-  monthlySessions: MonthlySessionsData[];
+  monthlySessionsCurrentYear: MonthlySessionsData[];
+  monthlySessionsPreviousYear: MonthlySessionsData[]; // Added for previous year
   averageSessionsPerDay: number; // Added average sessions per day
   resetAllData: () => void; // Added reset function
 }
@@ -84,6 +85,8 @@ export const useSessionManager = (): UseSessionManagerResult => {
 
   const calculateAggregatedSessions = useCallback(() => {
     const now = new Date();
+    const currentYear = now.getFullYear();
+    const previousYear = currentYear - 1;
 
     const startOfCurrentWeek = startOfWeek(now, { locale: de });
     const endOfCurrentWeek = endOfWeek(now, { locale: de });
@@ -107,22 +110,33 @@ export const useSessionManager = (): UseSessionManagerResult => {
       return session.completed && isWithinInterval(sessionDate, { start: startOfCurrentYear, end: endOfCurrentYear });
     }).length;
 
-    const monthlyCounts: { [key: number]: number } = {};
+    const monthlyCountsCurrentYear: { [key: number]: number } = {};
+    const monthlyCountsPreviousYear: { [key: number]: number } = {};
     for (let i = 0; i < 12; i++) {
-      monthlyCounts[i] = 0;
+      monthlyCountsCurrentYear[i] = 0;
+      monthlyCountsPreviousYear[i] = 0;
     }
 
     sessions.forEach(session => {
       const sessionDate = new Date(session.date);
-      if (session.completed && sessionDate.getFullYear() === now.getFullYear()) {
+      if (session.completed) {
         const month = getMonth(sessionDate);
-        monthlyCounts[month]++;
+        if (sessionDate.getFullYear() === currentYear) {
+          monthlyCountsCurrentYear[month]++;
+        } else if (sessionDate.getFullYear() === previousYear) {
+          monthlyCountsPreviousYear[month]++;
+        }
       }
     });
 
-    const monthlySessionsData: MonthlySessionsData[] = Object.keys(monthlyCounts).map(monthIndex => ({
-      name: new Date(now.getFullYear(), parseInt(monthIndex)).toLocaleString('de-DE', { month: 'short' }),
-      sessions: monthlyCounts[parseInt(monthIndex)],
+    const monthlySessionsCurrentYear: MonthlySessionsData[] = Object.keys(monthlyCountsCurrentYear).map(monthIndex => ({
+      name: new Date(currentYear, parseInt(monthIndex)).toLocaleString('de-DE', { month: 'short' }),
+      sessions: monthlyCountsCurrentYear[parseInt(monthIndex)],
+    }));
+
+    const monthlySessionsPreviousYear: MonthlySessionsData[] = Object.keys(monthlyCountsPreviousYear).map(monthIndex => ({
+      name: new Date(previousYear, parseInt(monthIndex)).toLocaleString('de-DE', { month: 'short' }),
+      sessions: monthlyCountsPreviousYear[parseInt(monthIndex)],
     }));
 
     // Calculate average sessions per day
@@ -131,10 +145,24 @@ export const useSessionManager = (): UseSessionManagerResult => {
     const averageSessionsPerDay = uniqueDates.size > 0 ? completedSessions.length / uniqueDates.size : 0;
 
 
-    return { sessionsThisWeek, sessionsThisMonth, sessionsThisYear, monthlySessionsData, averageSessionsPerDay };
+    return { 
+      sessionsThisWeek, 
+      sessionsThisMonth, 
+      sessionsThisYear, 
+      monthlySessionsCurrentYear, 
+      monthlySessionsPreviousYear, 
+      averageSessionsPerDay 
+    };
   }, [sessions]);
 
-  const { sessionsThisWeek, sessionsThisMonth, sessionsThisYear, monthlySessionsData, averageSessionsPerDay } = calculateAggregatedSessions();
+  const { 
+    sessionsThisWeek, 
+    sessionsThisMonth, 
+    sessionsThisYear, 
+    monthlySessionsCurrentYear, 
+    monthlySessionsPreviousYear, 
+    averageSessionsPerDay 
+  } = calculateAggregatedSessions();
 
   const resetAllData = useCallback(() => {
     removeLocalStorageItem("stehauf_sessions");
@@ -152,7 +180,8 @@ export const useSessionManager = (): UseSessionManagerResult => {
     sessionsPerWeek: sessionsThisWeek,
     sessionsPerMonth: sessionsThisMonth,
     sessionsPerYear: sessionsThisYear,
-    monthlySessions: monthlySessionsData,
+    monthlySessionsCurrentYear,
+    monthlySessionsPreviousYear,
     averageSessionsPerDay,
     resetAllData,
   };

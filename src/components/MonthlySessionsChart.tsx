@@ -16,13 +16,14 @@ interface MonthlySessionsData {
 
 interface MonthlySessionsChartProps {
   data: MonthlySessionsData[];
+  title?: string; // Added title prop
 }
 
-const MonthlySessionsChart: React.FC<MonthlySessionsChartProps> = ({ data }) => {
+const MonthlySessionsChart: React.FC<MonthlySessionsChartProps> = ({ data, title = "Pro Monat" }) => {
   return (
     <Card className="w-full min-w-0">
       <CardHeader>
-        <CardTitle>Pro Monat</CardTitle>
+        <CardTitle>{title}</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="h-[200px] w-full">

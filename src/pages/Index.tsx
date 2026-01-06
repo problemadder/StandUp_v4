@@ -3,10 +3,10 @@ import Timer from "@/components/Timer";
 import RewardDisplay from "@/components/RewardDisplay";
 import Stats from "@/components/Stats";
 import CsvButtons from "@/components/CsvButtons";
-import MonthlySessionsChart from "@/components/MonthlySessionsChart";
+import YearlyCharts from "@/components/YearlyCharts"; // Import the new component
 import ResetButton from "@/components/ResetButton";
 import { useSessionManager, Session } from "@/hooks/use-session-manager";
-import { getRandomReward, Reward } from "@/lib/rewards-data"; // This import will change later
+import { getRandomReward, Reward } from "@/lib/rewards-data";
 
 const Index = () => {
   const {
@@ -18,13 +18,13 @@ const Index = () => {
     sessionsPerWeek,
     sessionsPerMonth,
     sessionsPerYear,
-    monthlySessions,
+    monthlySessionsCurrentYear, // Get current year data
+    monthlySessionsPreviousYear, // Get previous year data
     averageSessionsPerDay,
   } = useSessionManager();
   const [currentReward, setCurrentReward] = useState<Reward | null>(null);
 
   const handleSessionComplete = () => {
-    // This will be updated to use useRewardManager later
     const newReward = getRandomReward(currentReward || undefined);
     addSession(newReward);
     setCurrentReward(newReward);
@@ -63,9 +63,12 @@ const Index = () => {
         <CsvButtons sessions={sessions} onImport={handleImportedSessions} />
       </div>
 
-      {/* Monatschart */}
+      {/* Monatscharts für aktuelles und letztes Jahr */}
       <div className="w-full max-w-5xl mb-8">
-        <MonthlySessionsChart data={monthlySessions} />
+        <YearlyCharts 
+          currentYearData={monthlySessionsCurrentYear} 
+          previousYearData={monthlySessionsPreviousYear} 
+        />
       </div>
 
       {/* Reset-Button (und später die neuen Reward-CSV-Buttons) */}
