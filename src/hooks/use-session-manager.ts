@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback } from "react";
 import { getLocalStorageItem, setLocalStorageItem, removeLocalStorageItem } from "@/lib/local-storage";
-import { fetchGermanPublicHolidays, isGermanPublicHoliday, PublicHoliday } from "@/lib/holiday-api"; // Import PublicHoliday
+import { fetchGermanPublicHolidays, isGermanPublicHoliday, PublicHoliday } from "@/lib/holiday-api";
 import { Reward } from "@/lib/rewards-data";
-import { startOfWeek, endOfWeek, startOfMonth, endOfMonth, startOfYear, endOfYear, isWithinInterval, getMonth, subYears } from 'date-fns';
+import { startOfWeek, endOfWeek, startOfMonth, endOfMonth, startOfYear, endOfYear, isWithinInterval, getMonth } from 'date-fns';
 import { de } from 'date-fns/locale';
 
 export interface Session {
@@ -29,9 +29,9 @@ interface UseSessionManagerResult {
   sessionsPerMonth: number;
   sessionsPerYear: number;
   monthlySessionsCurrentYear: MonthlySessionsData[];
-  monthlySessionsPreviousYear: MonthlySessionsData[]; // Added for previous year
-  averageSessionsPerDay: number; // Added average sessions per day
-  resetAllData: () => void; // Added reset function
+  monthlySessionsPreviousYear: MonthlySessionsData[];
+  averageSessionsPerDay: number;
+  resetAllData: () => void;
 }
 
 const getTodayDateString = () => new Date().toISOString().split('T')[0];
@@ -42,6 +42,20 @@ export const useSessionManager = (): UseSessionManagerResult => {
   );
   const [allHolidays, setAllHolidays] = useState<PublicHoliday[]>([]);
   const [isLoadingHolidays, setIsLoadingHolidays] = useState(true);
+  // New state for tracking active days
+  const [activeDays, setActiveDays] = useState<string[]>(() =>
+    getLocalStorageItem<string[]>("stehauf_active_days", [])
+  );
+
+  // Effect to record active days
+  useEffect(() => {
+    const today = getTodayDateString();
+    if (!activeDays.includes(today)) {
+      const updatedActiveDays = [...activeDays, today].sort(); // Keep sorted for consistency
+      setActiveDays(updatedActiveDays);
+      setLocalStorageItem("stehauf_active_days", updatedActiveDays);
+    }
+  }, [activeDays]); // Depend on activeDays to ensure it updates if state changes elsewhere, though it's mostly for initial load
 
   // Fetch holidays for current and previous year
   useEffect(() => {
@@ -140,9 +154,10 @@ export const useSessionManager = (): UseSessionManagerResult => {
     }));
 
     // Calculate average sessions per day
-    const completedSessions = sessions.filter(s => s.completed);
-    const uniqueDates = new Set(completedSessions.map(s => s.date));
-    const averageSessionsPerDay = uniqueDates.size > 0 ? completedSessions.length / uniqueDates.size : 0;
+    const completedSessionsCount = sessions.filter(s => s.completed).length;
+    // Use activeDays for the denominator
+    const uniqueActiveDaysCount = new Set(activeDays).size;
+    const averageSessionsPerDay = uniqueActiveDaysCount > 0 ? completedSessionsCount / uniqueActiveDaysCount : 0;
 
 
     return { 
@@ -153,7 +168,7 @@ export const useSessionManager = (): UseSessionManagerResult => {
       monthlySessionsPreviousYear, 
       averageSessionsPerDay 
     };
-  }, [sessions]);
+  }, [sessions, activeDays]); // Add activeDays to dependency array
 
   const { 
     sessionsThisWeek, 
@@ -166,7 +181,9 @@ export const useSessionManager = (): UseSessionManagerResult => {
 
   const resetAllData = useCallback(() => {
     removeLocalStorageItem("stehauf_sessions");
+    removeLocalStorageItem("stehauf_active_days"); // Also reset active days
     setSessionsState([]);
+    setActiveDays([]); // Clear active days state
     alert("Alle Daten wurden zurückgesetzt!");
     window.location.reload(); // Reload to ensure full state reset
   }, []);
@@ -179,7 +196,7 @@ export const useSessionManager = (): UseSessionManagerResult => {
     isLoadingHolidays,
     sessionsPerWeek: sessionsThisWeek,
     sessionsPerMonth: sessionsThisMonth,
-    sessionsPerYear: sessionsThisYear,
+    sessionsPerYear: sessionsThisYear, // Corrected from sessionsPerYear to sessionsThisYear
     monthlySessionsCurrentYear,
     monthlySessionsPreviousYear,
     averageSessionsPerDay,
