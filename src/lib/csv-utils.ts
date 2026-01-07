@@ -1,5 +1,6 @@
 import { Session } from "@/hooks/use-session-manager";
 import { QuestionAnswerReward, FlagReward } from "@/lib/rewards-data"; // Import new interfaces
+import { convertIsoToEuropean, convertEuropeanToIso } from "@/lib/date-utils"; // Import date conversion utilities
 
 interface AllData {
   sessions: Session[];
@@ -37,7 +38,7 @@ export const exportAllDataToCsv = (data: AllData): void => {
     csvRows.push(
       [
         "SESSION",
-        session.date,
+        convertIsoToEuropean(session.date), // Convert to European format for export
         session.time,
         session.durationMinutes.toString(),
         session.completed ? "Ja" : "Nein",
@@ -53,7 +54,7 @@ export const exportAllDataToCsv = (data: AllData): void => {
     csvRows.push(
       [
         "ACTIVE_DAY",
-        date,
+        convertIsoToEuropean(date), // Convert to European format for export
         "", // TIME
         "", // DURATION_MINUTES
         "", // COMPLETED
@@ -130,9 +131,11 @@ export const importAllDataFromCsv = (csvString: string): AllData => {
           rewardContent = content1;
         }
 
+        const isoDate = convertEuropeanToIso(rowData["DATE"]); // Convert from European to ISO for internal use
+
         sessions.push({
-          id: `${rowData["DATE"]}-${rowData["TIME"]}-${Math.random().toString(36).substring(2, 9)}`, // Generate a new ID
-          date: rowData["DATE"],
+          id: `${isoDate}-${rowData["TIME"]}-${Math.random().toString(36).substring(2, 9)}`, // Generate a new ID
+          date: isoDate,
           time: rowData["TIME"],
           durationMinutes: parseInt(rowData["DURATION_MINUTES"], 10),
           completed: rowData["COMPLETED"] === "Ja",
@@ -145,9 +148,12 @@ export const importAllDataFromCsv = (csvString: string): AllData => {
         console.error(`Fehler beim Parsen von Session-Zeile ${i + 1}:`, e);
       }
     } else if (type === "ACTIVE_DAY") {
-      const date = rowData["DATE"];
-      if (date && !activeDays.includes(date)) { // Ensure uniqueness
-        activeDays.push(date);
+      const europeanDate = rowData["DATE"];
+      if (europeanDate) {
+        const isoDate = convertEuropeanToIso(europeanDate); // Convert from European to ISO for internal use
+        if (isoDate && !activeDays.includes(isoDate)) { // Ensure uniqueness and valid conversion
+          activeDays.push(isoDate);
+        }
       }
     } else {
       console.warn(`Unbekannter TYPE in Zeile ${i + 1}: ${type}`);
