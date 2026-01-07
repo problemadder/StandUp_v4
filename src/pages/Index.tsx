@@ -5,6 +5,7 @@ import Stats from "@/components/Stats";
 import CsvButtons from "@/components/CsvButtons";
 import YearlyCharts from "@/components/YearlyCharts";
 import ResetButton from "@/components/ResetButton";
+import HomeofficeButton from "@/components/HomeofficeButton";
 import { useSessionManager, Session } from "@/hooks/use-session-manager";
 import { getRandomReward, Reward } from "@/lib/rewards-data";
 
@@ -18,10 +19,12 @@ const Index = () => {
     sessionsPerWeek,
     sessionsPerMonth,
     sessionsPerYear,
-    combinedMonthlySessions, // Get the new combined data
+    combinedMonthlySessions,
     averageSessionsPerDay,
-    activeDays, // Get activeDays from hook
-    setActiveDays, // Get setActiveDays from hook
+    activeDays,
+    setActiveDays,
+    homeofficeDays,
+    markHomeofficeDay,
   } = useSessionManager();
   const [currentReward, setCurrentReward] = useState<Reward | null>(null);
 
@@ -31,7 +34,7 @@ const Index = () => {
     setCurrentReward(newReward);
   };
 
-  const handleImportedData = (importedData: { sessions: Session[], activeDays: string[] }) => {
+  const handleImportedData = (importedData: { sessions: Session[], activeDays: string[], homeofficeDays: string[] }) => {
     // Filter out duplicate sessions based on date, time, and reward content
     const combinedSessions = [...importedData.sessions, ...sessions.filter(
       existSess => !importedData.sessions.some(impSess => 
@@ -45,6 +48,10 @@ const Index = () => {
     // Combine and unique active days
     const combinedActiveDays = Array.from(new Set([...activeDays, ...importedData.activeDays])).sort();
     setActiveDays(combinedActiveDays);
+
+    // Combine and unique homeoffice days
+    // Use existing markHomeofficeDay to add imported days, ensuring uniqueness and local storage update
+    importedData.homeofficeDays.forEach(day => markHomeofficeDay(day)); 
   };
 
   return (
@@ -71,14 +78,16 @@ const Index = () => {
       <div className="flex flex-col lg:flex-row space-y-4 lg:space-y-0 lg:space-x-4 w-full max-w-5xl mb-8">
         <CsvButtons 
           sessions={sessions} 
-          activeDays={activeDays} // Pass activeDays
-          onImport={handleImportedData} // Updated handler
+          activeDays={activeDays}
+          homeofficeDays={homeofficeDays} {/* Pass homeofficeDays here */}
+          onImport={handleImportedData}
         />
+        <HomeofficeButton onMarkHomeoffice={markHomeofficeDay} />
       </div>
 
       <div className="w-full max-w-5xl mb-8">
         <YearlyCharts 
-          combinedMonthlySessions={combinedMonthlySessions} // Pass combined data
+          combinedMonthlySessions={combinedMonthlySessions}
         />
       </div>
 

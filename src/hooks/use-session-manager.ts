@@ -34,6 +34,8 @@ interface UseSessionManagerResult {
   resetAllData: () => void;
   activeDays: string[]; // Expose activeDays (for CSV, not for average calc anymore)
   setActiveDays: (newActiveDays: string[]) => void; // Expose setActiveDays (for CSV, not for average calc anymore)
+  homeofficeDays: string[]; // New: Expose homeofficeDays
+  markHomeofficeDay: (date: string) => void; // New: Function to mark a day as homeoffice
 }
 
 const getTodayDateString = () => new Date().toISOString().split('T')[0];
@@ -46,6 +48,9 @@ export const useSessionManager = (): UseSessionManagerResult => {
   const [isLoadingHolidays, setIsLoadingHolidays] = useState(true);
   const [activeDays, setActiveDaysState] = useState<string[]>(() =>
     getLocalStorageItem<string[]>("stehauf_active_days", [])
+  );
+  const [homeofficeDays, setHomeofficeDaysState] = useState<string[]>(() => // New state for homeoffice days
+    getLocalStorageItem<string[]>("stehauf_homeoffice_days", [])
   );
 
   // Fetch holidays for current and previous year
@@ -86,6 +91,17 @@ export const useSessionManager = (): UseSessionManagerResult => {
   const setActiveDays = useCallback((newActiveDays: string[]) => {
     setActiveDaysState(newActiveDays);
     setLocalStorageItem("stehauf_active_days", newActiveDays);
+  }, []);
+
+  const markHomeofficeDay = useCallback((date: string) => { // New function to mark homeoffice day
+    setHomeofficeDaysState(prevDays => {
+      if (!prevDays.includes(date)) {
+        const updatedDays = [...prevDays, date].sort();
+        setLocalStorageItem("stehauf_homeoffice_days", updatedDays);
+        return updatedDays;
+      }
+      return prevDays;
+    });
   }, []);
 
   const getCompletedSessionsToday = useCallback(() => {
@@ -172,9 +188,11 @@ export const useSessionManager = (): UseSessionManagerResult => {
 
   const resetAllData = useCallback(() => {
     removeLocalStorageItem("stehauf_sessions");
-    removeLocalStorageItem("stehauf_active_days"); // Still remove for consistency, though not used for average
+    removeLocalStorageItem("stehauf_active_days");
+    removeLocalStorageItem("stehauf_homeoffice_days"); // New: Clear homeoffice days
     setSessionsState([]);
     setActiveDaysState([]);
+    setHomeofficeDaysState([]); // New: Clear homeoffice days state
     alert("Alle Daten wurden zurückgesetzt!");
     window.location.reload();
   }, []);
@@ -193,5 +211,7 @@ export const useSessionManager = (): UseSessionManagerResult => {
     resetAllData,
     activeDays,
     setActiveDays,
+    homeofficeDays, // New: Expose homeofficeDays
+    markHomeofficeDay, // New: Expose markHomeofficeDay
   };
 };

@@ -6,15 +6,16 @@ import { Session } from "@/hooks/use-session-manager";
 
 interface CsvButtonsProps {
   sessions: Session[];
-  activeDays: string[]; // New prop for active days
-  onImport: (importedData: { sessions: Session[], activeDays: string[] }) => void; // Updated onImport signature
+  activeDays: string[];
+  homeofficeDays: string[]; // New prop for homeoffice days
+  onImport: (importedData: { sessions: Session[], activeDays: string[], homeofficeDays: string[] }) => void; // Updated onImport signature
 }
 
-const CsvButtons: React.FC<CsvButtonsProps> = ({ sessions, activeDays, onImport }) => {
+const CsvButtons: React.FC<CsvButtonsProps> = ({ sessions, activeDays, homeofficeDays, onImport }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleExport = () => {
-    exportAllDataToCsv({ sessions, activeDays });
+    exportAllDataToCsv({ sessions, activeDays, homeofficeDays }); // Pass homeofficeDays
   };
 
   const handleImportClick = () => {

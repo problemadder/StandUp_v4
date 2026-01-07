@@ -5,12 +5,13 @@ import { convertIsoToEuropean, convertEuropeanToIso } from "@/lib/date-utils"; /
 interface AllData {
   sessions: Session[];
   activeDays: string[];
+  homeofficeDays: string[]; // New: Add homeofficeDays to AllData interface
 }
 
 export const exportAllDataToCsv = (data: AllData): void => {
-  const { sessions, activeDays } = data;
+  const { sessions, activeDays, homeofficeDays } = data; // Destructure homeofficeDays
 
-  if (sessions.length === 0 && activeDays.length === 0) {
+  if (sessions.length === 0 && activeDays.length === 0 && homeofficeDays.length === 0) {
     alert("Keine Daten zum Exportieren vorhanden.");
     return;
   }
@@ -65,6 +66,22 @@ export const exportAllDataToCsv = (data: AllData): void => {
     );
   });
 
+  // New: Add homeoffice day rows
+  homeofficeDays.forEach(date => {
+    csvRows.push(
+      [
+        "HOMEOFFICE_DAY", // New type for homeoffice days
+        convertIsoToEuropean(date), // Convert to European format for export
+        "", // TIME
+        "", // DURATION_MINUTES
+        "", // COMPLETED
+        "", // REWARD_TYPE
+        "", // REWARD_CONTENT1
+        ""  // REWARD_CONTENT2
+      ].join(";")
+    );
+  });
+
   const csvString = csvRows.join("\n");
   const blob = new Blob([csvString], { type: "text/csv;charset=utf-8;" });
   const link = document.createElement("a");
@@ -87,7 +104,7 @@ export const importAllDataFromCsv = (csvString: string): AllData => {
   const lines = csvString.split("\n").filter(line => line.trim() !== "");
   if (lines.length <= 1) {
     console.warn("CSV-Datei ist leer oder enthält nur Header.");
-    return { sessions: [], activeDays: [] };
+    return { sessions: [], activeDays: [], homeofficeDays: [] }; // Initialize homeofficeDays
   }
 
   const headers = lines[0].split(";").map(h => h.trim());
@@ -96,11 +113,12 @@ export const importAllDataFromCsv = (csvString: string): AllData => {
   if (!expectedHeaders.every(h => headers.includes(h))) {
     console.error("CSV-Header stimmen nicht überein. Erwartet:", expectedHeaders, "Gefunden:", headers);
     alert("Ungültiges CSV-Format. Bitte stellen Sie sicher, dass die Header korrekt sind.");
-    return { sessions: [], activeDays: [] };
+    return { sessions: [], activeDays: [], homeofficeDays: [] }; // Initialize homeofficeDays
   }
 
   const sessions: Session[] = [];
   const activeDays: string[] = [];
+  const homeofficeDays: string[] = []; // New: Initialize homeofficeDays
 
   for (let i = 1; i < lines.length; i++) {
     const values = lines[i].split(";").map(v => v.trim().replace(/^"|"$/g, '').replace(/""/g, '"')); // Unescape quotes
@@ -155,9 +173,17 @@ export const importAllDataFromCsv = (csvString: string): AllData => {
           activeDays.push(isoDate);
         }
       }
+    } else if (type === "HOMEOFFICE_DAY") { // New: Handle homeoffice days during import
+      const europeanDate = rowData["DATE"];
+      if (europeanDate) {
+        const isoDate = convertEuropeanToIso(europeanDate);
+        if (isoDate && !homeofficeDays.includes(isoDate)) {
+          homeofficeDays.push(isoDate);
+        }
+      }
     } else {
       console.warn(`Unbekannter TYPE in Zeile ${i + 1}: ${type}`);
     }
   }
-  return { sessions, activeDays: activeDays.sort() };
+  return { sessions, activeDays: activeDays.sort(), homeofficeDays: homeofficeDays.sort() }; // Return homeofficeDays
 };
