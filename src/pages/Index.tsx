@@ -25,9 +25,9 @@ const Index = () => {
     setActiveDays,
     homeofficeDays,
     markHomeofficeDay,
-    bestDaySessions, // New
-    bestMonthSessions, // New
-    bestYearSessions, // New
+    bestDaySessions,
+    bestMonthSessions,
+    bestYearSessions,
   } = useSessionManager();
   const [currentReward, setCurrentReward] = useState<Reward | null>(null);
 
@@ -81,22 +81,23 @@ const Index = () => {
         </div>
       </div>
 
-      {/* Moved CsvButtons and HomeofficeButton here */}
       <div className="w-full max-w-5xl mb-8">
         <YearlyCharts 
           combinedMonthlySessions={combinedMonthlySessions}
         />
       </div>
 
-      <div className="w-full max-w-5xl flex flex-col sm:flex-row items-center justify-center gap-4">
+      <div className="w-full max-w-5xl flex flex-col lg:flex-row items-center justify-center gap-4">
         <CsvButtons 
           sessions={sessions} 
           activeDays={activeDays}
           homeofficeDays={homeofficeDays}
           onImport={handleImportedData}
         />
-        <HomeofficeButton onMarkHomeoffice={markHomeofficeDay} />
-        <ResetButton />
+        <div className="flex flex-col space-y-4 w-full min-w-0"> {/* New wrapper for Homeoffice and Reset */}
+          <HomeofficeButton onMarkHomeoffice={markHomeofficeDay} />
+          <ResetButton />
+        </div>
       </div>
     </div>
   );
