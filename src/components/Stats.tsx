@@ -8,7 +8,8 @@ interface StatsProps {
   sessionsPerWeek: number;
   sessionsPerMonth: number;
   sessionsPerYear: number;
-  averageSessionsPerDay: number; // New prop
+  averageSessionsPerDay: number;
+  homeofficeDays: string[]; // New prop
 }
 
 const Stats: React.FC<StatsProps> = ({
@@ -18,9 +19,13 @@ const Stats: React.FC<StatsProps> = ({
   sessionsPerMonth,
   sessionsPerYear,
   averageSessionsPerDay,
+  homeofficeDays, // Destructure
 }) => {
   const goalMet = completedSessionsToday >= 4;
   const bonusSessionCompleted = completedSessionsToday >= 5;
+
+  const today = new Date().toISOString().split('T')[0]; // Get today's date string
+  const isTodayHomeoffice = homeofficeDays.includes(today);
 
   return (
     <Card className="w-full">
@@ -30,12 +35,16 @@ const Stats: React.FC<StatsProps> = ({
       <CardContent className="space-y-4">
         <div>
           <p className="text-lg font-medium">Heute:</p>
-          <p className={`text-2xl font-bold ${goalMet ? "text-primary" : "text-secondary"}`}>
-            {completedSessionsToday}/4
-            {bonusSessionCompleted && <span className="text-sm text-muted-foreground ml-2">(Bonus!)</span>}
-          </p>
+          {isTodayHomeoffice ? (
+            <p className="text-2xl font-bold text-muted-foreground">Homeoffice</p>
+          ) : (
+            <p className={`text-2xl font-bold ${goalMet ? "text-primary" : "text-secondary"}`}>
+              {completedSessionsToday}/4
+              {bonusSessionCompleted && <span className="text-sm text-muted-foreground ml-2">(Bonus!)</span>}
+            </p>
+          )}
         </div>
-        {averageSessionsPerDay > 0 && ( // Only show if there's data
+        {averageSessionsPerDay > 0 && (
           <div>
             <p className="text-lg font-medium">Durchschnitt pro Tag:</p>
             <p className="text-2xl font-bold text-primary">
@@ -53,8 +62,7 @@ const Stats: React.FC<StatsProps> = ({
             <p className="text-2xl font-bold text-primary">{sessionsPerMonth}</p>
           </div>
           <div>
-            <p className="text-lg font-medium">Jahr:</p>
-            <p className="text-2xl font-bold text-primary">{sessionsPerYear}</p>
+            <p className="text-lg font-bold text-primary">{sessionsPerYear}</p>
           </div>
         </div>
       </CardContent>

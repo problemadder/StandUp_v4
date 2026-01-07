@@ -70,6 +70,7 @@ const Index = () => {
             sessionsPerMonth={sessionsPerMonth}
             sessionsPerYear={sessionsPerYear}
             averageSessionsPerDay={averageSessionsPerDay}
+            homeofficeDays={homeofficeDays} // Pass homeofficeDays here
           />
           <RewardDisplay reward={currentReward} />
         </div>
