@@ -9,7 +9,7 @@ interface StatsProps {
   sessionsPerMonth: number;
   sessionsPerYear: number;
   averageSessionsPerDay: number;
-  homeofficeDays: string[]; // New prop
+  homeofficeDays: string[];
 }
 
 const Stats: React.FC<StatsProps> = ({
@@ -19,12 +19,12 @@ const Stats: React.FC<StatsProps> = ({
   sessionsPerMonth,
   sessionsPerYear,
   averageSessionsPerDay,
-  homeofficeDays, // Destructure
+  homeofficeDays,
 }) => {
   const goalMet = completedSessionsToday >= 4;
   const bonusSessionCompleted = completedSessionsToday >= 5;
 
-  const today = new Date().toISOString().split('T')[0]; // Get today's date string
+  const today = new Date().toISOString().split('T')[0];
   const isTodayHomeoffice = homeofficeDays.includes(today);
 
   return (
@@ -62,7 +62,8 @@ const Stats: React.FC<StatsProps> = ({
             <p className="text-2xl font-bold text-primary">{sessionsPerMonth}</p>
           </div>
           <div>
-            <p className="text-lg font-bold text-primary">{sessionsPerYear}</p>
+            <p className="text-lg font-medium">Jahr:</p> {/* Added the missing header here */}
+            <p className="text-2xl font-bold text-primary">{sessionsPerYear}</p>
           </div>
         </div>
       </CardContent>
