@@ -79,7 +79,7 @@ const Index = () => {
         <CsvButtons 
           sessions={sessions} 
           activeDays={activeDays}
-          homeofficeDays={homeofficeDays} {/* Pass homeofficeDays here */}
+          homeofficeDays={homeofficeDays}
           onImport={handleImportedData}
         />
         <HomeofficeButton onMarkHomeoffice={markHomeofficeDay} />
