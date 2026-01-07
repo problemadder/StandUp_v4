@@ -25,6 +25,9 @@ const Index = () => {
     setActiveDays,
     homeofficeDays,
     markHomeofficeDay,
+    bestDaySessions, // New
+    bestMonthSessions, // New
+    bestYearSessions, // New
   } = useSessionManager();
   const [currentReward, setCurrentReward] = useState<Reward | null>(null);
 
@@ -70,6 +73,9 @@ const Index = () => {
             sessionsPerYear={sessionsPerYear}
             averageSessionsPerDay={averageSessionsPerDay}
             homeofficeDays={homeofficeDays}
+            bestDaySessions={bestDaySessions}
+            bestMonthSessions={bestMonthSessions}
+            bestYearSessions={bestYearSessions}
           />
           <RewardDisplay reward={currentReward} />
         </div>

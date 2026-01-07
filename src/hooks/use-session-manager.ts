@@ -36,6 +36,9 @@ interface UseSessionManagerResult {
   setActiveDays: (newActiveDays: string[]) => void; // Expose setActiveDays (for CSV, not for average calc anymore)
   homeofficeDays: string[]; // New: Expose homeofficeDays
   markHomeofficeDay: (date: string) => void; // New: Function to mark a day as homeoffice
+  bestDaySessions: number; // New: All-time best sessions in a single day
+  bestMonthSessions: number; // New: All-time best sessions in a single month
+  bestYearSessions: number; // New: All-time best sessions in a single year
 }
 
 const getTodayDateString = () => new Date().toISOString().split('T')[0];
@@ -169,12 +172,48 @@ export const useSessionManager = (): UseSessionManagerResult => {
     const uniqueDaysWithCompletedSessions = new Set(completedSessions.map(s => s.date)).size;
     const averageSessionsPerDay = uniqueDaysWithCompletedSessions > 0 ? completedSessions.length / uniqueDaysWithCompletedSessions : 0;
 
+    // All-time bests
+    let bestDaySessions = 0;
+    let bestMonthSessions = 0;
+    let bestYearSessions = 0;
+
+    const dailyCounts: { [key: string]: number } = {};
+    const monthlyCounts: { [key: string]: number } = {}; // YYYY-MM
+    const yearlyCounts: { [key: number]: number } = {}; // YYYY
+
+    sessions.forEach(session => {
+      if (session.completed) {
+        const sessionDate = new Date(session.date);
+        const year = sessionDate.getFullYear();
+        const month = (sessionDate.getMonth() + 1).toString().padStart(2, '0'); // 01-12
+        const dateString = `${year}-${month}-${sessionDate.getDate().toString().padStart(2, '0')}`;
+        const monthString = `${year}-${month}`;
+
+        dailyCounts[dateString] = (dailyCounts[dateString] || 0) + 1;
+        monthlyCounts[monthString] = (monthlyCounts[monthString] || 0) + 1;
+        yearlyCounts[year] = (yearlyCounts[year] || 0) + 1;
+      }
+    });
+
+    if (Object.keys(dailyCounts).length > 0) {
+      bestDaySessions = Math.max(...Object.values(dailyCounts));
+    }
+    if (Object.keys(monthlyCounts).length > 0) {
+      bestMonthSessions = Math.max(...Object.values(monthlyCounts));
+    }
+    if (Object.keys(yearlyCounts).length > 0) {
+      bestYearSessions = Math.max(...Object.values(yearlyCounts));
+    }
+
     return { 
       sessionsThisWeek, 
       sessionsThisMonth, 
       sessionsThisYear, 
       combinedMonthlySessions, // Return combined data
-      averageSessionsPerDay 
+      averageSessionsPerDay,
+      bestDaySessions,
+      bestMonthSessions,
+      bestYearSessions,
     };
   }, [sessions]);
 
@@ -183,7 +222,10 @@ export const useSessionManager = (): UseSessionManagerResult => {
     sessionsThisMonth, 
     sessionsThisYear, 
     combinedMonthlySessions, // Destructure combined data
-    averageSessionsPerDay 
+    averageSessionsPerDay,
+    bestDaySessions,
+    bestMonthSessions,
+    bestYearSessions,
   } = calculateAggregatedSessions();
 
   const resetAllData = useCallback(() => {
@@ -213,5 +255,8 @@ export const useSessionManager = (): UseSessionManagerResult => {
     setActiveDays,
     homeofficeDays, // New: Expose homeofficeDays
     markHomeofficeDay, // New: Expose markHomeofficeDay
+    bestDaySessions,
+    bestMonthSessions,
+    bestYearSessions,
   };
 };
