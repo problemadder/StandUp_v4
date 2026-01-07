@@ -17,10 +17,8 @@ const HomeofficeButton: React.FC<HomeofficeButtonProps> = ({ onMarkHomeoffice })
   return (
     <Button
       onClick={handleMarkHomeoffice}
-      className="relative overflow-hidden w-full px-4 py-3 text-lg font-bold text-primary-foreground bg-gradient-to-br from-primary to-primary/70 rounded-lg shadow-lg
-                 hover:from-primary/90 hover:to-primary/60 active:translate-y-0.5 active:shadow-md transition-all duration-200 ease-in-out
-                 before:content-[''] before:absolute before:inset-0 before:bg-gradient-to-br before:from-white/20 before:to-transparent before:opacity-0 before:transition-opacity before:duration-200
-                 hover:before:opacity-100"
+      variant="destructive" // Changed to destructive variant
+      className="w-full px-4 py-3 text-lg font-bold" // Simplified class names
     >
       <Home className="mr-2 h-5 w-5" /> Homeoffice
     </Button>
