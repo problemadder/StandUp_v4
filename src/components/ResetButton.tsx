@@ -16,9 +16,9 @@ const ResetButton: React.FC = () => {
     <Button
       onClick={handleReset}
       variant="destructive"
-      className="px-4 py-2 text-base"
+      className="w-full px-4 py-3 text-lg"
     >
-      <RotateCcw className="mr-2 h-4 w-4" /> App zurücksetzen
+      <RotateCcw className="mr-2 h-5 w-5" /> App zurücksetzen
     </Button>
   );
 };
