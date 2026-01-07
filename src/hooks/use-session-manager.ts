@@ -14,9 +14,10 @@ export interface Session {
   reward: Reward;
 }
 
-export interface MonthlySessionsData {
-  name: string; // Month name
-  sessions: number;
+export interface CombinedMonthlySessionsData {
+  name: string; // Month name (e.g., 'Jan')
+  currentYearSessions: number;
+  previousYearSessions: number;
 }
 
 interface UseSessionManagerResult {
@@ -28,8 +29,7 @@ interface UseSessionManagerResult {
   sessionsPerWeek: number;
   sessionsPerMonth: number;
   sessionsPerYear: number;
-  monthlySessionsCurrentYear: MonthlySessionsData[];
-  monthlySessionsPreviousYear: MonthlySessionsData[];
+  combinedMonthlySessions: CombinedMonthlySessionsData[]; // Changed to combined data
   averageSessionsPerDay: number;
   resetAllData: () => void;
   activeDays: string[]; // Expose activeDays
@@ -149,15 +149,14 @@ export const useSessionManager = (): UseSessionManagerResult => {
       }
     });
 
-    const monthlySessionsCurrentYear: MonthlySessionsData[] = Object.keys(monthlyCountsCurrentYear).map(monthIndex => ({
-      name: new Date(currentYear, parseInt(monthIndex)).toLocaleString('de-DE', { month: 'short' }),
-      sessions: monthlyCountsCurrentYear[parseInt(monthIndex)],
-    }));
-
-    const monthlySessionsPreviousYear: MonthlySessionsData[] = Object.keys(monthlyCountsPreviousYear).map(monthIndex => ({
-      name: new Date(previousYear, parseInt(monthIndex)).toLocaleString('de-DE', { month: 'short' }),
-      sessions: monthlyCountsPreviousYear[parseInt(monthIndex)],
-    }));
+    const combinedMonthlySessions: CombinedMonthlySessionsData[] = [];
+    for (let i = 0; i < 12; i++) {
+      combinedMonthlySessions.push({
+        name: new Date(currentYear, i).toLocaleString('de-DE', { month: 'short' }),
+        currentYearSessions: monthlyCountsCurrentYear[i],
+        previousYearSessions: monthlyCountsPreviousYear[i],
+      });
+    }
 
     // Calculate average sessions per day
     const completedSessionsCount = sessions.filter(s => s.completed).length;
@@ -169,8 +168,7 @@ export const useSessionManager = (): UseSessionManagerResult => {
       sessionsThisWeek, 
       sessionsThisMonth, 
       sessionsThisYear, 
-      monthlySessionsCurrentYear, 
-      monthlySessionsPreviousYear, 
+      combinedMonthlySessions, // Return combined data
       averageSessionsPerDay 
     };
   }, [sessions, activeDays]);
@@ -179,8 +177,7 @@ export const useSessionManager = (): UseSessionManagerResult => {
     sessionsThisWeek, 
     sessionsThisMonth, 
     sessionsThisYear, 
-    monthlySessionsCurrentYear, 
-    monthlySessionsPreviousYear, 
+    combinedMonthlySessions, // Destructure combined data
     averageSessionsPerDay 
   } = calculateAggregatedSessions();
 
@@ -202,8 +199,7 @@ export const useSessionManager = (): UseSessionManagerResult => {
     sessionsPerWeek: sessionsThisWeek,
     sessionsPerMonth: sessionsThisMonth,
     sessionsPerYear: sessionsThisYear,
-    monthlySessionsCurrentYear,
-    monthlySessionsPreviousYear,
+    combinedMonthlySessions, // Expose combined data
     averageSessionsPerDay,
     resetAllData,
     activeDays,

@@ -18,8 +18,7 @@ const Index = () => {
     sessionsPerWeek,
     sessionsPerMonth,
     sessionsPerYear,
-    monthlySessionsCurrentYear,
-    monthlySessionsPreviousYear,
+    combinedMonthlySessions, // Get the new combined data
     averageSessionsPerDay,
     activeDays, // Get activeDays from hook
     setActiveDays, // Get setActiveDays from hook
@@ -75,8 +74,7 @@ const Index = () => {
 
       <div className="w-full max-w-5xl mb-8">
         <YearlyCharts 
-          currentYearData={monthlySessionsCurrentYear} 
-          previousYearData={monthlySessionsPreviousYear} 
+          combinedMonthlySessions={combinedMonthlySessions} // Pass combined data
         />
       </div>
 

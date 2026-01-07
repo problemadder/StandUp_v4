@@ -1,20 +1,15 @@
 import React from 'react';
 import MonthlySessionsChart from "@/components/MonthlySessionsChart";
-import { MonthlySessionsData } from "@/hooks/use-session-manager";
+import { CombinedMonthlySessionsData } from "@/hooks/use-session-manager"; // Import the new interface
 
 interface YearlyChartsProps {
-  currentYearData: MonthlySessionsData[];
-  previousYearData: MonthlySessionsData[];
+  combinedMonthlySessions: CombinedMonthlySessionsData[]; // New prop for combined data
 }
 
-const YearlyCharts: React.FC<YearlyChartsProps> = ({ currentYearData, previousYearData }) => {
-  const currentYear = new Date().getFullYear();
-  const previousYear = currentYear - 1;
-
+const YearlyCharts: React.FC<YearlyChartsProps> = ({ combinedMonthlySessions }) => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full">
-      <MonthlySessionsChart data={currentYearData} title={`Pro Monat (${currentYear})`} />
-      <MonthlySessionsChart data={previousYearData} title={`Pro Monat (${previousYear})`} />
+    <div className="w-full"> {/* Removed grid, now single chart */}
+      <MonthlySessionsChart data={combinedMonthlySessions} title="Sitzungen pro Monat" />
     </div>
   );
 };

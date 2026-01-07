@@ -7,19 +7,19 @@ import {
   YAxis,
   Tooltip,
   Bar,
+  Legend, // Added Legend for clarity
 } from 'recharts';
-
-interface MonthlySessionsData {
-  name: string;
-  sessions: number;
-}
+import { CombinedMonthlySessionsData } from "@/hooks/use-session-manager"; // Import the new interface
 
 interface MonthlySessionsChartProps {
-  data: MonthlySessionsData[];
-  title?: string; // Added title prop
+  data: CombinedMonthlySessionsData[];
+  title?: string;
 }
 
-const MonthlySessionsChart: React.FC<MonthlySessionsChartProps> = ({ data, title = "Pro Monat" }) => {
+const MonthlySessionsChart: React.FC<MonthlySessionsChartProps> = ({ data, title = "Sitzungen pro Monat" }) => {
+  const currentYear = new Date().getFullYear();
+  const previousYear = currentYear - 1;
+
   return (
     <Card className="w-full min-w-0">
       <CardHeader>
@@ -52,11 +52,27 @@ const MonthlySessionsChart: React.FC<MonthlySessionsChartProps> = ({ data, title
                 }}
                 itemStyle={{ color: 'hsl(var(--foreground))' }}
                 labelStyle={{ color: 'hsl(var(--primary))' }}
+                formatter={(value: number, name: string) => {
+                  if (name === `currentYearSessions`) {
+                    return [`${value} Sitzungen`, `Aktuelles Jahr (${currentYear})`];
+                  } else if (name === `previousYearSessions`) {
+                    return [`${value} Sitzungen`, `Letztes Jahr (${previousYear})`];
+                  }
+                  return [value, name];
+                }}
+              />
+              <Legend /> {/* Add legend to differentiate bars */}
+              <Bar
+                dataKey="previousYearSessions"
+                fill="hsl(var(--muted-foreground) / 0.5)" // Gray and transparent
+                radius={[4, 4, 0, 0]}
+                name={`Letztes Jahr (${previousYear})`}
               />
               <Bar
-                dataKey="sessions"
-                fill="hsl(var(--primary))"
+                dataKey="currentYearSessions"
+                fill="hsl(var(--primary))" // Green
                 radius={[4, 4, 0, 0]}
+                name={`Aktuelles Jahr (${currentYear})`}
               />
             </BarChart>
           </ResponsiveContainer>
