@@ -50,7 +50,6 @@ const Index = () => {
     setActiveDays(combinedActiveDays);
 
     // Combine and unique homeoffice days
-    // Use existing markHomeofficeDay to add imported days, ensuring uniqueness and local storage update
     importedData.homeofficeDays.forEach(day => markHomeofficeDay(day)); 
   };
 
@@ -70,22 +69,13 @@ const Index = () => {
             sessionsPerMonth={sessionsPerMonth}
             sessionsPerYear={sessionsPerYear}
             averageSessionsPerDay={averageSessionsPerDay}
-            homeofficeDays={homeofficeDays} // Pass homeofficeDays here
+            homeofficeDays={homeofficeDays}
           />
           <RewardDisplay reward={currentReward} />
         </div>
       </div>
 
-      <div className="flex flex-col lg:flex-row space-y-4 lg:space-y-0 lg:space-x-4 w-full max-w-5xl mb-8">
-        <CsvButtons 
-          sessions={sessions} 
-          activeDays={activeDays}
-          homeofficeDays={homeofficeDays}
-          onImport={handleImportedData}
-        />
-        <HomeofficeButton onMarkHomeoffice={markHomeofficeDay} />
-      </div>
-
+      {/* Moved CsvButtons and HomeofficeButton here */}
       <div className="w-full max-w-5xl mb-8">
         <YearlyCharts 
           combinedMonthlySessions={combinedMonthlySessions}
@@ -93,6 +83,13 @@ const Index = () => {
       </div>
 
       <div className="w-full max-w-5xl flex flex-col sm:flex-row items-center justify-center gap-4">
+        <CsvButtons 
+          sessions={sessions} 
+          activeDays={activeDays}
+          homeofficeDays={homeofficeDays}
+          onImport={handleImportedData}
+        />
+        <HomeofficeButton onMarkHomeoffice={markHomeofficeDay} />
         <ResetButton />
       </div>
     </div>
