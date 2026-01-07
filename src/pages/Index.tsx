@@ -32,9 +32,13 @@ const Index = () => {
   };
 
   const handleImportedData = (importedData: { sessions: Session[], activeDays: string[] }) => {
-    // Filter out duplicate sessions based on ID (if any)
+    // Filter out duplicate sessions based on date, time, and reward content
     const combinedSessions = [...importedData.sessions, ...sessions.filter(
-      existSess => !importedData.sessions.some(impSess => impSess.id === existSess.id)
+      existSess => !importedData.sessions.some(impSess => 
+        impSess.date === existSess.date && 
+        impSess.time === existSess.time && 
+        JSON.stringify(impSess.reward) === JSON.stringify(existSess.reward)
+      )
     )];
     setSessions(combinedSessions);
 
