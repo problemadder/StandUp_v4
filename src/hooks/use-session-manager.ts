@@ -38,13 +38,6 @@ interface UseSessionManagerResult {
 
 const getTodayDateString = () => new Date().toISOString().split('T')[0];
 
-// Helper to parse YYYY-MM-DD string into a local Date object at midnight
-const parseDateStringAsLocal = (dateString: string): Date => {
-  const [year, month, day] = dateString.split('-').map(Number);
-  // Month is 0-indexed in Date constructor
-  return new Date(year, month - 1, day);
-};
-
 export const useSessionManager = (): UseSessionManagerResult => {
   const [sessions, setSessionsState] = useState<Session[]>(() =>
     getLocalStorageItem<Session[]>("stehauf_sessions", [])
@@ -123,17 +116,17 @@ export const useSessionManager = (): UseSessionManagerResult => {
     const endOfCurrentYear = endOfYear(now);
 
     const sessionsThisWeek = sessions.filter(session => {
-      const sessionDate = parseDateStringAsLocal(session.date); // Use helper
+      const sessionDate = new Date(session.date);
       return session.completed && isWithinInterval(sessionDate, { start: startOfCurrentWeek, end: endOfCurrentWeek });
     }).length;
 
     const sessionsThisMonth = sessions.filter(session => {
-      const sessionDate = parseDateStringAsLocal(session.date); // Use helper
+      const sessionDate = new Date(session.date);
       return session.completed && isWithinInterval(sessionDate, { start: startOfCurrentMonth, end: endOfCurrentMonth });
     }).length;
 
     const sessionsThisYear = sessions.filter(session => {
-      const sessionDate = parseDateStringAsLocal(session.date); // Use helper
+      const sessionDate = new Date(session.date);
       return session.completed && isWithinInterval(sessionDate, { start: startOfCurrentYear, end: endOfCurrentYear });
     }).length;
 
@@ -145,7 +138,7 @@ export const useSessionManager = (): UseSessionManagerResult => {
     }
 
     sessions.forEach(session => {
-      const sessionDate = parseDateStringAsLocal(session.date); // Use helper
+      const sessionDate = new Date(session.date);
       if (session.completed) {
         const month = getMonth(sessionDate);
         if (sessionDate.getFullYear() === currentYear) {
