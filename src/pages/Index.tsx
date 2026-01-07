@@ -3,7 +3,7 @@ import Timer from "@/components/Timer";
 import RewardDisplay from "@/components/RewardDisplay";
 import Stats from "@/components/Stats";
 import CsvButtons from "@/components/CsvButtons";
-import YearlyCharts from "@/components/YearlyCharts"; // Import the new component
+import YearlyCharts from "@/components/YearlyCharts";
 import ResetButton from "@/components/ResetButton";
 import { useSessionManager, Session } from "@/hooks/use-session-manager";
 import { getRandomReward, Reward } from "@/lib/rewards-data";
@@ -18,9 +18,11 @@ const Index = () => {
     sessionsPerWeek,
     sessionsPerMonth,
     sessionsPerYear,
-    monthlySessionsCurrentYear, // Get current year data
-    monthlySessionsPreviousYear, // Get previous year data
+    monthlySessionsCurrentYear,
+    monthlySessionsPreviousYear,
     averageSessionsPerDay,
+    activeDays, // Get activeDays from hook
+    setActiveDays, // Get setActiveDays from hook
   } = useSessionManager();
   const [currentReward, setCurrentReward] = useState<Reward | null>(null);
 
@@ -30,11 +32,16 @@ const Index = () => {
     setCurrentReward(newReward);
   };
 
-  const handleImportedSessions = (importedSessions: Session[]) => {
-    const combinedSessions = [...sessions, ...importedSessions.filter(
-      impSess => !sessions.some(existSess => existSess.id === impSess.id)
+  const handleImportedData = (importedData: { sessions: Session[], activeDays: string[] }) => {
+    // Filter out duplicate sessions based on ID (if any)
+    const combinedSessions = [...importedData.sessions, ...sessions.filter(
+      existSess => !importedData.sessions.some(impSess => impSess.id === existSess.id)
     )];
     setSessions(combinedSessions);
+
+    // Combine and unique active days
+    const combinedActiveDays = Array.from(new Set([...activeDays, ...importedData.activeDays])).sort();
+    setActiveDays(combinedActiveDays);
   };
 
   return (
@@ -58,12 +65,14 @@ const Index = () => {
         </div>
       </div>
 
-      {/* Bestehende CSV-Buttons für Session-Daten */}
       <div className="flex flex-col lg:flex-row space-y-4 lg:space-y-0 lg:space-x-4 w-full max-w-5xl mb-8">
-        <CsvButtons sessions={sessions} onImport={handleImportedSessions} />
+        <CsvButtons 
+          sessions={sessions} 
+          activeDays={activeDays} // Pass activeDays
+          onImport={handleImportedData} // Updated handler
+        />
       </div>
 
-      {/* Monatscharts für aktuelles und letztes Jahr */}
       <div className="w-full max-w-5xl mb-8">
         <YearlyCharts 
           currentYearData={monthlySessionsCurrentYear} 
@@ -71,9 +80,7 @@ const Index = () => {
         />
       </div>
 
-      {/* Reset-Button (und später die neuen Reward-CSV-Buttons) */}
       <div className="w-full max-w-5xl flex flex-col sm:flex-row items-center justify-center gap-4">
-        {/* RewardCsvButtons werden hier hinzugefügt */}
         <ResetButton />
       </div>
     </div>

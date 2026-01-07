@@ -32,6 +32,8 @@ interface UseSessionManagerResult {
   monthlySessionsPreviousYear: MonthlySessionsData[];
   averageSessionsPerDay: number;
   resetAllData: () => void;
+  activeDays: string[]; // Expose activeDays
+  setActiveDays: (newActiveDays: string[]) => void; // Expose setActiveDays
 }
 
 const getTodayDateString = () => new Date().toISOString().split('T')[0];
@@ -42,8 +44,7 @@ export const useSessionManager = (): UseSessionManagerResult => {
   );
   const [allHolidays, setAllHolidays] = useState<PublicHoliday[]>([]);
   const [isLoadingHolidays, setIsLoadingHolidays] = useState(true);
-  // New state for tracking active days
-  const [activeDays, setActiveDays] = useState<string[]>(() =>
+  const [activeDays, setActiveDaysState] = useState<string[]>(() =>
     getLocalStorageItem<string[]>("stehauf_active_days", [])
   );
 
@@ -52,10 +53,10 @@ export const useSessionManager = (): UseSessionManagerResult => {
     const today = getTodayDateString();
     if (!activeDays.includes(today)) {
       const updatedActiveDays = [...activeDays, today].sort(); // Keep sorted for consistency
-      setActiveDays(updatedActiveDays);
+      setActiveDaysState(updatedActiveDays);
       setLocalStorageItem("stehauf_active_days", updatedActiveDays);
     }
-  }, [activeDays]); // Depend on activeDays to ensure it updates if state changes elsewhere, though it's mostly for initial load
+  }, [activeDays]);
 
   // Fetch holidays for current and previous year
   useEffect(() => {
@@ -90,6 +91,11 @@ export const useSessionManager = (): UseSessionManagerResult => {
   const setSessions = useCallback((newSessions: Session[]) => {
     setSessionsState(newSessions);
     setLocalStorageItem("stehauf_sessions", newSessions);
+  }, []);
+
+  const setActiveDays = useCallback((newActiveDays: string[]) => {
+    setActiveDaysState(newActiveDays);
+    setLocalStorageItem("stehauf_active_days", newActiveDays);
   }, []);
 
   const getCompletedSessionsToday = useCallback(() => {
@@ -155,7 +161,6 @@ export const useSessionManager = (): UseSessionManagerResult => {
 
     // Calculate average sessions per day
     const completedSessionsCount = sessions.filter(s => s.completed).length;
-    // Use activeDays for the denominator
     const uniqueActiveDaysCount = new Set(activeDays).size;
     const averageSessionsPerDay = uniqueActiveDaysCount > 0 ? completedSessionsCount / uniqueActiveDaysCount : 0;
 
@@ -168,7 +173,7 @@ export const useSessionManager = (): UseSessionManagerResult => {
       monthlySessionsPreviousYear, 
       averageSessionsPerDay 
     };
-  }, [sessions, activeDays]); // Add activeDays to dependency array
+  }, [sessions, activeDays]);
 
   const { 
     sessionsThisWeek, 
@@ -181,11 +186,11 @@ export const useSessionManager = (): UseSessionManagerResult => {
 
   const resetAllData = useCallback(() => {
     removeLocalStorageItem("stehauf_sessions");
-    removeLocalStorageItem("stehauf_active_days"); // Also reset active days
+    removeLocalStorageItem("stehauf_active_days");
     setSessionsState([]);
-    setActiveDays([]); // Clear active days state
+    setActiveDaysState([]);
     alert("Alle Daten wurden zurückgesetzt!");
-    window.location.reload(); // Reload to ensure full state reset
+    window.location.reload();
   }, []);
 
   return {
@@ -196,10 +201,12 @@ export const useSessionManager = (): UseSessionManagerResult => {
     isLoadingHolidays,
     sessionsPerWeek: sessionsThisWeek,
     sessionsPerMonth: sessionsThisMonth,
-    sessionsPerYear: sessionsThisYear, // Corrected from sessionsPerYear to sessionsThisYear
+    sessionsPerYear: sessionsThisYear,
     monthlySessionsCurrentYear,
     monthlySessionsPreviousYear,
     averageSessionsPerDay,
     resetAllData,
+    activeDays,
+    setActiveDays,
   };
 };

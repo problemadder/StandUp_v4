@@ -1,19 +1,20 @@
 import React, { useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Download, Upload } from "lucide-react";
-import { exportToCsv, importFromCsv } from "@/lib/csv-utils";
+import { exportAllDataToCsv, importAllDataFromCsv } from "@/lib/csv-utils";
 import { Session } from "@/hooks/use-session-manager";
 
 interface CsvButtonsProps {
   sessions: Session[];
-  onImport: (importedSessions: Session[]) => void;
+  activeDays: string[]; // New prop for active days
+  onImport: (importedData: { sessions: Session[], activeDays: string[] }) => void; // Updated onImport signature
 }
 
-const CsvButtons: React.FC<CsvButtonsProps> = ({ sessions, onImport }) => {
+const CsvButtons: React.FC<CsvButtonsProps> = ({ sessions, activeDays, onImport }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleExport = () => {
-    exportToCsv(sessions);
+    exportAllDataToCsv({ sessions, activeDays });
   };
 
   const handleImportClick = () => {
@@ -27,7 +28,7 @@ const CsvButtons: React.FC<CsvButtonsProps> = ({ sessions, onImport }) => {
       reader.onload = (e) => {
         const csvString = e.target?.result as string;
         try {
-          const importedData = importFromCsv(csvString);
+          const importedData = importAllDataFromCsv(csvString);
           onImport(importedData);
           alert("Daten erfolgreich importiert!");
         } catch (error) {
