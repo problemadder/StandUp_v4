@@ -24,14 +24,15 @@ const Index = () => {
     combinedMonthlySessions,
     averageSessionsPerDay,
     averageSessionsPerMonth,
-    averageSessionsPerWeek, // New: Destructure from hook
+    averageSessionsPerWeek,
     activeDays,
     setActiveDays,
     homeofficeDays,
     markHomeofficeDay,
     bestDaySessions,
     bestMonthSessions,
-    bestWeekSessions, // New: Destructure from hook
+    bestWeekSessions,
+    bestYearSessions,
   } = useSessionManager();
   const [currentReward, setCurrentReward] = useState<Reward | null>(null);
 
@@ -101,6 +102,7 @@ const Index = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 w-full max-w-5xl mb-8">
         <Timer onSessionComplete={handleSessionComplete} />
         <div className="flex flex-col space-y-8">
+          {/* Pass all relevant props to Stats component */}
           <Stats
             completedSessionsToday={completedSessionsToday}
             isLoadingHolidays={isLoadingHolidays}
@@ -109,11 +111,12 @@ const Index = () => {
             sessionsPerYear={sessionsPerYear}
             averageSessionsPerDay={averageSessionsPerDay}
             averageSessionsPerMonth={averageSessionsPerMonth}
-            averageSessionsPerWeek={averageSessionsPerWeek} // New: Pass to Stats
+            averageSessionsPerWeek={averageSessionsPerWeek}
             homeofficeDays={homeofficeDays}
             bestDaySessions={bestDaySessions}
             bestMonthSessions={bestMonthSessions}
-            bestWeekSessions={bestWeekSessions} // New: Pass to Stats
+            bestWeekSessions={bestWeekSessions}
+            bestYearSessions={bestYearSessions}
           />
           <RewardDisplay reward={currentReward} />
         </div>

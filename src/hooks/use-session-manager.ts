@@ -32,7 +32,7 @@ interface UseSessionManagerResult {
   combinedMonthlySessions: CombinedMonthlySessionsData[];
   averageSessionsPerDay: number;
   averageSessionsPerMonth: number;
-  averageSessionsPerWeek: number; // New: Average sessions per active week
+  averageSessionsPerWeek: number;
   resetAllData: () => void;
   activeDays: string[];
   setActiveDays: (newActiveDays: string[]) => void;
@@ -40,7 +40,8 @@ interface UseSessionManagerResult {
   markHomeofficeDay: (date: string) => void;
   bestDaySessions: number;
   bestMonthSessions: number;
-  bestWeekSessions: number; // New: All-time best sessions in a single week
+  bestWeekSessions: number;
+  bestYearSessions: number; // Re-added: All-time best sessions in a single year
 }
 
 const getTodayDateString = () => new Date().toISOString().split('T')[0];
@@ -179,7 +180,7 @@ export const useSessionManager = (): UseSessionManagerResult => {
     const uniqueMonthsWithCompletedSessions = new Set(completedSessions.map(s => s.date.substring(0, 7))).size; // YYYY-MM
     const averageSessionsPerMonth = uniqueMonthsWithCompletedSessions > 0 ? completedSessions.length / uniqueMonthsWithCompletedSessions : 0;
 
-    // NEW: Calculate average sessions per week
+    // Calculate average sessions per week
     const uniqueWeeksWithCompletedSessions = new Set(
       completedSessions.map(s => startOfWeek(new Date(s.date), { locale: de }).toISOString().split('T')[0])
     ).size;
@@ -188,11 +189,13 @@ export const useSessionManager = (): UseSessionManagerResult => {
     // All-time bests
     let bestDaySessions = 0;
     let bestMonthSessions = 0;
-    let bestWeekSessions = 0; // NEW
+    let bestWeekSessions = 0;
+    let bestYearSessions = 0; // Re-added
 
     const dailyCounts: { [key: string]: number } = {};
     const monthlyCounts: { [key: string]: number } = {}; // YYYY-MM
-    const weeklyCounts: { [key: string]: number } = {}; // NEW: YYYY-MM-DD (start of week)
+    const weeklyCounts: { [key: string]: number } = {};
+    const yearlyCounts: { [key: number]: number } = {}; // Re-added: YYYY
 
     sessions.forEach(session => {
       if (session.completed) {
@@ -201,11 +204,12 @@ export const useSessionManager = (): UseSessionManagerResult => {
         const month = (sessionDate.getMonth() + 1).toString().padStart(2, '0'); // 01-12
         const dateString = `${year}-${month}-${sessionDate.getDate().toString().padStart(2, '0')}`;
         const monthString = `${year}-${month}`;
-        const weekStartString = startOfWeek(sessionDate, { locale: de }).toISOString().split('T')[0]; // NEW
+        const weekStartString = startOfWeek(sessionDate, { locale: de }).toISOString().split('T')[0];
 
         dailyCounts[dateString] = (dailyCounts[dateString] || 0) + 1;
         monthlyCounts[monthString] = (monthlyCounts[monthString] || 0) + 1;
-        weeklyCounts[weekStartString] = (weeklyCounts[weekStartString] || 0) + 1; // NEW
+        weeklyCounts[weekStartString] = (weeklyCounts[weekStartString] || 0) + 1;
+        yearlyCounts[year] = (yearlyCounts[year] || 0) + 1; // Re-added
       }
     });
 
@@ -215,8 +219,11 @@ export const useSessionManager = (): UseSessionManagerResult => {
     if (Object.keys(monthlyCounts).length > 0) {
       bestMonthSessions = Math.max(...Object.values(monthlyCounts));
     }
-    if (Object.keys(weeklyCounts).length > 0) { // NEW
+    if (Object.keys(weeklyCounts).length > 0) {
       bestWeekSessions = Math.max(...Object.values(weeklyCounts));
+    }
+    if (Object.keys(yearlyCounts).length > 0) { // Re-added
+      bestYearSessions = Math.max(...Object.values(yearlyCounts));
     }
 
     return { 
@@ -226,10 +233,11 @@ export const useSessionManager = (): UseSessionManagerResult => {
       combinedMonthlySessions,
       averageSessionsPerDay,
       averageSessionsPerMonth,
-      averageSessionsPerWeek, // NEW
+      averageSessionsPerWeek,
       bestDaySessions,
       bestMonthSessions,
-      bestWeekSessions, // NEW
+      bestWeekSessions,
+      bestYearSessions, // Re-added
     };
   }, [sessions]);
 
@@ -240,10 +248,11 @@ export const useSessionManager = (): UseSessionManagerResult => {
     combinedMonthlySessions,
     averageSessionsPerDay,
     averageSessionsPerMonth,
-    averageSessionsPerWeek, // NEW
+    averageSessionsPerWeek,
     bestDaySessions,
     bestMonthSessions,
-    bestWeekSessions, // NEW
+    bestWeekSessions,
+    bestYearSessions, // Re-added
   } = calculateAggregatedSessions();
 
   const resetAllData = useCallback(() => {
@@ -269,7 +278,7 @@ export const useSessionManager = (): UseSessionManagerResult => {
     combinedMonthlySessions,
     averageSessionsPerDay,
     averageSessionsPerMonth,
-    averageSessionsPerWeek, // NEW
+    averageSessionsPerWeek,
     resetAllData,
     activeDays,
     setActiveDays,
@@ -277,6 +286,7 @@ export const useSessionManager = (): UseSessionManagerResult => {
     markHomeofficeDay,
     bestDaySessions,
     bestMonthSessions,
-    bestWeekSessions, // NEW
+    bestWeekSessions,
+    bestYearSessions, // Re-added
   };
 };

@@ -10,11 +10,12 @@ interface StatsProps {
   sessionsPerYear: number;
   averageSessionsPerDay: number;
   averageSessionsPerMonth: number;
-  averageSessionsPerWeek: number; // New prop
+  averageSessionsPerWeek: number;
   homeofficeDays: string[];
   bestDaySessions: number;
   bestMonthSessions: number;
-  bestWeekSessions: number; // New prop
+  bestWeekSessions: number;
+  bestYearSessions: number; // Re-added prop
 }
 
 const Stats: React.FC<StatsProps> = ({
@@ -25,11 +26,12 @@ const Stats: React.FC<StatsProps> = ({
   sessionsPerYear,
   averageSessionsPerDay,
   averageSessionsPerMonth,
-  averageSessionsPerWeek, // Destructure new prop
+  averageSessionsPerWeek,
   homeofficeDays,
   bestDaySessions,
   bestMonthSessions,
-  bestWeekSessions, // Destructure new prop
+  bestWeekSessions,
+  bestYearSessions, // Destructure re-added prop
 }) => {
   const goalMet = completedSessionsToday >= 4;
   const bonusSessionCompleted = completedSessionsToday >= 5;
@@ -65,7 +67,7 @@ const Stats: React.FC<StatsProps> = ({
                 </p>
               </div>
               <div>
-                <p className="text-lg font-medium">pro Woche:</p> {/* New: Display average sessions per week */}
+                <p className="text-lg font-medium">pro Woche:</p>
                 <p className="text-2xl font-bold text-primary">
                   {averageSessionsPerWeek.toFixed(2)}
                 </p>
@@ -96,21 +98,25 @@ const Stats: React.FC<StatsProps> = ({
         </div>
 
         {/* All-time Stats Section */}
-        {(bestDaySessions > 0 || bestMonthSessions > 0 || bestWeekSessions > 0) && (
+        {(bestDaySessions > 0 || bestMonthSessions > 0 || bestWeekSessions > 0 || bestYearSessions > 0) && (
           <div className="pt-4 border-t border-muted-foreground/20">
             <p className="text-xl font-semibold mb-4 text-center">Allzeit-Rekorde</p>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
+            <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 text-center"> {/* Adjusted grid for 4 items */}
               <div>
                 <p className="text-lg font-medium">Bester Tag:</p>
                 <p className="text-2xl font-bold text-accent">{bestDaySessions}</p>
               </div>
               <div>
-                <p className="text-lg font-medium">Beste Woche:</p> {/* New: Display best week sessions */}
+                <p className="text-lg font-medium">Beste Woche:</p>
                 <p className="text-2xl font-bold text-accent">{bestWeekSessions}</p>
               </div>
               <div>
                 <p className="text-lg font-medium">Bester Monat:</p>
                 <p className="text-2xl font-bold text-accent">{bestMonthSessions}</p>
+              </div>
+              <div>
+                <p className="text-lg font-medium">Bestes Jahr:</p> {/* Re-added display */}
+                <p className="text-2xl font-bold text-accent">{bestYearSessions}</p>
               </div>
             </div>
           </div>
