@@ -98,6 +98,9 @@ const Index = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 w-full max-w-5xl mb-8">
         <Timer onSessionComplete={handleSessionComplete} />
         <div className="flex flex-col space-y-8">
+          <h1 className="text-4xl sm:text-5xl font-extrabold text-center text-primary mb-4"> {/* Moved here */}
+            {bonusSessionCompleted ? "Maschine!" : "StehAuf! Büro-Challenge"}
+          </h1>
           <Stats
             completedSessionsToday={completedSessionsToday}
             isLoadingHolidays={isLoadingHolidays}
@@ -116,10 +119,6 @@ const Index = () => {
           <RewardDisplay reward={currentReward} />
         </div>
       </div>
-
-      <h1 className="text-4xl sm:text-5xl font-extrabold mb-8 text-center text-primary">
-        {bonusSessionCompleted ? "Maschine!" : "StehAuf! Büro-Challenge"}
-      </h1>
 
       <div className="w-full max-w-5xl mb-8">
         <YearlyCharts 
