@@ -56,6 +56,27 @@ const Stats: React.FC<StatsProps> = ({
             </p>
           )}
         </div>
+
+        {/* Aktuelle Zahlen (ehemals Absolut) */}
+        <div className="pt-4 border-t border-muted-foreground/20">
+          <p className="text-xl font-semibold mb-4 text-center">Aktuell:</p>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
+            <div>
+              <p className="text-lg font-medium">Woche:</p>
+              <p className="text-2xl font-bold text-primary">{sessionsPerWeek}</p>
+            </div>
+            <div>
+              <p className="text-lg font-medium">Monat:</p>
+              <p className="text-2xl font-bold text-primary">{sessionsPerMonth}</p>
+            </div>
+            <div>
+              <p className="text-lg font-medium">Jahr:</p>
+              <p className="text-2xl font-bold text-primary">{sessionsPerYear}</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Durchschnittszahlen */}
         {(averageSessionsPerDay > 0 || averageSessionsPerMonth > 0 || averageSessionsPerWeek > 0) && (
           <div className="pt-4 border-t border-muted-foreground/20">
             <p className="text-xl font-semibold mb-4 text-center">Durchschnitt:</p>
@@ -82,29 +103,11 @@ const Stats: React.FC<StatsProps> = ({
           </div>
         )}
 
-        <div className="pt-4 border-t border-muted-foreground/20">
-          <p className="text-xl font-semibold mb-4 text-center">Absolut:</p> {/* New main title */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
-            <div>
-              <p className="text-lg font-medium">Woche:</p> {/* Changed from "Sitzungen diese Woche:" */}
-              <p className="text-2xl font-bold text-primary">{sessionsPerWeek}</p>
-            </div>
-            <div>
-              <p className="text-lg font-medium">Monat:</p> {/* Changed from "Sitzungen diesen Monat:" */}
-              <p className="text-2xl font-bold text-primary">{sessionsPerMonth}</p>
-            </div>
-            <div>
-              <p className="text-lg font-medium">Jahr:</p> {/* Changed from "Sitzungen dieses Jahr:" */}
-              <p className="text-2xl font-bold text-primary">{sessionsPerYear}</p>
-            </div>
-          </div>
-        </div>
-
         {/* All-time Stats Section */}
         {(bestDaySessions > 0 || bestMonthSessions > 0 || bestWeekSessions > 0 || bestYearSessions > 0) && (
           <div className="pt-4 border-t border-muted-foreground/20">
             <p className="text-xl font-semibold mb-4 text-center">Allzeit-Rekorde</p>
-            <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 text-center"> {/* Adjusted grid for 4 items */}
+            <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 text-center">
               <div>
                 <p className="text-lg font-medium">Bester Tag:</p>
                 <p className="text-2xl font-bold text-accent">{bestDaySessions}</p>
@@ -118,7 +121,7 @@ const Stats: React.FC<StatsProps> = ({
                 <p className="text-2xl font-bold text-accent">{bestMonthSessions}</p>
               </div>
               <div>
-                <p className="text-lg font-medium">Bestes Jahr:</p> {/* Re-added display */}
+                <p className="text-lg font-medium">Bestes Jahr:</p>
                 <p className="text-2xl font-bold text-accent">{bestYearSessions}</p>
               </div>
             </div>
