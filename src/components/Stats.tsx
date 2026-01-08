@@ -48,11 +48,11 @@ const Stats: React.FC<StatsProps> = ({
       </CardHeader>
       <CardContent className="space-y-4">
         {/* Aktuelle Zahlen (ehemals Absolut) */}
-        <div className="pt-4 border-t border-muted-foreground/20">
+        <div className="pt-4"> {/* 'border-t border-muted-foreground/20' entfernt */}
           <p className="text-xl font-semibold mb-4 text-center">Aktuell:</p>
-          <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 text-center"> {/* Angepasst auf 4 Spalten */}
+          <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 text-center">
             <div>
-              <p className="text-lg font-medium">Heute</p> {/* Doppelpunkt entfernt */}
+              <p className="text-lg font-medium">Heute</p>
               {isTodayHomeoffice ? (
                 <p className="text-2xl font-bold text-muted-foreground">Homeoffice</p>
               ) : (
