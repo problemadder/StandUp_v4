@@ -62,15 +62,15 @@ const Stats: React.FC<StatsProps> = ({
           <p className="text-xl font-semibold mb-4 text-center">Aktuell:</p>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
             <div>
-              <p className="text-lg font-medium">Woche:</p>
+              <p className="text-lg font-medium">Woche</p> {/* Removed colon */}
               <p className="text-2xl font-bold text-primary">{sessionsPerWeek}</p>
             </div>
             <div>
-              <p className="text-lg font-medium">Monat:</p>
+              <p className="text-lg font-medium">Monat</p> {/* Removed colon */}
               <p className="text-2xl font-bold text-primary">{sessionsPerMonth}</p>
             </div>
             <div>
-              <p className="text-lg font-medium">Jahr:</p>
+              <p className="text-lg font-medium">Jahr</p> {/* Removed colon */}
               <p className="text-2xl font-bold text-primary">{sessionsPerYear}</p>
             </div>
           </div>
@@ -82,19 +82,19 @@ const Stats: React.FC<StatsProps> = ({
             <p className="text-xl font-semibold mb-4 text-center">Durchschnitt:</p>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
               <div>
-                <p className="text-lg font-medium">Tag:</p>
+                <p className="text-lg font-medium">Tag</p> {/* Removed colon */}
                 <p className="text-2xl font-bold text-primary">
                   {averageSessionsPerDay.toFixed(2)}
                 </p>
               </div>
               <div>
-                <p className="text-lg font-medium">Woche:</p>
+                <p className="text-lg font-medium">Woche</p> {/* Removed colon */}
                 <p className="text-2xl font-bold text-primary">
                   {averageSessionsPerWeek.toFixed(2)}
                 </p>
               </div>
               <div>
-                <p className="text-lg font-medium">Monat:</p>
+                <p className="text-lg font-medium">Monat</p> {/* Removed colon */}
                 <p className="text-2xl font-bold text-primary">
                   {averageSessionsPerMonth.toFixed(2)}
                 </p>
@@ -109,19 +109,19 @@ const Stats: React.FC<StatsProps> = ({
             <p className="text-xl font-semibold mb-4 text-center">Allzeit-Rekorde:</p>
             <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 text-center">
               <div>
-                <p className="text-lg font-medium">Tag</p> {/* Removed colon */}
+                <p className="text-lg font-medium">Tag</p>
                 <p className="text-2xl font-bold text-accent">{bestDaySessions}</p>
               </div>
               <div>
-                <p className="text-lg font-medium">Woche</p> {/* Removed colon */}
+                <p className="text-lg font-medium">Woche</p>
                 <p className="text-2xl font-bold text-accent">{bestWeekSessions}</p>
               </div>
               <div>
-                <p className="text-lg font-medium">Monat</p> {/* Removed colon */}
+                <p className="text-lg font-medium">Monat</p>
                 <p className="text-2xl font-bold text-accent">{bestMonthSessions}</p>
               </div>
               <div>
-                <p className="text-lg font-medium">Jahr</p> {/* Removed colon */}
+                <p className="text-lg font-medium">Jahr</p>
                 <p className="text-2xl font-bold text-accent">{bestYearSessions}</p>
               </div>
             </div>
