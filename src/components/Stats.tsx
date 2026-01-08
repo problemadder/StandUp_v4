@@ -58,22 +58,22 @@ const Stats: React.FC<StatsProps> = ({
         </div>
         {(averageSessionsPerDay > 0 || averageSessionsPerMonth > 0 || averageSessionsPerWeek > 0) && (
           <div className="pt-4 border-t border-muted-foreground/20">
-            <p className="text-xl font-semibold mb-4 text-center">Durchschnittliche Sitzungen</p>
+            <p className="text-xl font-semibold mb-4 text-center">Durchschnitt:</p>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
               <div>
-                <p className="text-lg font-medium">pro Tag:</p>
+                <p className="text-lg font-medium">Tag:</p>
                 <p className="text-2xl font-bold text-primary">
                   {averageSessionsPerDay.toFixed(2)}
                 </p>
               </div>
               <div>
-                <p className="text-lg font-medium">pro Woche:</p>
+                <p className="text-lg font-medium">Woche:</p>
                 <p className="text-2xl font-bold text-primary">
                   {averageSessionsPerWeek.toFixed(2)}
                 </p>
               </div>
               <div>
-                <p className="text-lg font-medium">pro Monat:</p>
+                <p className="text-lg font-medium">Monat:</p>
                 <p className="text-2xl font-bold text-primary">
                   {averageSessionsPerMonth.toFixed(2)}
                 </p>
