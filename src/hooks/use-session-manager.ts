@@ -33,6 +33,7 @@ interface UseSessionManagerResult {
   averageSessionsPerDay: number;
   averageSessionsPerMonth: number;
   averageSessionsPerWeek: number;
+  averageSessionsPerYearExcludingCurrent: number; // Neu: Durchschnitt pro Jahr (ohne aktuelles Jahr)
   resetAllData: () => void;
   activeDays: string[];
   setActiveDays: (newActiveDays: string[]) => void;
@@ -186,6 +187,19 @@ export const useSessionManager = (): UseSessionManagerResult => {
     ).size;
     const averageSessionsPerWeek = uniqueWeeksWithCompletedSessions > 0 ? completedSessions.length / uniqueWeeksWithCompletedSessions : 0;
 
+    // Calculate average sessions per year (excluding current year)
+    const completedSessionsExcludingCurrentYear = completedSessions.filter(
+      (s) => new Date(s.date).getFullYear() !== currentYear
+    );
+    const totalSessionsExcludingCurrentYear = completedSessionsExcludingCurrentYear.length;
+    const uniqueYearsExcludingCurrentYear = new Set(
+      completedSessionsExcludingCurrentYear.map((s) => new Date(s.date).getFullYear())
+    ).size;
+    const averageSessionsPerYearExcludingCurrent =
+      uniqueYearsExcludingCurrentYear > 0
+        ? totalSessionsExcludingCurrentYear / uniqueYearsExcludingCurrentYear
+        : 0;
+
     // All-time bests
     let bestDaySessions = 0;
     let bestMonthSessions = 0;
@@ -234,6 +248,7 @@ export const useSessionManager = (): UseSessionManagerResult => {
       averageSessionsPerDay,
       averageSessionsPerMonth,
       averageSessionsPerWeek,
+      averageSessionsPerYearExcludingCurrent, // Neu hinzugefügt
       bestDaySessions,
       bestMonthSessions,
       bestWeekSessions,
@@ -249,6 +264,7 @@ export const useSessionManager = (): UseSessionManagerResult => {
     averageSessionsPerDay,
     averageSessionsPerMonth,
     averageSessionsPerWeek,
+    averageSessionsPerYearExcludingCurrent, // Neu hinzugefügt
     bestDaySessions,
     bestMonthSessions,
     bestWeekSessions,
@@ -279,6 +295,7 @@ export const useSessionManager = (): UseSessionManagerResult => {
     averageSessionsPerDay,
     averageSessionsPerMonth,
     averageSessionsPerWeek,
+    averageSessionsPerYearExcludingCurrent, // Neu hinzugefügt
     resetAllData,
     activeDays,
     setActiveDays,

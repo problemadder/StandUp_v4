@@ -25,6 +25,7 @@ const Index = () => {
     averageSessionsPerDay,
     averageSessionsPerMonth,
     averageSessionsPerWeek,
+    averageSessionsPerYearExcludingCurrent, // Destructure the new prop
     activeDays,
     setActiveDays,
     homeofficeDays,
@@ -111,6 +112,7 @@ const Index = () => {
             averageSessionsPerDay={averageSessionsPerDay}
             averageSessionsPerMonth={averageSessionsPerMonth}
             averageSessionsPerWeek={averageSessionsPerWeek}
+            averageSessionsPerYearExcludingCurrent={averageSessionsPerYearExcludingCurrent} // Pass the new prop
             homeofficeDays={homeofficeDays}
             bestDaySessions={bestDaySessions}
             bestMonthSessions={bestMonthSessions}
