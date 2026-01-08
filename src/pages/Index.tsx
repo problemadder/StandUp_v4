@@ -7,9 +7,9 @@ import ResetButton from "@/components/ResetButton";
 import HomeofficeButton from "@/components/HomeofficeButton";
 import { useSessionManager, Session } from "@/hooks/use-session-manager";
 import { getRandomReward, Reward } from "@/lib/rewards-data";
-import { Button } from "@/components/ui/button"; // Import Button for Export/Import
-import { Download, Upload } from "lucide-react"; // Import icons
-import { exportAllDataToCsv, importAllDataFromCsv } from "@/lib/csv-utils"; // Import CSV utilities
+import { Button } from "@/components/ui/button";
+import { Download, Upload } from "lucide-react";
+import { exportAllDataToCsv, importAllDataFromCsv } from "@/lib/csv-utils";
 
 const Index = () => {
   const {
@@ -90,10 +90,12 @@ const Index = () => {
     }
   };
 
+  const bonusSessionCompleted = completedSessionsToday >= 5;
+
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-background text-foreground p-4 sm:p-6">
       <h1 className="text-4xl sm:text-5xl font-extrabold mb-8 text-center text-primary">
-        StehAuf! Büro-Challenge
+        {bonusSessionCompleted ? "Maschine!" : "StehAuf! Büro-Challenge"}
       </h1>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 w-full max-w-5xl mb-8">
