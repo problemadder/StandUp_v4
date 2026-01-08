@@ -5,13 +5,14 @@ import { convertIsoToEuropean, convertEuropeanToIso } from "@/lib/date-utils"; /
 interface AllData {
   sessions: Session[];
   activeDays: string[];
-  homeofficeDays: string[]; // New: Add homeofficeDays to AllData interface
+  homeofficeDays: string[];
+  visitedDays: string[]; // Neu: Hinzufügen von visitedDays
 }
 
 export const exportAllDataToCsv = (data: AllData): void => {
-  const { sessions, activeDays, homeofficeDays } = data; // Destructure homeofficeDays
+  const { sessions, activeDays, homeofficeDays, visitedDays } = data; // Destructure visitedDays
 
-  if (sessions.length === 0 && activeDays.length === 0 && homeofficeDays.length === 0) {
+  if (sessions.length === 0 && activeDays.length === 0 && homeofficeDays.length === 0 && visitedDays.length === 0) {
     alert("Keine Daten zum Exportieren vorhanden.");
     return;
   }
@@ -66,11 +67,27 @@ export const exportAllDataToCsv = (data: AllData): void => {
     );
   });
 
-  // New: Add homeoffice day rows
+  // Add homeoffice day rows
   homeofficeDays.forEach(date => {
     csvRows.push(
       [
-        "HOMEOFFICE_DAY", // New type for homeoffice days
+        "HOMEOFFICE_DAY",
+        convertIsoToEuropean(date), // Convert to European format for export
+        "", // TIME
+        "", // DURATION_MINUTES
+        "", // COMPLETED
+        "", // REWARD_TYPE
+        "", // REWARD_CONTENT1
+        ""  // REWARD_CONTENT2
+      ].join(";")
+    );
+  });
+
+  // Neu: Add visited day rows
+  visitedDays.forEach(date => {
+    csvRows.push(
+      [
+        "VISITED_DAY", // Neuer Typ für besuchte Tage
         convertIsoToEuropean(date), // Convert to European format for export
         "", // TIME
         "", // DURATION_MINUTES
@@ -104,7 +121,7 @@ export const importAllDataFromCsv = (csvString: string): AllData => {
   const lines = csvString.split("\n").filter(line => line.trim() !== "");
   if (lines.length <= 1) {
     console.warn("CSV-Datei ist leer oder enthält nur Header.");
-    return { sessions: [], activeDays: [], homeofficeDays: [] }; // Initialize homeofficeDays
+    return { sessions: [], activeDays: [], homeofficeDays: [], visitedDays: [] }; // Initialize visitedDays
   }
 
   const headers = lines[0].split(";").map(h => h.trim());
@@ -113,12 +130,13 @@ export const importAllDataFromCsv = (csvString: string): AllData => {
   if (!expectedHeaders.every(h => headers.includes(h))) {
     console.error("CSV-Header stimmen nicht überein. Erwartet:", expectedHeaders, "Gefunden:", headers);
     alert("Ungültiges CSV-Format. Bitte stellen Sie sicher, dass die Header korrekt sind.");
-    return { sessions: [], activeDays: [], homeofficeDays: [] }; // Initialize homeofficeDays
+    return { sessions: [], activeDays: [], homeofficeDays: [], visitedDays: [] }; // Initialize visitedDays
   }
 
   const sessions: Session[] = [];
   const activeDays: string[] = [];
-  const homeofficeDays: string[] = []; // New: Initialize homeofficeDays
+  const homeofficeDays: string[] = [];
+  const visitedDays: string[] = []; // Neu: Initialize visitedDays
 
   for (let i = 1; i < lines.length; i++) {
     const values = lines[i].split(";").map(v => v.trim().replace(/^"|"$/g, '').replace(/""/g, '"')); // Unescape quotes
@@ -173,7 +191,7 @@ export const importAllDataFromCsv = (csvString: string): AllData => {
           activeDays.push(isoDate);
         }
       }
-    } else if (type === "HOMEOFFICE_DAY") { // New: Handle homeoffice days during import
+    } else if (type === "HOMEOFFICE_DAY") {
       const europeanDate = rowData["DATE"];
       if (europeanDate) {
         const isoDate = convertEuropeanToIso(europeanDate);
@@ -181,9 +199,17 @@ export const importAllDataFromCsv = (csvString: string): AllData => {
           homeofficeDays.push(isoDate);
         }
       }
+    } else if (type === "VISITED_DAY") { // Neu: Handle visited days during import
+      const europeanDate = rowData["DATE"];
+      if (europeanDate) {
+        const isoDate = convertEuropeanToIso(europeanDate);
+        if (isoDate && !visitedDays.includes(isoDate)) {
+          visitedDays.push(isoDate);
+        }
+      }
     } else {
       console.warn(`Unbekannter TYPE in Zeile ${i + 1}: ${type}`);
     }
   }
-  return { sessions, activeDays: activeDays.sort(), homeofficeDays: homeofficeDays.sort() }; // Return homeofficeDays
+  return { sessions, activeDays: activeDays.sort(), homeofficeDays: homeofficeDays.sort(), visitedDays: visitedDays.sort() }; // Return visitedDays
 };

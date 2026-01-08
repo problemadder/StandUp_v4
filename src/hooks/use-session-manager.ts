@@ -39,6 +39,7 @@ interface UseSessionManagerResult {
   setActiveDays: (newActiveDays: string[]) => void;
   homeofficeDays: string[];
   markHomeofficeDay: (date: string) => void;
+  visitedDays: string[]; // Neu: Hinzufügen von visitedDays
   bestDaySessions: number;
   bestMonthSessions: number;
   bestWeekSessions: number;
@@ -59,6 +60,22 @@ export const useSessionManager = (): UseSessionManagerResult => {
   const [homeofficeDays, setHomeofficeDaysState] = useState<string[]>(() =>
     getLocalStorageItem<string[]>("stehauf_homeoffice_days", [])
   );
+  const [visitedDays, setVisitedDaysState] = useState<string[]>(() => // Neu: Zustand für besuchte Tage
+    getLocalStorageItem<string[]>("stehauf_visited_days", [])
+  );
+
+  // Effect to track visited days
+  useEffect(() => {
+    const today = getTodayDateString();
+    setVisitedDaysState(prevDays => {
+      if (!prevDays.includes(today)) {
+        const updatedDays = [...prevDays, today].sort();
+        setLocalStorageItem("stehauf_visited_days", updatedDays);
+        return updatedDays;
+      }
+      return prevDays;
+    });
+  }, []); // Leeres Array als Abhängigkeit, damit es nur einmal beim Mounten läuft
 
   // Fetch holidays for current and previous year
   useEffect(() => {
@@ -275,9 +292,11 @@ export const useSessionManager = (): UseSessionManagerResult => {
     removeLocalStorageItem("stehauf_sessions");
     removeLocalStorageItem("stehauf_active_days");
     removeLocalStorageItem("stehauf_homeoffice_days");
+    removeLocalStorageItem("stehauf_visited_days"); // Neu: visitedDays zurücksetzen
     setSessionsState([]);
     setActiveDaysState([]);
     setHomeofficeDaysState([]);
+    setVisitedDaysState([]); // Neu: visitedDays Zustand zurücksetzen
     alert("Alle Daten wurden zurückgesetzt!");
     window.location.reload();
   }, []);
@@ -301,6 +320,7 @@ export const useSessionManager = (): UseSessionManagerResult => {
     setActiveDays,
     homeofficeDays,
     markHomeofficeDay,
+    visitedDays, // Neu: visitedDays zurückgeben
     bestDaySessions,
     bestMonthSessions,
     bestWeekSessions,
