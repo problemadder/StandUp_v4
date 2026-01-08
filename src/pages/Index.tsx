@@ -96,12 +96,12 @@ const Index = () => {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-background text-foreground p-4 sm:p-6">
+      <h1 className="text-4xl sm:text-5xl font-extrabold text-center text-primary mb-8"> {/* Moved here, adjusted mb */}
+        {bonusSessionCompleted ? "Maschine!" : "StehAuf! Büro-Challenge"}
+      </h1>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 w-full max-w-5xl mb-8">
         <Timer onSessionComplete={handleSessionComplete} />
         <div className="flex flex-col space-y-8">
-          <h1 className="text-4xl sm:text-5xl font-extrabold text-center text-primary mb-4">
-            {bonusSessionCompleted ? "Maschine!" : "StehAuf! Büro-Challenge"}
-          </h1>
           <Stats
             completedSessionsToday={completedSessionsToday}
             isLoadingHolidays={isLoadingHolidays}
