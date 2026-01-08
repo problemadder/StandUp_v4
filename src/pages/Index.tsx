@@ -39,7 +39,8 @@ const Index = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleSessionComplete = () => {
-    const newReward = getRandomReward(currentReward || undefined);
+    // Pass completedSessionsToday to getRandomReward
+    const newReward = getRandomReward(completedSessionsToday, currentReward || undefined);
     addSession(newReward);
     setCurrentReward(newReward);
   };
@@ -98,7 +99,7 @@ const Index = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 w-full max-w-5xl mb-8">
         <Timer onSessionComplete={handleSessionComplete} />
         <div className="flex flex-col space-y-8">
-          <h1 className="text-4xl sm:text-5xl font-extrabold text-center text-primary mb-4"> {/* Moved here */}
+          <h1 className="text-4xl sm:text-5xl font-extrabold text-center text-primary mb-4">
             {bonusSessionCompleted ? "Maschine!" : "StehAuf! Büro-Challenge"}
           </h1>
           <Stats

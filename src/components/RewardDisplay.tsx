@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Reward, QuestionAnswerReward, FlagReward } from "@/lib/rewards-data";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import RandomFactWidget from "@/components/RandomFactWidget"; // Import the new component
 
 interface RewardDisplayProps {
   reward: Reward | null;
@@ -67,6 +68,8 @@ const RewardDisplay: React.FC<RewardDisplayProps> = ({ reward }) => {
             )}
           </div>
         );
+      case "randomFactWidget": // New case for the bonus widget
+        return <RandomFactWidget />;
       default:
         return <p>Unbekannte Belohnung.</p>;
     }
@@ -77,6 +80,7 @@ const RewardDisplay: React.FC<RewardDisplayProps> = ({ reward }) => {
       case "facts": return "Fakten";
       case "questionsAnswers": return "Frage & Antwort";
       case "flags": return "Flaggen-Quiz";
+      case "randomFactWidget": return "Bonus-Fakt!"; // Title for the bonus widget
       default: return "Belohnung";
     }
   };
