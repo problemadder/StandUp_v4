@@ -9,12 +9,12 @@ interface StatsProps {
   sessionsPerMonth: number;
   sessionsPerYear: number;
   averageSessionsPerDay: number;
-  averageSessionsPerMonth: number; // New prop
-  averageSessionsPerYear: number; // New prop
+  averageSessionsPerMonth: number;
+  averageSessionsPerWeek: number; // New prop
   homeofficeDays: string[];
-  bestDaySessions: number; // New prop
-  bestMonthSessions: number; // New prop
-  bestYearSessions: number; // New prop
+  bestDaySessions: number;
+  bestMonthSessions: number;
+  bestWeekSessions: number; // New prop
 }
 
 const Stats: React.FC<StatsProps> = ({
@@ -24,12 +24,12 @@ const Stats: React.FC<StatsProps> = ({
   sessionsPerMonth,
   sessionsPerYear,
   averageSessionsPerDay,
-  averageSessionsPerMonth, // Destructure new prop
-  averageSessionsPerYear, // Destructure new prop
+  averageSessionsPerMonth,
+  averageSessionsPerWeek, // Destructure new prop
   homeofficeDays,
   bestDaySessions,
   bestMonthSessions,
-  bestYearSessions,
+  bestWeekSessions, // Destructure new prop
 }) => {
   const goalMet = completedSessionsToday >= 4;
   const bonusSessionCompleted = completedSessionsToday >= 5;
@@ -54,7 +54,7 @@ const Stats: React.FC<StatsProps> = ({
             </p>
           )}
         </div>
-        {(averageSessionsPerDay > 0 || averageSessionsPerMonth > 0 || averageSessionsPerYear > 0) && (
+        {(averageSessionsPerDay > 0 || averageSessionsPerMonth > 0 || averageSessionsPerWeek > 0) && (
           <div className="pt-4 border-t border-muted-foreground/20">
             <p className="text-xl font-semibold mb-4 text-center">Durchschnittliche Sitzungen</p>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
@@ -65,15 +65,15 @@ const Stats: React.FC<StatsProps> = ({
                 </p>
               </div>
               <div>
-                <p className="text-lg font-medium">pro Monat:</p>
+                <p className="text-lg font-medium">pro Woche:</p> {/* New: Display average sessions per week */}
                 <p className="text-2xl font-bold text-primary">
-                  {averageSessionsPerMonth.toFixed(2)}
+                  {averageSessionsPerWeek.toFixed(2)}
                 </p>
               </div>
               <div>
-                <p className="text-lg font-medium">pro Jahr:</p>
+                <p className="text-lg font-medium">pro Monat:</p>
                 <p className="text-2xl font-bold text-primary">
-                  {averageSessionsPerYear.toFixed(2)}
+                  {averageSessionsPerMonth.toFixed(2)}
                 </p>
               </div>
             </div>
@@ -96,7 +96,7 @@ const Stats: React.FC<StatsProps> = ({
         </div>
 
         {/* All-time Stats Section */}
-        {(bestDaySessions > 0 || bestMonthSessions > 0 || bestYearSessions > 0) && (
+        {(bestDaySessions > 0 || bestMonthSessions > 0 || bestWeekSessions > 0) && (
           <div className="pt-4 border-t border-muted-foreground/20">
             <p className="text-xl font-semibold mb-4 text-center">Allzeit-Rekorde</p>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
@@ -105,12 +105,12 @@ const Stats: React.FC<StatsProps> = ({
                 <p className="text-2xl font-bold text-accent">{bestDaySessions}</p>
               </div>
               <div>
-                <p className="text-lg font-medium">Bester Monat:</p>
-                <p className="text-2xl font-bold text-accent">{bestMonthSessions}</p>
+                <p className="text-lg font-medium">Beste Woche:</p> {/* New: Display best week sessions */}
+                <p className="text-2xl font-bold text-accent">{bestWeekSessions}</p>
               </div>
               <div>
-                <p className="text-lg font-medium">Bestes Jahr:</p>
-                <p className="text-2xl font-bold text-accent">{bestYearSessions}</p>
+                <p className="text-lg font-medium">Bester Monat:</p>
+                <p className="text-2xl font-bold text-accent">{bestMonthSessions}</p>
               </div>
             </div>
           </div>

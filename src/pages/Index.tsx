@@ -24,14 +24,14 @@ const Index = () => {
     combinedMonthlySessions,
     averageSessionsPerDay,
     averageSessionsPerMonth,
-    averageSessionsPerYear,
+    averageSessionsPerWeek, // New: Destructure from hook
     activeDays,
     setActiveDays,
     homeofficeDays,
     markHomeofficeDay,
     bestDaySessions,
     bestMonthSessions,
-    bestYearSessions,
+    bestWeekSessions, // New: Destructure from hook
   } = useSessionManager();
   const [currentReward, setCurrentReward] = useState<Reward | null>(null);
 
@@ -109,11 +109,11 @@ const Index = () => {
             sessionsPerYear={sessionsPerYear}
             averageSessionsPerDay={averageSessionsPerDay}
             averageSessionsPerMonth={averageSessionsPerMonth}
-            averageSessionsPerYear={averageSessionsPerYear}
+            averageSessionsPerWeek={averageSessionsPerWeek} // New: Pass to Stats
             homeofficeDays={homeofficeDays}
             bestDaySessions={bestDaySessions}
             bestMonthSessions={bestMonthSessions}
-            bestYearSessions={bestYearSessions}
+            bestWeekSessions={bestWeekSessions} // New: Pass to Stats
           />
           <RewardDisplay reward={currentReward} />
         </div>
