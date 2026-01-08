@@ -9,6 +9,8 @@ interface StatsProps {
   sessionsPerMonth: number;
   sessionsPerYear: number;
   averageSessionsPerDay: number;
+  averageSessionsPerMonth: number; // New prop
+  averageSessionsPerYear: number; // New prop
   homeofficeDays: string[];
   bestDaySessions: number; // New prop
   bestMonthSessions: number; // New prop
@@ -22,6 +24,8 @@ const Stats: React.FC<StatsProps> = ({
   sessionsPerMonth,
   sessionsPerYear,
   averageSessionsPerDay,
+  averageSessionsPerMonth, // Destructure new prop
+  averageSessionsPerYear, // Destructure new prop
   homeofficeDays,
   bestDaySessions,
   bestMonthSessions,
@@ -50,25 +54,43 @@ const Stats: React.FC<StatsProps> = ({
             </p>
           )}
         </div>
-        {averageSessionsPerDay > 0 && (
-          <div>
-            <p className="text-lg font-medium">Durchschnitt pro Tag:</p>
-            <p className="text-2xl font-bold text-primary">
-              {averageSessionsPerDay.toFixed(1)}
-            </p>
+        {(averageSessionsPerDay > 0 || averageSessionsPerMonth > 0 || averageSessionsPerYear > 0) && (
+          <div className="pt-4 border-t border-muted-foreground/20">
+            <p className="text-xl font-semibold mb-4 text-center">Durchschnittliche Sitzungen</p>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
+              <div>
+                <p className="text-lg font-medium">pro Tag:</p>
+                <p className="text-2xl font-bold text-primary">
+                  {averageSessionsPerDay.toFixed(2)}
+                </p>
+              </div>
+              <div>
+                <p className="text-lg font-medium">pro Monat:</p>
+                <p className="text-2xl font-bold text-primary">
+                  {averageSessionsPerMonth.toFixed(2)}
+                </p>
+              </div>
+              <div>
+                <p className="text-lg font-medium">pro Jahr:</p>
+                <p className="text-2xl font-bold text-primary">
+                  {averageSessionsPerYear.toFixed(2)}
+                </p>
+              </div>
+            </div>
           </div>
         )}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
+
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center pt-4 border-t border-muted-foreground/20">
           <div>
-            <p className="text-lg font-medium">Woche:</p>
+            <p className="text-lg font-medium">Sitzungen diese Woche:</p>
             <p className="text-2xl font-bold text-primary">{sessionsPerWeek}</p>
           </div>
           <div>
-            <p className="text-lg font-medium">Monat:</p>
+            <p className="text-lg font-medium">Sitzungen diesen Monat:</p>
             <p className="text-2xl font-bold text-primary">{sessionsPerMonth}</p>
           </div>
           <div>
-            <p className="text-lg font-medium">Jahr:</p>
+            <p className="text-lg font-medium">Sitzungen dieses Jahr:</p>
             <p className="text-2xl font-bold text-primary">{sessionsPerYear}</p>
           </div>
         </div>

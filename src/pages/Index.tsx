@@ -23,6 +23,8 @@ const Index = () => {
     sessionsPerYear,
     combinedMonthlySessions,
     averageSessionsPerDay,
+    averageSessionsPerMonth,
+    averageSessionsPerYear,
     activeDays,
     setActiveDays,
     homeofficeDays,
@@ -104,6 +106,8 @@ const Index = () => {
             sessionsPerMonth={sessionsPerMonth}
             sessionsPerYear={sessionsPerYear}
             averageSessionsPerDay={averageSessionsPerDay}
+            averageSessionsPerMonth={averageSessionsPerMonth}
+            averageSessionsPerYear={averageSessionsPerYear}
             homeofficeDays={homeofficeDays}
             bestDaySessions={bestDaySessions}
             bestMonthSessions={bestMonthSessions}

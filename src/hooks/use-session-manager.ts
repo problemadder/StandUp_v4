@@ -31,6 +31,8 @@ interface UseSessionManagerResult {
   sessionsPerYear: number;
   combinedMonthlySessions: CombinedMonthlySessionsData[]; // Changed to combined data
   averageSessionsPerDay: number;
+  averageSessionsPerMonth: number; // New: Average sessions per active month
+  averageSessionsPerYear: number; // New: Average sessions per active year
   resetAllData: () => void;
   activeDays: string[]; // Expose activeDays (for CSV, not for average calc anymore)
   setActiveDays: (newActiveDays: string[]) => void; // Expose setActiveDays (for CSV, not for average calc anymore)
@@ -167,10 +169,19 @@ export const useSessionManager = (): UseSessionManagerResult => {
       });
     }
 
-    // Calculate average sessions per day based on unique days with completed sessions
     const completedSessions = sessions.filter(s => s.completed);
+
+    // Calculate average sessions per day based on unique days with completed sessions
     const uniqueDaysWithCompletedSessions = new Set(completedSessions.map(s => s.date)).size;
     const averageSessionsPerDay = uniqueDaysWithCompletedSessions > 0 ? completedSessions.length / uniqueDaysWithCompletedSessions : 0;
+
+    // Calculate average sessions per month based on unique months with completed sessions
+    const uniqueMonthsWithCompletedSessions = new Set(completedSessions.map(s => s.date.substring(0, 7))).size; // YYYY-MM
+    const averageSessionsPerMonth = uniqueMonthsWithCompletedSessions > 0 ? completedSessions.length / uniqueMonthsWithCompletedSessions : 0;
+
+    // Calculate average sessions per year based on unique years with completed sessions
+    const uniqueYearsWithCompletedSessions = new Set(completedSessions.map(s => s.date.substring(0, 4))).size; // YYYY
+    const averageSessionsPerYear = uniqueYearsWithCompletedSessions > 0 ? completedSessions.length / uniqueYearsWithCompletedSessions : 0;
 
     // All-time bests
     let bestDaySessions = 0;
@@ -211,6 +222,8 @@ export const useSessionManager = (): UseSessionManagerResult => {
       sessionsThisYear, 
       combinedMonthlySessions, // Return combined data
       averageSessionsPerDay,
+      averageSessionsPerMonth, // New: Return average sessions per active month
+      averageSessionsPerYear, // New: Return average sessions per active year
       bestDaySessions,
       bestMonthSessions,
       bestYearSessions,
@@ -223,6 +236,8 @@ export const useSessionManager = (): UseSessionManagerResult => {
     sessionsThisYear, 
     combinedMonthlySessions, // Destructure combined data
     averageSessionsPerDay,
+    averageSessionsPerMonth, // New: Destructure average sessions per active month
+    averageSessionsPerYear, // New: Destructure average sessions per active year
     bestDaySessions,
     bestMonthSessions,
     bestYearSessions,
@@ -250,6 +265,8 @@ export const useSessionManager = (): UseSessionManagerResult => {
     sessionsPerYear: sessionsThisYear,
     combinedMonthlySessions, // Expose combined data
     averageSessionsPerDay,
+    averageSessionsPerMonth, // New: Expose average sessions per active month
+    averageSessionsPerYear, // New: Expose average sessions per active year
     resetAllData,
     activeDays,
     setActiveDays,
