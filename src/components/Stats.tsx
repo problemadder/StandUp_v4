@@ -11,7 +11,7 @@ interface StatsProps {
   averageSessionsPerDay: number;
   averageSessionsPerMonth: number;
   averageSessionsPerWeek: number;
-  averageSessionsPerYearExcludingCurrent: number; // Neu: Prop für den Jahresdurchschnitt
+  averageSessionsPerYearExcludingCurrent: number;
   homeofficeDays: string[];
   bestDaySessions: number;
   bestMonthSessions: number;
@@ -28,7 +28,7 @@ const Stats: React.FC<StatsProps> = ({
   averageSessionsPerDay,
   averageSessionsPerMonth,
   averageSessionsPerWeek,
-  averageSessionsPerYearExcludingCurrent, // Neu: Destrukturieren der Prop
+  averageSessionsPerYearExcludingCurrent,
   homeofficeDays,
   bestDaySessions,
   bestMonthSessions,
@@ -47,22 +47,21 @@ const Stats: React.FC<StatsProps> = ({
         {/* <CardTitle>Statistiken</CardTitle> */}
       </CardHeader>
       <CardContent className="space-y-4">
-        <div>
-          <p className="text-lg font-medium">Heute:</p>
-          {isTodayHomeoffice ? (
-            <p className="text-2xl font-bold text-muted-foreground">Homeoffice</p>
-          ) : (
-            <p className={`text-2xl font-bold ${goalMet ? "text-primary" : "text-secondary"}`}>
-              {completedSessionsToday}/4
-              {bonusSessionCompleted && <span className="text-sm text-muted-foreground ml-2">(Bonus!)</span>}
-            </p>
-          )}
-        </div>
-
         {/* Aktuelle Zahlen (ehemals Absolut) */}
         <div className="pt-4 border-t border-muted-foreground/20">
           <p className="text-xl font-semibold mb-4 text-center">Aktuell:</p>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
+          <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 text-center"> {/* Angepasst auf 4 Spalten */}
+            <div>
+              <p className="text-lg font-medium">Heute</p> {/* Doppelpunkt entfernt */}
+              {isTodayHomeoffice ? (
+                <p className="text-2xl font-bold text-muted-foreground">Homeoffice</p>
+              ) : (
+                <p className={`text-2xl font-bold ${goalMet ? "text-primary" : "text-secondary"}`}>
+                  {completedSessionsToday}/4
+                  {bonusSessionCompleted && <span className="text-sm text-muted-foreground ml-2">(Bonus!)</span>}
+                </p>
+              )}
+            </div>
             <div>
               <p className="text-lg font-medium">Woche</p>
               <p className="text-2xl font-bold text-primary">{sessionsPerWeek}</p>
@@ -82,7 +81,7 @@ const Stats: React.FC<StatsProps> = ({
         {(averageSessionsPerDay > 0 || averageSessionsPerMonth > 0 || averageSessionsPerWeek > 0 || averageSessionsPerYearExcludingCurrent > 0) && (
           <div className="pt-4 border-t border-muted-foreground/20">
             <p className="text-xl font-semibold mb-4 text-center">Durchschnitt:</p>
-            <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 text-center"> {/* Angepasst auf 4 Spalten */}
+            <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 text-center">
               <div>
                 <p className="text-lg font-medium">Tag</p>
                 <p className="text-2xl font-bold text-primary">
@@ -101,7 +100,7 @@ const Stats: React.FC<StatsProps> = ({
                   {averageSessionsPerMonth.toFixed(2)}
                 </p>
               </div>
-              <div> {/* Neu: Jahresdurchschnitt */}
+              <div>
                 <p className="text-lg font-medium">Jahr</p>
                 <p className="text-2xl font-bold text-primary">
                   {averageSessionsPerYearExcludingCurrent.toFixed(2)}
