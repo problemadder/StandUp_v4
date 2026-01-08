@@ -1,4 +1,4 @@
-export type RewardType = "facts" | "questionsAnswers" | "flags" | "randomFactWidget";
+export type RewardType = "facts" | "questionsAnswers" | "flags" | "randomFactWidget" | "quoteOfTheDayWidget";
 
 export interface QuestionAnswerReward {
   question: string;
@@ -12,7 +12,7 @@ export interface FlagReward {
 
 export interface Reward {
   type: RewardType;
-  content: string | QuestionAnswerReward | FlagReward | null; // content can be null for widget
+  content: string | QuestionAnswerReward | FlagReward | null; // content can be null for widgets
 }
 
 const historicalFacts: string[] = [
@@ -421,7 +421,7 @@ const flagData: FlagReward[] = [
 ];
 
 
-const allRewards: { [key in Exclude<RewardType, "randomFactWidget">]: (string | QuestionAnswerReward | FlagReward)[] } = {
+const allRewards: { [key in Exclude<RewardType, "randomFactWidget" | "quoteOfTheDayWidget">]: (string | QuestionAnswerReward | FlagReward)[] } = {
   facts: allFacts,
   questionsAnswers: questionsAnswersData,
   flags: flagData,
@@ -432,9 +432,13 @@ export const getRandomReward = (completedSessionsToday: number, exclude?: Reward
   if (completedSessionsToday === 4 || completedSessionsToday === 5) {
     return { type: "randomFactWidget", content: null };
   }
+  // Special bonus for the 7th session and beyond
+  if (completedSessionsToday >= 6) {
+    return { type: "quoteOfTheDayWidget", content: null };
+  }
 
-  const types: Exclude<RewardType, "randomFactWidget">[] = ["facts", "questionsAnswers", "flags"];
-  let randomType: Exclude<RewardType, "randomFactWidget">;
+  const types: Exclude<RewardType, "randomFactWidget" | "quoteOfTheDayWidget">[] = ["facts", "questionsAnswers", "flags"];
+  let randomType: Exclude<RewardType, "randomFactWidget" | "quoteOfTheDayWidget">;
   let randomContent: string | QuestionAnswerReward | FlagReward;
 
   do {
