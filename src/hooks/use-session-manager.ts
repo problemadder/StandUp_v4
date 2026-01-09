@@ -190,9 +190,10 @@ export const useSessionManager = (): UseSessionManagerResult => {
 
     const completedSessions = sessions.filter(s => s.completed);
 
-    // Calculate average sessions per day based on unique days with completed sessions
-    const uniqueDaysWithCompletedSessions = new Set(completedSessions.map(s => s.date)).size;
-    const averageSessionsPerDay = uniqueDaysWithCompletedSessions > 0 ? completedSessions.length / uniqueDaysWithCompletedSessions : 0;
+    // Calculate average sessions per day based on visitedDays
+    const totalCompletedSessions = completedSessions.length;
+    const totalVisitedDays = visitedDays.length; // Use visitedDays for the denominator
+    const averageSessionsPerDay = totalVisitedDays > 0 ? totalCompletedSessions / totalVisitedDays : 0;
 
     // Calculate average sessions per month based on unique months with completed sessions
     const uniqueMonthsWithCompletedSessions = new Set(completedSessions.map(s => s.date.substring(0, 7))).size; // YYYY-MM
@@ -271,7 +272,7 @@ export const useSessionManager = (): UseSessionManagerResult => {
       bestWeekSessions,
       bestYearSessions, // Re-added
     };
-  }, [sessions]);
+  }, [sessions, visitedDays]); // Abhängigkeit zu visitedDays hinzugefügt
 
   const { 
     sessionsThisWeek, 
