@@ -428,12 +428,12 @@ const allRewards: { [key in Exclude<RewardType, "randomFactWidget" | "quoteOfThe
 };
 
 export const getRandomReward = (completedSessionsToday: number, exclude?: Reward): Reward => {
-  // Special bonus for the 5th and 6th sessions
-  if (completedSessionsToday === 4 || completedSessionsToday === 5) {
+  // Fact bonus for the 5th session
+  if (completedSessionsToday === 4) {
     return { type: "randomFactWidget", content: null };
   }
-  // Special bonus for the 7th session and beyond
-  if (completedSessionsToday >= 6) {
+  // Quote bonus for the 6th session
+  if (completedSessionsToday === 5) {
     return { type: "quoteOfTheDayWidget", content: null };
   }
 
