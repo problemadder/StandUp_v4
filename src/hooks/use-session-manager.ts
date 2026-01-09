@@ -189,33 +189,46 @@ export const useSessionManager = (): UseSessionManagerResult => {
     }
 
     const completedSessions = sessions.filter(s => s.completed);
+    const totalCompletedSessions = completedSessions.length;
 
-    // Calculate average sessions per day based on unique days with completed sessions
-    const uniqueDaysWithCompletedSessions = new Set(completedSessions.map(s => s.date)).size;
-    const averageSessionsPerDay = uniqueDaysWithCompletedSessions > 0 ? completedSessions.length / uniqueDaysWithCompletedSessions : 0;
+    // --- Berechnung der Durchschnittswerte unter Berücksichtigung von visitedDays ---
+    // Alle relevanten Tage (Sitzungstage + besuchte Tage), die keine Homeoffice-Tage sind
+    const allRelevantDates = Array.from(new Set([
+      ...sessions.map(s => s.date),
+      ...visitedDays
+    ])).filter(date => !homeofficeDays.includes(date));
 
-    // Calculate average sessions per month based on unique months with completed sessions
-    const uniqueMonthsWithCompletedSessions = new Set(completedSessions.map(s => s.date.substring(0, 7))).size; // YYYY-MM
-    const averageSessionsPerMonth = uniqueMonthsWithCompletedSessions > 0 ? completedSessions.length / uniqueMonthsWithCompletedSessions : 0;
+    // Durchschnitt pro Tag
+    const averageSessionsPerDay = allRelevantDates.length > 0 ? totalCompletedSessions / allRelevantDates.length : 0;
 
-    // Calculate average sessions per week
-    const uniqueWeeksWithCompletedSessions = new Set(
-      completedSessions.map(s => startOfWeek(new Date(s.date), { locale: de }).toISOString().split('T')[0])
-    ).size;
-    const averageSessionsPerWeek = uniqueWeeksWithCompletedSessions > 0 ? completedSessions.length / uniqueWeeksWithCompletedSessions : 0;
-
-    // Calculate average sessions per year (excluding current year)
-    const completedSessionsExcludingCurrentYear = completedSessions.filter(
-      (s) => new Date(s.date).getFullYear() !== currentYear
+    // Durchschnitt pro Woche
+    const allRelevantWeeks = new Set(
+      allRelevantDates.map(d => startOfWeek(new Date(d), { locale: de }).toISOString().split('T')[0])
     );
-    const totalSessionsExcludingCurrentYear = completedSessionsExcludingCurrentYear.length;
-    const uniqueYearsExcludingCurrentYear = new Set(
-      completedSessionsExcludingCurrentYear.map((s) => new Date(s.date).getFullYear())
-    ).size;
+    const averageSessionsPerWeek = allRelevantWeeks.size > 0 ? totalCompletedSessions / allRelevantWeeks.size : 0;
+
+    // Durchschnitt pro Monat
+    const allRelevantMonths = new Set(
+      allRelevantDates.map(d => new Date(d).toISOString().substring(0, 7)) // YYYY-MM
+    );
+    const averageSessionsPerMonth = allRelevantMonths.size > 0 ? totalCompletedSessions / allRelevantMonths.size : 0;
+
+    // Durchschnitt pro Jahr (ohne aktuelles Jahr)
+    const allRelevantDatesExcludingCurrentYear = allRelevantDates.filter(
+      (date) => new Date(date).getFullYear() !== currentYear
+    );
+    const totalCompletedSessionsExcludingCurrentYear = completedSessions.filter(
+      (s) => new Date(s.date).getFullYear() !== currentYear
+    ).length;
+    const allRelevantYearsExcludingCurrent = new Set(
+      allRelevantDatesExcludingCurrentYear.map((date) => new Date(date).getFullYear())
+    );
     const averageSessionsPerYearExcludingCurrent =
-      uniqueYearsExcludingCurrentYear > 0
-        ? totalSessionsExcludingCurrentYear / uniqueYearsExcludingCurrentYear
+      allRelevantYearsExcludingCurrent.size > 0
+        ? totalCompletedSessionsExcludingCurrentYear / allRelevantYearsExcludingCurrent.size
         : 0;
+    // --- Ende der Berechnung der Durchschnittswerte ---
+
 
     // All-time bests
     let bestDaySessions = 0;
@@ -271,7 +284,7 @@ export const useSessionManager = (): UseSessionManagerResult => {
       bestWeekSessions,
       bestYearSessions, // Re-added
     };
-  }, [sessions]);
+  }, [sessions, visitedDays, homeofficeDays]); // Abhängigkeiten aktualisiert
 
   const { 
     sessionsThisWeek, 
