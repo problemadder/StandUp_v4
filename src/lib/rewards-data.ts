@@ -112,18 +112,9 @@ const allFacts: string[] = [
   "Erdgas ist der sauberste fossile Brennstoff und verbrennt mit geringeren CO2-Emissionen als Kohle oder Öl.",
   "Strom bewegt sich mit Lichtgeschwindigkeit, also etwa 300.000 Kilometer pro Sekunde.",
   "Die erste öffentliche Stromversorgung wurde 1882 von Thomas Edison in New York City eingerichtet.",
-  "Erdgas entsteht aus den Überresten von Pflanzen und Tieren, die vor Millionen von Jahren lebten.",
   "Ein durchschnittlicher deutscher Haushalt verbraucht jährlich etwa 2.500 bis 5.000 kWh Strom.",
   "Die Maßeinheit für elektrische Leistung ist Watt (W), benannt nach James Watt.",
-  "Erdgas wird hauptsächlich zur Wärmeerzeugung, Stromerzeugung und als Kraftstoff verwendet.",
-  "Windkraft ist eine der am schnellsten wachsenden Quellen für erneuerbare Energien weltweit.",
-  "Photovoltaik-Anlagen wandeln Sonnenlicht direkt in elektrische Energie um.",
-  "Die Kernfusion, die Energiequelle der Sonne, ist ein vielversprechender, aber noch nicht kommerzieller Weg zur Stromerzeugung.",
   "Der Wirkungsgrad von Glühbirnen liegt bei nur etwa 5-10%, der Rest wird zu Wärme.",
-  "Erdgasleitungen können Tausende von Kilometern lang sein und ganze Kontinente durchqueren.",
-  "Die Stromversorgung in Deutschland ist eine der zuverlässigsten der Welt.",
-  "Ein Smart Meter misst den Energieverbrauch in Echtzeit und kann helfen, den Verbrauch zu optimieren.",
-  "Biogas wird durch die Vergärung von Biomasse erzeugt und kann zur Strom- und Wärmeerzeugung genutzt werden."
 ];
 
 const questionsAnswersData: QuestionAnswerReward[] = [
