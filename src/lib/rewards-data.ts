@@ -20,7 +20,7 @@ export interface Reward {
   content: string | QuestionAnswerReward | FlagReward | VocabularyReward | null; // content can be null for widgets
 }
 
-const historicalFacts: string[] = [
+const allFacts: string[] = [
   "Wussten Sie, dass die Chinesische Mauer nicht vom Mond aus sichtbar ist?",
   "Die kürzeste Kriegsgeschichte dauerte nur 38 Minuten (zwischen Großbritannien und Sansibar im Jahr 1896).",
   "Kleopatra lebte näher an der Erfindung des iPhones als am Bau der Pyramiden.",
@@ -48,10 +48,7 @@ const historicalFacts: string[] = [
   "Im 19. Jahrhundert war es in Europa Mode, echte Mumien aus Ägypten zu importieren und bei Dinnerpartys zu 'entrollen'.",
   "Die Chinesen haben Papiergeld schon im 9. Jahrhundert benutzt – lange bevor es im Westen üblich wurde.",
   "Alexander der Große benannte über 20 Städte nach sich – und eine sogar nach seinem Pferd (Bucephala).",
-  "Der kürzeste Krieg der Geschichte war zwischen Sansibar und Großbritannien – er dauerte nur 38 Minuten."
-];
-
-const scienceTidbits: string[] = [
+  "Der kürzeste Krieg der Geschichte war zwischen Sansibar und Großbritannien – er dauerte nur 38 Minuten.",
   "Honig ist das einzige Lebensmittel, das niemals verdirbt.",
   "Ein Blitz ist fünfmal heißer als die Oberfläche der Sonne.",
   "Das menschliche Gehirn wiegt etwa 1,4 Kilogramm, verbraucht aber 20% des gesamten Sauerstoffs und der Kalorien des Körpers.",
@@ -81,10 +78,7 @@ const scienceTidbits: string[] = [
   "Delfine geben sich gegenseitig Namen – individuelle Pfeiftöne, die sie selbst erfinden.",
   "Das menschliche Gefäßsystem ist über 100.000 km lang – genug für zweimal um die Erde.",
   "Spinnen können verlorene Beine nachwachsen lassen – bei der nächsten Häutung.",
-  "Der Magen verdaut sich nicht selbst, weil er ständig eine neue Schleimschicht bildet."
-];
-
-const generalTrivia: string[] = [
+  "Der Magen verdaut sich nicht selbst, weil er ständig eine neue Schleimschicht bildet.",
   "Eine Gruppe von Eulen wird 'Parlament' genannt.",
   "Erdbeeren sind botanisch gesehen keine Beeren, aber Bananen sind es.",
   "Der Eiffelturm kann im Sommer um bis zu 15 cm wachsen, da sich das Eisen bei Hitze ausdehnt.",
@@ -114,10 +108,7 @@ const generalTrivia: string[] = [
   "Die Wahrscheinlichkeit, von einem Automaten erschlagen zu werden, ist höher als von einem Hai getötet zu werden.",
   "Ketchup wurde früher als Medizin verkauft.",
   "In Schottland gibt es 421 Wörter für 'Schnee'.",
-  "Wombats machen eckigen Kot – damit er nicht wegrollt."
-];
-
-const energyFacts: string[] = [
+  "Wombats machen eckigen Kot – damit er nicht wegrollt.",
   "Erdgas ist der sauberste fossile Brennstoff und verbrennt mit geringeren CO2-Emissionen als Kohle oder Öl.",
   "Strom bewegt sich mit Lichtgeschwindigkeit, also etwa 300.000 Kilometer pro Sekunde.",
   "Die erste öffentliche Stromversorgung wurde 1882 von Thomas Edison in New York City eingerichtet.",
@@ -133,13 +124,6 @@ const energyFacts: string[] = [
   "Die Stromversorgung in Deutschland ist eine der zuverlässigsten der Welt.",
   "Ein Smart Meter misst den Energieverbrauch in Echtzeit und kann helfen, den Verbrauch zu optimieren.",
   "Biogas wird durch die Vergärung von Biomasse erzeugt und kann zur Strom- und Wärmeerzeugung genutzt werden."
-];
-
-const allFacts: string[] = [
-  ...historicalFacts,
-  ...scienceTidbits,
-  ...generalTrivia,
-  ...energyFacts,
 ];
 
 const questionsAnswersData: QuestionAnswerReward[] = [
@@ -698,7 +682,7 @@ const allRewards: { [key in Exclude<RewardType, "randomFactWidget" | "quoteOfThe
   facts: allFacts,
   questionsAnswers: questionsAnswersData,
   flags: flagData,
-  vocabulary: vocabularyData, // Neu hinzugefügt
+  vocabulary: vocabularyData,
 };
 
 export const getRandomReward = (completedSessionsToday: number, exclude?: Reward): Reward => {
@@ -711,7 +695,7 @@ export const getRandomReward = (completedSessionsToday: number, exclude?: Reward
     return { type: "quoteOfTheDayWidget", content: null };
   }
 
-  const types: Exclude<RewardType, "randomFactWidget" | "quoteOfTheDayWidget">[] = ["facts", "questionsAnswers", "flags", "vocabulary"]; // 'vocabulary' hinzugefügt
+  const types: Exclude<RewardType, "randomFactWidget" | "quoteOfTheDayWidget">[] = ["facts", "questionsAnswers", "flags", "vocabulary"];
   let randomType: Exclude<RewardType, "randomFactWidget" | "quoteOfTheDayWidget">;
   let randomContent: string | QuestionAnswerReward | FlagReward | VocabularyReward;
 
