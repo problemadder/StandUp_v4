@@ -560,6 +560,22 @@ const vocabularyData: VocabularyReward[] = [
   { question: "Does the price guarantee cover all components of the electricity price?", answer: "Bezieht sich die Preisgarantie auf alle Bestandteile des Strompreises?" },
   { question: "I would like to receive my invoices by email instead of by post.", answer: "Ich möchte meine Rechnungen per E-Mail statt per Post erhalten." },
   { question: "The transfer of my data to the new provider did not work.", answer: "Die Datenübermittlung an den neuen Versorger hat nicht funktioniert." },
+  { question: "I would like to report my current meter reading.", answer: "Ich möchte meinen aktuellen Zählerstand mitteilen." },
+  { question: "The meter reading on the bill does not match my actual consumption.", answer: "Der Zählerstand auf der Rechnung stimmt nicht mit meinem tatsächlichen Verbrauch überein." },
+  { question: "My monthly installment is too high compared to my usage.", answer: "Mein monatlicher Abschlag ist im Vergleich zu meinem Verbrauch zu hoch." },
+  { question: "I want to lower my monthly payment for electricity.", answer: "Ich möchte meinen monatlichen Abschlagsbetrag für Strom senken." },
+  { question: "There is an error in my final annual statement.", answer: "In meiner Jahresabschlussrechnung ist ein Fehler." },
+  { question: "I have not received my credit note from the last billing period yet.", answer: "Ich habe mein Guthaben aus der letzten Abrechnungsperiode noch nicht erhalten." },
+  { question: "Why has my basic price increased so significantly?", answer: "Warum hat sich mein Grundpreis so stark erhöht?" },
+  { question: "I want to object to this invoice.", answer: "Ich möchte Widerspruch gegen diese Rechnung einlegen." },
+  { question: "My gas meter was replaced last month.", answer: "Mein Gaszähler wurde letzten Monat ausgetauscht." },
+  { question: "I am moving and would like to cancel my contract.", answer: "Ich ziehe um und möchte meinen Vertrag kündigen." },
+  { question: "Could you please check if my price guarantee is still valid?", answer: "Könnten Sie bitte prüfen, ob meine Preisgarantie noch gültig ist?" },
+  { question: "I received a reminder even though I have already paid.", answer: "Ich habe eine Mahnung erhalten, obwohl ich bereits bezahlt habe." },
+  { question: "The estimated consumption is much higher than what I actually used.", answer: "Der geschätzte Verbrauch ist viel höher als mein tatsächlicher Verbrauch." },
+  { question: "I would like to switch my electricity provider due to the price increase.", answer: "Ich möchte wegen der Preiserhöhung meinen Stromanbieter wechseln." },
+  { question: "Where can I find my customer number and contract account?", answer: "Wo finde ich meine Kundennummer und mein Vertragskonto?" },
+  { question: "Is there a bonus for new customers in this tariff?", answer: "Gibt es in diesem Tarif einen Neukundenbonus?" },
 ];
 
 
