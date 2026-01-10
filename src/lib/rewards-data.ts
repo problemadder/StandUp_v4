@@ -260,6 +260,26 @@ const questionsAnswersData: QuestionAnswerReward[] = [
   { question: "Welches Land liegt zwischen dem Iran und Indien?", answer: "Pakistan" },
   { question: "Welches Land liegt westlich von Schweden?", answer: "Norwegen" },
   { question: "Welches Land liegt zwischen Litauen und Estland?", answer: "Lettland" },
+  { question: "Welches Land liegt zwischen Thailand und Vietnam?", answer: "Kambodscha (und Laos)" },
+  { question: "Welches Land liegt direkt nördlich von Italien?", answer: "Die Schweiz (und Österreich)" },
+  { question: "Welches Land liegt östlich von Syrien und westlich vom Iran?", answer: "Irak" },
+  { question: "Welches Land liegt zwischen Peru und Kolumbien im Nordwesten Südamerikas?", answer: "Ecuador" },
+  { question: "Welches Land liegt nördlich von Südafrika und grenzt im Westen an den Atlantik?", answer: "Namibia" },
+  { question: "Welches Land liegt zwischen Indien und Tibet (China) im Himalaya?", answer: "Nepal (und Bhutan)" },
+  { question: "Welches Land liegt östlich von Griechenland?", answer: "Türkei" },
+  { question: "Welches Land liegt südlich von Mexiko?", answer: "Guatemala (und Belize)" },
+  { question: "Welches Land liegt zwischen dem Schwarzen Meer und dem Kaspischen Meer südlich von Russland?", answer: "Georgien" },
+  { question: "Welches Land liegt westlich von Belarus und der Ukraine?", answer: "Polen" },
+  { question: "Welches Land liegt nördlich von Tansania und südlich von Äthiopien?", answer: "Kenia" },
+  { question: "Welches Land liegt zwischen Argentinien und Brasilien an der Küste?", answer: "Uruguay" },
+  { question: "Welches Land liegt westlich von Afghanistan?", answer: "Iran" },
+  { question: "Welches Land liegt zwischen den Philippinen und Japan?", answer: "Taiwan" },
+  { question: "Welches Land liegt direkt südlich von der Türkei?", answer: "Syrien" },
+  { question: "Welches Land liegt östlich von Sambia und grenzt an den Indischen Ozean?", answer: "Mosambik" },
+  { question: "Welches Land liegt zwischen Finnland und Weißrussland (Belarus)?", answer: "Estland, Lettland und Litauen" },
+  { question: "Welches Land liegt westlich vom Sudan und östlich von Niger?", answer: "Tschad" },
+  { question: "Welches Land liegt südlich von Jordanien?", answer: "Saudi-Arabien" },
+  { question: "Welches Land liegt zwischen Österreich, Rumänien und Kroatien?", answer: "Ungarn" }
 ];
 
 const vocabularyData: VocabularyReward[] = [
