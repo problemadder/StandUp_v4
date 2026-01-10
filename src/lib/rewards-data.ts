@@ -245,6 +245,21 @@ const questionsAnswersData: QuestionAnswerReward[] = [
   { question: "Was ist die Hauptstadt von Singapur?", answer: "Singapur" },
   { question: "Was ist die Hauptstadt von Brunei?", answer: "Bandar Seri Begawan" },
   { question: "Was ist die Hauptstadt von Osttimor?", answer: "Dili" },
+  { question: "Welches Land liegt direkt nördlich von den USA?", answer: "Kanada" },
+  { question: "Welches Land liegt westlich von Argentinien?", answer: "Chile" },
+  { question: "Welches Land liegt zwischen Spanien und Frankreich?", answer: "Andorra" },
+  { question: "Welches Land liegt südlich von Deutschland?", answer: "Österreich (und die Schweiz)" },
+  { question: "Welches Land liegt östlich von Portugal?", answer: "Spanien" },
+  { question: "Welches Land liegt zwischen Polen und Rumänien?", answer: "Ukraine" },
+  { question: "Welches Land liegt westlich von Ägypten?", answer: "Libyen" },
+  { question: "Welches Land liegt zwischen den Niederlanden und Frankreich?", answer: "Belgien" },
+  { question: "Welcher Inselstaat liegt östlich von Madagaskar?", answer: "Mauritius" },
+  { question: "Welches Land liegt nördlich von Estland (über die Ostsee)?", answer: "Finnland" },
+  { question: "Welches Land liegt zwischen Deutschland, Frankreich und Belgien?", answer: "Luxemburg" },
+  { question: "Welches Land liegt südlich von der Mongolei?", answer: "China" },
+  { question: "Welches Land liegt zwischen dem Iran und Indien?", answer: "Pakistan" },
+  { question: "Welches Land liegt westlich von Schweden?", answer: "Norwegen" },
+  { question: "Welches Land liegt zwischen Litauen und Estland?", answer: "Lettland" },
 ];
 
 const vocabularyData: VocabularyReward[] = [
