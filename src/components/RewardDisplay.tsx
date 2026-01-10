@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Reward, QuestionAnswerReward, FlagReward } from "@/lib/rewards-data";
+import { Reward, QuestionAnswerReward, FlagReward, VocabularyReward } from "@/lib/rewards-data";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import RandomFactWidget from "@/components/RandomFactWidget";
@@ -69,6 +69,20 @@ const RewardDisplay: React.FC<RewardDisplayProps> = ({ reward }) => {
             )}
           </div>
         );
+      case "vocabulary": // Neuer Fall für Vokabeln
+        const vocabReward = reward.content as VocabularyReward;
+        return (
+          <div>
+            <p className="font-semibold mb-2">{vocabReward.question}</p>
+            {!showAnswer ? (
+              <Button onClick={() => setShowAnswer(true)} className="mt-2 bg-secondary text-secondary-foreground hover:bg-secondary/90">
+                Antwort anzeigen
+              </Button>
+            ) : (
+              <p className="mt-2 text-lg font-bold text-primary">{vocabReward.answer}</p>
+            )}
+          </div>
+        );
       case "randomFactWidget":
         return <RandomFactWidget />;
       case "quoteOfTheDayWidget": // New case for the Quote of the Day widget
@@ -83,6 +97,7 @@ const RewardDisplay: React.FC<RewardDisplayProps> = ({ reward }) => {
       case "facts": return "Fakten";
       case "questionsAnswers": return "Frage & Antwort";
       case "flags": return "Flaggen-Quiz";
+      case "vocabulary": return "Vokabel-Quiz"; // Titel für Vokabeln
       case "randomFactWidget": return "Bonus-Fakt!";
       case "quoteOfTheDayWidget": return "Zitat des Tages!"; // Title for the Quote of the Day widget
       default: return "Belohnung";

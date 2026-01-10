@@ -1,5 +1,5 @@
 import { Session } from "@/hooks/use-session-manager";
-import { QuestionAnswerReward, FlagReward } from "@/lib/rewards-data"; // Import new interfaces
+import { QuestionAnswerReward, FlagReward, VocabularyReward, RewardType } from "@/lib/rewards-data"; // Import new interfaces and RewardType
 import { convertIsoToEuropean, convertEuropeanToIso } from "@/lib/date-utils"; // Import date conversion utilities
 
 interface AllData {
@@ -33,7 +33,11 @@ export const exportAllDataToCsv = (data: AllData): void => {
       const flagReward = session.reward.content as FlagReward;
       content1 = flagReward.countryName;
       content2 = flagReward.flagCode;
-    } else { // facts
+    } else if (session.reward.type === 'vocabulary') { // Neuer Fall für Vokabeln
+      const vocabReward = session.reward.content as VocabularyReward;
+      content1 = vocabReward.question;
+      content2 = vocabReward.answer;
+    } else { // facts, randomFactWidget, quoteOfTheDayWidget
       content1 = session.reward.content as string;
     }
 
@@ -154,7 +158,7 @@ export const importAllDataFromCsv = (csvString: string): AllData => {
 
     if (type === "SESSION") {
       try {
-        let rewardContent: string | QuestionAnswerReward | FlagReward;
+        let rewardContent: string | QuestionAnswerReward | FlagReward | VocabularyReward | null = null;
         const rewardType = rowData["REWARD_TYPE"];
         const content1 = rowData["REWARD_CONTENT1"];
         const content2 = rowData["REWARD_CONTENT2"];
@@ -163,6 +167,10 @@ export const importAllDataFromCsv = (csvString: string): AllData => {
           rewardContent = { question: content1, answer: content2 };
         } else if (rewardType === "flags") {
           rewardContent = { countryName: content1, flagCode: content2 };
+        } else if (rewardType === "vocabulary") { // Neuer Fall für Vokabeln
+          rewardContent = { question: content1, answer: content2 };
+        } else if (rewardType === "randomFactWidget" || rewardType === "quoteOfTheDayWidget") {
+          rewardContent = null; // Widgets have null content
         } else { // facts
           rewardContent = content1;
         }
@@ -176,7 +184,7 @@ export const importAllDataFromCsv = (csvString: string): AllData => {
           durationMinutes: parseInt(rowData["DURATION_MINUTES"], 10),
           completed: rowData["COMPLETED"] === "Ja",
           reward: {
-            type: rewardType as any, // Type assertion, handle carefully
+            type: rewardType as RewardType, // Type assertion
             content: rewardContent,
           },
         });
