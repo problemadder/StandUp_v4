@@ -544,6 +544,22 @@ const vocabularyData: VocabularyReward[] = [
   { question: "I am moving abroad and want to terminate my contract prematurely.", answer: "Ich ziehe ins Ausland und möchte meinen Vertrag vorzeitig kündigen." },
   { question: "The handover protocol clearly shows a different meter reading.", answer: "Das Übergabeprotokoll zeigt eindeutig einen anderen Zählerstand." },
   { question: "I am still waiting for the refund of my overpayment.", answer: "Ich warte noch immer auf die Rückerstattung meiner Überzahlung." },
+  { question: "I am exercising my special right of termination due to the price increase.", answer: "Ich mache von meinem Sonderkündigungsrecht wegen der Preiserhöhung Gebrauch." },
+  { question: "When will the smart meter be installed in my apartment?", answer: "Wann wird der intelligente Zähler in meiner Wohnung installiert?" },
+  { question: "The price increase is not transparent to me.", answer: "Die Preiserhöhung ist für mich nicht transparent nachvollziehbar." },
+  { question: "Can I track my real-time consumption with the new smart meter?", answer: "Kann ich mit dem neuen Smart Meter meinen Verbrauch in Echtzeit verfolgen?" },
+  { question: "I didn't receive a notification about the price change in time.", answer: "Ich habe die Mitteilung über die Preisänderung nicht rechtzeitig erhalten." },
+  { question: "My bank details have changed for the SEPA direct debit.", answer: "Meine Bankverbindung für das SEPA-Lastschriftmandat hat sich geändert." },
+  { question: "I want to request a verification of the meter because it seems defective.", answer: "Ich möchte eine Befundprüfung des Zählers beantragen, da er defekt zu sein scheint." },
+  { question: "The bonus for switching was not deducted from my bill.", answer: "Der Wechselbonus wurde nicht von meiner Rechnung abgezogen." },
+  { question: "Is there an additional fee for the installation of the smart meter?", answer: "Fällt für den Einbau des Smart Meters eine zusätzliche Gebühr an?" },
+  { question: "I disagree with the estimated billing; please use my actual reading.", answer: "Ich bin mit der Schätzung nicht einverstanden; bitte nutzen Sie meinen tatsächlichen Zählerstand." },
+  { question: "What is the notice period if I want to switch to a cheaper provider?", answer: "Wie lang ist die Kündigungsfrist, wenn ich zu einem günstigeren Anbieter wechseln möchte?" },
+  { question: "My advance payment was increased without any change in my consumption behavior.", answer: "Mein Abschlag wurde erhöht, ohne dass sich mein Verbrauchsverhalten geändert hat." },
+  { question: "I have a credit balance of two hundred euros on my account.", answer: "Ich habe ein Guthaben von zweihundert Euro auf meinem Konto." },
+  { question: "Does the price guarantee cover all components of the electricity price?", answer: "Bezieht sich die Preisgarantie auf alle Bestandteile des Strompreises?" },
+  { question: "I would like to receive my invoices by email instead of by post.", answer: "Ich möchte meine Rechnungen per E-Mail statt per Post erhalten." },
+  { question: "The transfer of my data to the new provider did not work.", answer: "Die Datenübermittlung an den neuen Versorger hat nicht funktioniert." },
 ];
 
 
