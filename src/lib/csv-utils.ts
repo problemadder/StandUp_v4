@@ -1,6 +1,7 @@
 import { Session } from "@/hooks/use-session-manager";
 import { QuestionAnswerReward, FlagReward, VocabularyReward, RewardType } from "@/lib/rewards-data"; // Import new interfaces and RewardType
 import { convertIsoToEuropean, convertEuropeanToIso } from "@/lib/date-utils"; // Import date conversion utilities
+import { showSuccess, showError } from "@/utils/toast"; // Import toast utilities
 
 interface AllData {
   sessions: Session[];
@@ -13,7 +14,7 @@ export const exportAllDataToCsv = (data: AllData): void => {
   const { sessions, activeDays, homeofficeDays, visitedDays } = data; // Destructure visitedDays
 
   if (sessions.length === 0 && activeDays.length === 0 && homeofficeDays.length === 0 && visitedDays.length === 0) {
-    alert("Keine Daten zum Exportieren vorhanden.");
+    showError("Keine Daten zum Exportieren vorhanden.");
     return;
   }
 
@@ -37,7 +38,7 @@ export const exportAllDataToCsv = (data: AllData): void => {
       const vocabReward = session.reward.content as VocabularyReward;
       content1 = vocabReward.question;
       content2 = vocabReward.answer;
-    } else { // facts, randomFactWidget, quoteOfTheDayWidget
+    } else if (session.reward.content !== null) { // facts, randomFactWidget, quoteOfTheDayWidget (if content is not null)
       content1 = session.reward.content as string;
     }
 
@@ -114,9 +115,10 @@ export const exportAllDataToCsv = (data: AllData): void => {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    URL.revokeObjectURL(url);
+    URL.revokeObjectURL(url); // Ensure URL is revoked
+    showSuccess("Daten erfolgreich exportiert!");
   } else {
-    alert("Ihr Browser unterstützt den automatischen Download nicht. Bitte kopieren Sie den Text manuell.");
+    showError("Ihr Browser unterstützt den automatischen Download nicht. Bitte kopieren Sie den Text manuell.");
     console.log(csvString);
   }
 };
@@ -133,7 +135,7 @@ export const importAllDataFromCsv = (csvString: string): AllData => {
 
   if (!expectedHeaders.every(h => headers.includes(h))) {
     console.error("CSV-Header stimmen nicht überein. Erwartet:", expectedHeaders, "Gefunden:", headers);
-    alert("Ungültiges CSV-Format. Bitte stellen Sie sicher, dass die Header korrekt sind.");
+    showError("Ungültiges CSV-Format. Bitte stellen Sie sicher, dass die Header korrekt sind.");
     return { sessions: [], activeDays: [], homeofficeDays: [], visitedDays: [] }; // Initialize visitedDays
   }
 
