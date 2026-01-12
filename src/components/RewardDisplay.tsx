@@ -54,7 +54,7 @@ const RewardDisplay: React.FC<RewardDisplayProps> = ({ reward }) => {
             <p className="font-semibold mb-4 text-center">Wozu gehört diese Flagge?</p>
             <img
               src={`https://flagcdn.com/144x108/${flagReward.flagCode}.png`}
-              srcSet={`https://flagcdn.com/288x216/${flagReward.flagCode}.png 2x, https://flagcdn.com/384x288/${flagReward.flagCode}.png 3x`}
+              srcSet={`https://flagcdn.com/144x108/${flagReward.flagCode}.png 2x, https://flagcdn.com/144x108/${flagReward.flagCode}.png 3x`}
               width="144"
               height="108"
               alt={`Flagge von ${flagReward.countryName}`}
