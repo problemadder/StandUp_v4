@@ -26,6 +26,16 @@ const Timer: React.FC<TimerProps> = ({ onSessionComplete }) => {
   });
   const [cooldownRemaining, setCooldownRemaining] = useState(0);
 
+  // New state for sitting time
+  const [sittingStartTime, setSittingStartTime] = useState<number | null>(() => {
+    const storedSittingTime = getLocalStorageItem<string | null>("stehauf_sitting_start_time", null);
+    if (storedSittingTime) {
+      return parseInt(storedSittingTime, 10);
+    }
+    return null;
+  });
+  const [elapsedSittingTime, setElapsedSittingTime] = useState(0);
+
   const animationFrameRef = useRef<number | null>(null);
   const startTimeRef = useRef<number>(0);
   const accumulatedTimeRef = useRef<number>(0);
@@ -77,6 +87,42 @@ const Timer: React.FC<TimerProps> = ({ onSessionComplete }) => {
       if (cooldownInterval) clearInterval(cooldownInterval);
     };
   }, [cooldownEndTime]);
+
+  // Effect to manage sittingStartTime based on cooldown and timer state
+  useEffect(() => {
+    // When cooldown ends and timer is not running, start sitting time
+    if (cooldownEndTime === null && !isRunning && sittingStartTime === null) {
+      const now = Date.now();
+      setSittingStartTime(now);
+      setLocalStorageItem("stehauf_sitting_start_time", now.toString());
+    }
+    // When timer starts, reset sitting time
+    if (isRunning && sittingStartTime !== null) {
+      setSittingStartTime(null);
+      removeLocalStorageItem("stehauf_sitting_start_time");
+      setElapsedSittingTime(0); // Reset elapsed sitting time
+    }
+  }, [cooldownEndTime, isRunning, sittingStartTime]);
+
+  // Effect to update elapsedSittingTime
+  useEffect(() => {
+    let sittingInterval: ReturnType<typeof setInterval> | null = null;
+
+    if (sittingStartTime !== null && !isRunning && cooldownRemaining === 0) {
+      const updateSittingTime = () => {
+        setElapsedSittingTime(Math.floor((Date.now() - sittingStartTime) / 1000));
+      };
+      updateSittingTime(); // Initial update
+      sittingInterval = setInterval(updateSittingTime, 1000);
+    } else {
+      setElapsedSittingTime(0); // Reset if conditions are not met
+    }
+
+    return () => {
+      if (sittingInterval) clearInterval(sittingInterval);
+    };
+  }, [sittingStartTime, isRunning, cooldownRemaining]); // Dependencies for sitting time update
+
 
   const tick = useCallback(() => {
     const now = performance.now();
@@ -155,7 +201,7 @@ const Timer: React.FC<TimerProps> = ({ onSessionComplete }) => {
     setTimeRemaining(SESSION_DURATION_SECONDS);
     accumulatedTimeRef.current = 0;
     startTimeRef.current = 0;
-    // Cooldown is not reset here, it's independent
+    // Cooldown and sitting time are not reset here, they are independent
   };
 
   const formatTime = (seconds: number) => {
@@ -201,6 +247,11 @@ const Timer: React.FC<TimerProps> = ({ onSessionComplete }) => {
           <RotateCcw className="mr-2 h-5 w-5" /> Reset
         </Button>
       </div>
+      {cooldownRemaining === 0 && !isRunning && sittingStartTime !== null && (
+        <p className="text-lg text-muted-foreground mt-4">
+          Sitzzeit: <span className="font-bold text-secondary">{formatTime(elapsedSittingTime)}</span> – Zeit, wieder aufzustehen!
+        </p>
+      )}
     </div>
   );
 };
