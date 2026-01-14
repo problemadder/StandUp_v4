@@ -1,10 +1,7 @@
-"use client";
-
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Play, Pause, RotateCcw } from "lucide-react";
-import { cn } from "@/lib/utils"; // Import cn for conditional class merging
 
 interface TimerProps {
   onSessionComplete: () => void;
@@ -15,14 +12,11 @@ const SESSION_DURATION_SECONDS = 15 * 60; // 15 Minuten
 const Timer: React.FC<TimerProps> = ({ onSessionComplete }) => {
   const [timeRemaining, setTimeRemaining] = useState(SESSION_DURATION_SECONDS);
   const [isRunning, setIsRunning] = useState(false);
-  const [isCooldownActive, setIsCooldownActive] = useState(false); // New state for cooldown
-  const [cooldownRemaining, setCooldownRemaining] = useState(0); // New state for cooldown timer
 
   // Refs for precise time tracking
   const animationFrameRef = useRef<number | null>(null);
   const startTimeRef = useRef<number>(0); // Timestamp when the current run started (performance.now())
   const accumulatedTimeRef = useRef<number>(0); // Total time elapsed before current run/pause (in seconds)
-  const cooldownIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null); // Ref for cooldown interval
 
   const originalDocumentTitle = useRef(document.title); // Store original title
 
@@ -45,54 +39,6 @@ const Timer: React.FC<TimerProps> = ({ onSessionComplete }) => {
     requestNotificationPermission();
   }, []);
 
-  const formatTime = (seconds: number) => {
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = seconds % 60;
-    return `${minutes.toString().padStart(2, "0")}:${remainingSeconds.toString().padStart(2, "0")}`;
-  };
-
-  // Logic to execute when a session completes
-  const handleSessionCompletionLogic = useCallback(() => {
-    onSessionComplete(); // Trigger session complete action
-
-    // Start cooldown
-    setIsCooldownActive(true);
-    setCooldownRemaining(SESSION_DURATION_SECONDS);
-    
-    // Clear any existing cooldown interval before setting a new one
-    if (cooldownIntervalRef.current) {
-      clearInterval(cooldownIntervalRef.current);
-    }
-
-    cooldownIntervalRef.current = setInterval(() => {
-      setCooldownRemaining(prev => {
-        if (prev <= 1) { // Use 1 to ensure it hits 0 and then clears
-          clearInterval(cooldownIntervalRef.current!);
-          setIsCooldownActive(false);
-          document.title = originalDocumentTitle.current; // Reset tab title after cooldown
-          return 0;
-        }
-        document.title = `${formatTime(prev - 1)} - Cooldown`; // Update tab title during cooldown
-        return prev - 1;
-      });
-    }, 1000);
-
-    if (Notification.permission === "granted") {
-      const notification = new Notification("StehAuf! Büro-Challenge", {
-        body: "Glückwunsch! 15 Minuten geschafft! Zeit für deine Belohnung. Nächste Session in 15 Minuten.",
-        icon: "/smiley.svg",
-      });
-      notification.onclick = () => {
-        window.focus();
-      };
-    }
-    // Reset main timer states for next session
-    setTimeRemaining(SESSION_DURATION_SECONDS);
-    accumulatedTimeRef.current = 0;
-    startTimeRef.current = 0;
-  }, [onSessionComplete]);
-
-  // Main session timer tick
   const tick = useCallback(() => {
     const now = performance.now();
     const elapsedTime = (now - startTimeRef.current) / 1000; // in seconds
@@ -104,13 +50,26 @@ const Timer: React.FC<TimerProps> = ({ onSessionComplete }) => {
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
       }
-      handleSessionCompletionLogic(); // Call the new logic handler
+      onSessionComplete();
+      if (Notification.permission === "granted") {
+        const notification = new Notification("StehAuf! Büro-Challenge", {
+          body: "Glückwunsch! 15 Minuten geschafft! Zeit für deine Belohnung.",
+          icon: "/smiley.svg",
+        });
+        notification.onclick = () => {
+          window.focus();
+        };
+      }
+      setTimeRemaining(SESSION_DURATION_SECONDS); // Reset timer after completion
+      document.title = originalDocumentTitle.current; // Reset tab title
+      accumulatedTimeRef.current = 0; // Reset accumulated time
+      startTimeRef.current = 0; // Reset start time
     } else {
       setTimeRemaining(Math.ceil(newTimeRemaining)); // Round up to show full seconds
       document.title = `${formatTime(Math.ceil(newTimeRemaining))} - StehAuf!`;
       animationFrameRef.current = requestAnimationFrame(tick);
     }
-  }, [handleSessionCompletionLogic]);
+  }, [onSessionComplete]);
 
   useEffect(() => {
     if (isRunning) {
@@ -124,26 +83,19 @@ const Timer: React.FC<TimerProps> = ({ onSessionComplete }) => {
       if (startTimeRef.current !== 0) { // Only accumulate if it was actually running
         accumulatedTimeRef.current += (performance.now() - startTimeRef.current) / 1000;
       }
-      if (!isCooldownActive) { // Only reset title if not in cooldown
-        document.title = originalDocumentTitle.current;
-      }
+      document.title = originalDocumentTitle.current; // Reset tab title when paused/reset
     }
 
     return () => {
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
       }
-      if (cooldownIntervalRef.current) {
-        clearInterval(cooldownIntervalRef.current);
-      }
       document.title = originalDocumentTitle.current; // Reset tab title on unmount
     };
-  }, [isRunning, tick, isCooldownActive]); // Depend on isRunning, tick, and isCooldownActive
+  }, [isRunning, tick]); // Depend on isRunning and tick
 
   const startTimer = () => {
-    if (!isCooldownActive) { // Only start if not in cooldown
-      setIsRunning(true);
-    }
+    setIsRunning(true);
   };
 
   const pauseTimer = () => {
@@ -153,39 +105,29 @@ const Timer: React.FC<TimerProps> = ({ onSessionComplete }) => {
   const resetTimer = () => {
     setIsRunning(false);
     setTimeRemaining(SESSION_DURATION_SECONDS);
-    accumulatedTimeRef.current = 0;
-    startTimeRef.current = 0;
-    setIsCooldownActive(false); // Reset cooldown state
-    setCooldownRemaining(0); // Reset cooldown timer
-    if (cooldownIntervalRef.current) {
-      clearInterval(cooldownIntervalRef.current);
-      cooldownIntervalRef.current = null; // Clear the ref
-    }
-    document.title = originalDocumentTitle.current;
+    accumulatedTimeRef.current = 0; // Reset accumulated time
+    startTimeRef.current = 0; // Reset start time
+  };
+
+  const formatTime = (seconds: number) => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes.toString().padStart(2, "0")}:${remainingSeconds.toString().padStart(2, "0")}`;
   };
 
   const progressValue = ((SESSION_DURATION_SECONDS - timeRemaining) / SESSION_DURATION_SECONDS) * 100;
-  const cooldownProgressValue = ((SESSION_DURATION_SECONDS - cooldownRemaining) / SESSION_DURATION_SECONDS) * 100;
 
   return (
     <div className="flex flex-col items-center space-y-6 p-6 bg-card text-card-foreground rounded-lg shadow-lg w-full">
       <div className="relative w-48 h-48 flex items-center justify-center">
-        <Progress
-          value={isCooldownActive ? cooldownProgressValue : progressValue}
-          className={cn("w-full h-full absolute rounded-full", isCooldownActive && "[&>div]:bg-destructive")} // Apply destructive background to the inner div
-        />
+        <Progress value={progressValue} className="w-full h-full absolute rounded-full" />
         <div className="absolute text-5xl font-extrabold text-primary-foreground">
-          {isCooldownActive ? formatTime(cooldownRemaining) : formatTime(timeRemaining)}
+          {formatTime(timeRemaining)}
         </div>
       </div>
       <div className="flex space-x-4">
         {!isRunning ? (
-          <Button
-            onClick={startTimer}
-            variant={isCooldownActive ? "destructive" : "primary"} // Red if in cooldown
-            disabled={isCooldownActive} // Disabled if in cooldown
-            className="px-6 py-3 text-lg"
-          >
+          <Button onClick={startTimer} className="px-6 py-3 text-lg bg-primary text-primary-foreground hover:bg-primary/90">
             <Play className="mr-2 h-5 w-5" /> Start
           </Button>
         ) : (
@@ -197,9 +139,6 @@ const Timer: React.FC<TimerProps> = ({ onSessionComplete }) => {
           <RotateCcw className="mr-2 h-5 w-5" /> Reset
         </Button>
       </div>
-      {isCooldownActive && (
-        <p className="text-destructive font-medium">Nächste Session in {formatTime(cooldownRemaining)}</p>
-      )}
     </div>
   );
 };
