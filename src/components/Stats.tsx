@@ -53,9 +53,9 @@ const Stats: React.FC<StatsProps> = ({
         {/* <CardTitle>Statistiken</CardTitle> */}
       </CardHeader>
       <CardContent className="space-y-4">
-        {/* Aktuelle Zahlen (ehemals Absolut) */}
+        {/* Aktuelles Jahr: (Combines former 'Aktuell' and 'Durchschnitt aktuelles Jahr') */}
         <div className="pt-4">
-          <p className="text-xl font-semibold mb-4 text-center">Aktuell:</p>
+          <p className="text-xl font-semibold mb-4 text-center">Aktuelles Jahr:</p>
           <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 text-center">
             <div>
               <p className="text-lg font-medium">Heute</p>
@@ -83,10 +83,9 @@ const Stats: React.FC<StatsProps> = ({
           </div>
         </div>
 
-        {/* Durchschnitt aktuelles Jahr */}
-        {(averageSessionsPerDayCurrentYear > 0 || averageSessionsPerMonthCurrentYear > 0 || averageSessionsPerWeekCurrentYear > 0 || sessionsPerYear > 0) && (
-          <div className="pt-4 border-t border-muted-foreground/20">
-            <p className="text-xl font-semibold mb-4 text-center">Aktuelles Jahr:</p>
+        {/* Durchschnitt aktuelles Jahr - Averages only, no separate header, no 'Jahr' */}
+        {(averageSessionsPerDayCurrentYear > 0 || averageSessionsPerMonthCurrentYear > 0 || averageSessionsPerWeekCurrentYear > 0) && (
+          <div className="pt-4"> {/* Removed border-t */}
             <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 text-center">
               <div>
                 <p className="text-lg font-medium">⌀ Tag</p>
@@ -106,12 +105,8 @@ const Stats: React.FC<StatsProps> = ({
                   {averageSessionsPerMonthCurrentYear.toFixed(2)}
                 </p>
               </div>
-              <div>
-                <p className="text-lg font-medium">Jahr</p>
-                <p className="text-2xl font-bold text-primary">
-                  {sessionsPerYear}
-                </p>
-              </div>
+              {/* Removed redundant 'Jahr' stat from here */}
+              <div className="hidden sm:block"></div> {/* Placeholder for alignment */}
             </div>
           </div>
         )}
