@@ -119,29 +119,29 @@ const Stats: React.FC<StatsProps> = ({
         {/* Durchschnitt letztes Jahr */}
         {(averageSessionsPerDayPreviousYear > 0 || averageSessionsPerMonthPreviousYear > 0 || averageSessionsPerWeekPreviousYear > 0 || totalSessionsPreviousYear > 0) && (
           <div className="pt-4 border-t border-muted-foreground/20">
-            <p className="text-xl font-semibold mb-4 text-center">Durchschnitt letztes Jahr:</p>
-            <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 text-center">
+            <p className="text-xl font-semibold mb-4 text-center text-muted-foreground">Durchschnitt letztes Jahr:</p>
+            <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 text-center text-muted-foreground">
               <div>
                 <p className="text-lg font-medium">Tag</p>
-                <p className="text-2xl font-bold text-primary">
+                <p className="text-2xl font-bold">
                   {averageSessionsPerDayPreviousYear.toFixed(2)}
                 </p>
               </div>
               <div>
                 <p className="text-lg font-medium">Woche</p>
-                <p className="text-2xl font-bold text-primary">
+                <p className="text-2xl font-bold">
                   {averageSessionsPerWeekPreviousYear.toFixed(2)}
                 </p>
               </div>
               <div>
                 <p className="text-lg font-medium">Monat</p>
-                <p className="text-2xl font-bold text-primary">
+                <p className="text-2xl font-bold">
                   {averageSessionsPerMonthPreviousYear.toFixed(2)}
                 </p>
               </div>
               <div>
                 <p className="text-lg font-medium">Jahr</p>
-                <p className="text-2xl font-bold text-primary">
+                <p className="text-2xl font-bold">
                   {totalSessionsPreviousYear}
                 </p>
               </div>
