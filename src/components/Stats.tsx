@@ -7,11 +7,14 @@ interface StatsProps {
   isLoadingHolidays: boolean;
   sessionsPerWeek: number;
   sessionsPerMonth: number;
-  sessionsPerYear: number;
-  averageSessionsPerDay: number;
-  averageSessionsPerMonth: number;
-  averageSessionsPerWeek: number;
-  averageSessionsPerYearExcludingCurrent: number;
+  sessionsPerYear: number; // Total for current year
+  averageSessionsPerDayCurrentYear: number; // New
+  averageSessionsPerMonthCurrentYear: number; // New
+  averageSessionsPerWeekCurrentYear: number; // New
+  averageSessionsPerDayPreviousYear: number; // New
+  averageSessionsPerMonthPreviousYear: number; // New
+  averageSessionsPerWeekPreviousYear: number; // New
+  totalSessionsPreviousYear: number; // New: Total sessions for previous year
   homeofficeDays: string[];
   bestDaySessions: number;
   bestMonthSessions: number;
@@ -25,10 +28,13 @@ const Stats: React.FC<StatsProps> = ({
   sessionsPerWeek,
   sessionsPerMonth,
   sessionsPerYear,
-  averageSessionsPerDay,
-  averageSessionsPerMonth,
-  averageSessionsPerWeek,
-  averageSessionsPerYearExcludingCurrent,
+  averageSessionsPerDayCurrentYear,
+  averageSessionsPerMonthCurrentYear,
+  averageSessionsPerWeekCurrentYear,
+  averageSessionsPerDayPreviousYear,
+  averageSessionsPerMonthPreviousYear,
+  averageSessionsPerWeekPreviousYear,
+  totalSessionsPreviousYear,
   homeofficeDays,
   bestDaySessions,
   bestMonthSessions,
@@ -48,7 +54,7 @@ const Stats: React.FC<StatsProps> = ({
       </CardHeader>
       <CardContent className="space-y-4">
         {/* Aktuelle Zahlen (ehemals Absolut) */}
-        <div className="pt-4"> {/* 'border-t border-muted-foreground/20' entfernt */}
+        <div className="pt-4">
           <p className="text-xl font-semibold mb-4 text-center">Aktuell:</p>
           <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 text-center">
             <div>
@@ -77,33 +83,60 @@ const Stats: React.FC<StatsProps> = ({
           </div>
         </div>
 
-        {/* Durchschnittszahlen */}
-        {(averageSessionsPerDay > 0 || averageSessionsPerMonth > 0 || averageSessionsPerWeek > 0 || averageSessionsPerYearExcludingCurrent > 0) && (
+        {/* Durchschnitt aktuelles Jahr */}
+        {(averageSessionsPerDayCurrentYear > 0 || averageSessionsPerMonthCurrentYear > 0 || averageSessionsPerWeekCurrentYear > 0) && (
           <div className="pt-4 border-t border-muted-foreground/20">
-            <p className="text-xl font-semibold mb-4 text-center">Durchschnitt:</p>
-            <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 text-center">
+            <p className="text-xl font-semibold mb-4 text-center">Durchschnitt aktuelles Jahr:</p>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
               <div>
                 <p className="text-lg font-medium">Tag</p>
                 <p className="text-2xl font-bold text-primary">
-                  {averageSessionsPerDay.toFixed(2)}
+                  {averageSessionsPerDayCurrentYear.toFixed(2)}
                 </p>
               </div>
               <div>
                 <p className="text-lg font-medium">Woche</p>
                 <p className="text-2xl font-bold text-primary">
-                  {averageSessionsPerWeek.toFixed(2)}
+                  {averageSessionsPerWeekCurrentYear.toFixed(2)}
                 </p>
               </div>
               <div>
                 <p className="text-lg font-medium">Monat</p>
                 <p className="text-2xl font-bold text-primary">
-                  {averageSessionsPerMonth.toFixed(2)}
+                  {averageSessionsPerMonthCurrentYear.toFixed(2)}
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Durchschnitt letztes Jahr */}
+        {(averageSessionsPerDayPreviousYear > 0 || averageSessionsPerMonthPreviousYear > 0 || averageSessionsPerWeekPreviousYear > 0 || totalSessionsPreviousYear > 0) && (
+          <div className="pt-4 border-t border-muted-foreground/20">
+            <p className="text-xl font-semibold mb-4 text-center">Durchschnitt letztes Jahr:</p>
+            <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 text-center">
+              <div>
+                <p className="text-lg font-medium">Tag</p>
+                <p className="text-2xl font-bold text-primary">
+                  {averageSessionsPerDayPreviousYear.toFixed(2)}
+                </p>
+              </div>
+              <div>
+                <p className="text-lg font-medium">Woche</p>
+                <p className="text-2xl font-bold text-primary">
+                  {averageSessionsPerWeekPreviousYear.toFixed(2)}
+                </p>
+              </div>
+              <div>
+                <p className="text-lg font-medium">Monat</p>
+                <p className="text-2xl font-bold text-primary">
+                  {averageSessionsPerMonthPreviousYear.toFixed(2)}
                 </p>
               </div>
               <div>
                 <p className="text-lg font-medium">Jahr</p>
                 <p className="text-2xl font-bold text-primary">
-                  {averageSessionsPerYearExcludingCurrent.toFixed(2)}
+                  {totalSessionsPreviousYear}
                 </p>
               </div>
             </div>

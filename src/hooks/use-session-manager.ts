@@ -26,24 +26,27 @@ interface UseSessionManagerResult {
   addSession: (reward: Reward) => void;
   setSessions: (newSessions: Session[]) => void;
   isLoadingHolidays: boolean;
-  sessionsPerWeek: number;
-  sessionsPerMonth: number;
-  sessionsPerYear: number;
+  sessionsPerWeek: number; // Current week
+  sessionsPerMonth: number; // Current month
+  sessionsPerYear: number; // Current year total
   combinedMonthlySessions: CombinedMonthlySessionsData[];
-  averageSessionsPerDay: number;
-  averageSessionsPerMonth: number;
-  averageSessionsPerWeek: number;
-  averageSessionsPerYearExcludingCurrent: number; // Neu: Durchschnitt pro Jahr (ohne aktuelles Jahr)
+  averageSessionsPerDayCurrentYear: number; // New
+  averageSessionsPerMonthCurrentYear: number; // New
+  averageSessionsPerWeekCurrentYear: number; // New
+  averageSessionsPerDayPreviousYear: number; // New
+  averageSessionsPerMonthPreviousYear: number; // New
+  averageSessionsPerWeekPreviousYear: number; // New
+  totalSessionsPreviousYear: number; // New: Total sessions for the previous year
   resetAllData: () => void;
   activeDays: string[];
   setActiveDays: (newActiveDays: string[]) => void;
   homeofficeDays: string[];
   markHomeofficeDay: (date: string) => void;
-  visitedDays: string[]; // Neu: Hinzufügen von visitedDays
+  visitedDays: string[];
   bestDaySessions: number;
   bestMonthSessions: number;
   bestWeekSessions: number;
-  bestYearSessions: number; // Re-added: All-time best sessions in a single year
+  bestYearSessions: number;
 }
 
 const getTodayDateString = () => new Date().toISOString().split('T')[0];
@@ -60,7 +63,7 @@ export const useSessionManager = (): UseSessionManagerResult => {
   const [homeofficeDays, setHomeofficeDaysState] = useState<string[]>(() =>
     getLocalStorageItem<string[]>("stehauf_homeoffice_days", [])
   );
-  const [visitedDays, setVisitedDaysState] = useState<string[]>(() => // Neu: Zustand für besuchte Tage
+  const [visitedDays, setVisitedDaysState] = useState<string[]>(() =>
     getLocalStorageItem<string[]>("stehauf_visited_days", [])
   );
 
@@ -75,7 +78,7 @@ export const useSessionManager = (): UseSessionManagerResult => {
       }
       return prevDays;
     });
-  }, []); // Leeres Array als Abhängigkeit, damit es nur einmal beim Mounten läuft
+  }, []);
 
   // Fetch holidays for current and previous year
   useEffect(() => {
@@ -138,12 +141,67 @@ export const useSessionManager = (): UseSessionManagerResult => {
     const currentYear = now.getFullYear();
     const previousYear = currentYear - 1;
 
+    // --- Filter data for current and previous year ---
+    const sessionsCurrentYear = sessions.filter(s => new Date(s.date).getFullYear() === currentYear && s.completed);
+    const visitedDaysCurrentYear = visitedDays.filter(d => new Date(d).getFullYear() === currentYear);
+    const homeofficeDaysCurrentYear = homeofficeDays.filter(d => new Date(d).getFullYear() === currentYear);
+
+    const sessionsPreviousYear = sessions.filter(s => new Date(s.date).getFullYear() === previousYear && s.completed);
+    const visitedDaysPreviousYear = visitedDays.filter(d => new Date(d).getFullYear() === previousYear);
+    const homeofficeDaysPreviousYear = homeofficeDays.filter(d => new Date(d).getFullYear() === previousYear);
+
+    // --- Helper to calculate averages for a specific year's data ---
+    const calculateAveragesForSpecificYear = (
+      sessionsForYear: Session[],
+      visitedDaysForYear: string[],
+      homeofficeDaysForYear: string[]
+    ) => {
+      const totalCompletedSessionsForYear = sessionsForYear.length;
+
+      const allRelevantDatesForYear = Array.from(new Set([
+        ...sessionsForYear.map(s => s.date),
+        ...visitedDaysForYear
+      ])).filter(date => !homeofficeDaysForYear.includes(date));
+
+      // Average per day
+      const averageSessionsPerDay = allRelevantDatesForYear.length > 0 ? totalCompletedSessionsForYear / allRelevantDatesForYear.length : 0;
+
+      // Average per week
+      const allRelevantWeeksForYear = new Set(
+        allRelevantDatesForYear.map(d => startOfWeek(new Date(d), { locale: de }).toISOString().split('T')[0])
+      );
+      const averageSessionsPerWeek = allRelevantWeeksForYear.size > 0 ? totalCompletedSessionsForYear / allRelevantWeeksForYear.size : 0;
+
+      // Average per month
+      const allRelevantMonthsForYear = new Set(
+        allRelevantDatesForYear.map(d => new Date(d).toISOString().substring(0, 7)) // YYYY-MM
+      );
+      const averageSessionsPerMonth = allRelevantMonthsForYear.size > 0 ? totalCompletedSessionsForYear / allRelevantMonthsForYear.size : 0;
+
+      return {
+        averageSessionsPerDay,
+        averageSessionsPerWeek,
+        averageSessionsPerMonth,
+      };
+    };
+
+    const currentYearAverages = calculateAveragesForSpecificYear(
+      sessionsCurrentYear,
+      visitedDaysCurrentYear,
+      homeofficeDaysCurrentYear
+    );
+
+    const previousYearAverages = calculateAveragesForSpecificYear(
+      sessionsPreviousYear,
+      visitedDaysPreviousYear,
+      homeofficeDaysPreviousYear
+    );
+
+    // --- Existing calculations for current week/month/year totals ---
     const startOfCurrentWeek = startOfWeek(now, { locale: de });
     const endOfCurrentWeek = endOfWeek(now, { locale: de });
     const startOfCurrentMonth = startOfMonth(now);
     const endOfCurrentMonth = endOfMonth(now);
-    const startOfCurrentYear = startOfYear(now);
-    const endOfCurrentYear = endOfYear(now);
 
     const sessionsThisWeek = sessions.filter(session => {
       const sessionDate = new Date(session.date);
@@ -155,11 +213,7 @@ export const useSessionManager = (): UseSessionManagerResult => {
       return session.completed && isWithinInterval(sessionDate, { start: startOfCurrentMonth, end: endOfCurrentMonth });
     }).length;
 
-    const sessionsThisYear = sessions.filter(session => {
-      const sessionDate = new Date(session.date);
-      return session.completed && isWithinInterval(sessionDate, { start: startOfCurrentYear, end: endOfCurrentYear });
-    }).length;
-
+    // Monthly counts for chart (already correct)
     const monthlyCountsCurrentYear: { [key: number]: number } = {};
     const monthlyCountsPreviousYear: { [key: number]: number } = {};
     for (let i = 0; i < 12; i++) {
@@ -188,58 +242,16 @@ export const useSessionManager = (): UseSessionManagerResult => {
       });
     }
 
-    const completedSessions = sessions.filter(s => s.completed);
-    const totalCompletedSessions = completedSessions.length;
-
-    // --- Berechnung der Durchschnittswerte unter Berücksichtigung von visitedDays ---
-    // Alle relevanten Tage (Sitzungstage + besuchte Tage), die keine Homeoffice-Tage sind
-    const allRelevantDates = Array.from(new Set([
-      ...sessions.map(s => s.date),
-      ...visitedDays
-    ])).filter(date => !homeofficeDays.includes(date));
-
-    // Durchschnitt pro Tag
-    const averageSessionsPerDay = allRelevantDates.length > 0 ? totalCompletedSessions / allRelevantDates.length : 0;
-
-    // Durchschnitt pro Woche
-    const allRelevantWeeks = new Set(
-      allRelevantDates.map(d => startOfWeek(new Date(d), { locale: de }).toISOString().split('T')[0])
-    );
-    const averageSessionsPerWeek = allRelevantWeeks.size > 0 ? totalCompletedSessions / allRelevantWeeks.size : 0;
-
-    // Durchschnitt pro Monat
-    const allRelevantMonths = new Set(
-      allRelevantDates.map(d => new Date(d).toISOString().substring(0, 7)) // YYYY-MM
-    );
-    const averageSessionsPerMonth = allRelevantMonths.size > 0 ? totalCompletedSessions / allRelevantMonths.size : 0;
-
-    // Durchschnitt pro Jahr (ohne aktuelles Jahr)
-    const allRelevantDatesExcludingCurrentYear = allRelevantDates.filter(
-      (date) => new Date(date).getFullYear() !== currentYear
-    );
-    const totalCompletedSessionsExcludingCurrentYear = completedSessions.filter(
-      (s) => new Date(s.date).getFullYear() !== currentYear
-    ).length;
-    const allRelevantYearsExcludingCurrent = new Set(
-      allRelevantDatesExcludingCurrentYear.map((date) => new Date(date).getFullYear())
-    );
-    const averageSessionsPerYearExcludingCurrent =
-      allRelevantYearsExcludingCurrent.size > 0
-        ? totalCompletedSessionsExcludingCurrentYear / allRelevantYearsExcludingCurrent.size
-        : 0;
-    // --- Ende der Berechnung der Durchschnittswerte ---
-
-
-    // All-time bests
+    // All-time bests (already correct)
     let bestDaySessions = 0;
     let bestMonthSessions = 0;
     let bestWeekSessions = 0;
-    let bestYearSessions = 0; // Re-added
+    let bestYearSessions = 0;
 
     const dailyCounts: { [key: string]: number } = {};
     const monthlyCounts: { [key: string]: number } = {}; // YYYY-MM
     const weeklyCounts: { [key: string]: number } = {};
-    const yearlyCounts: { [key: number]: number } = {}; // Re-added: YYYY
+    const yearlyCounts: { [key: number]: number } = {};
 
     sessions.forEach(session => {
       if (session.completed) {
@@ -253,7 +265,7 @@ export const useSessionManager = (): UseSessionManagerResult => {
         dailyCounts[dateString] = (dailyCounts[dateString] || 0) + 1;
         monthlyCounts[monthString] = (monthlyCounts[monthString] || 0) + 1;
         weeklyCounts[weekStartString] = (weeklyCounts[weekStartString] || 0) + 1;
-        yearlyCounts[year] = (yearlyCounts[year] || 0) + 1; // Re-added
+        yearlyCounts[year] = (yearlyCounts[year] || 0) + 1;
       }
     });
 
@@ -266,50 +278,56 @@ export const useSessionManager = (): UseSessionManagerResult => {
     if (Object.keys(weeklyCounts).length > 0) {
       bestWeekSessions = Math.max(...Object.values(weeklyCounts));
     }
-    if (Object.keys(yearlyCounts).length > 0) { // Re-added
+    if (Object.keys(yearlyCounts).length > 0) {
       bestYearSessions = Math.max(...Object.values(yearlyCounts));
     }
 
-    return { 
-      sessionsThisWeek, 
-      sessionsThisMonth, 
-      sessionsThisYear, 
+    return {
+      sessionsThisWeek,
+      sessionsThisMonth,
+      sessionsThisYear: sessionsCurrentYear.length, // Total for current year
       combinedMonthlySessions,
-      averageSessionsPerDay,
-      averageSessionsPerMonth,
-      averageSessionsPerWeek,
-      averageSessionsPerYearExcludingCurrent, // Neu hinzugefügt
+      averageSessionsPerDayCurrentYear: currentYearAverages.averageSessionsPerDay,
+      averageSessionsPerWeekCurrentYear: currentYearAverages.averageSessionsPerWeek,
+      averageSessionsPerMonthCurrentYear: currentYearAverages.averageSessionsPerMonth,
+      averageSessionsPerDayPreviousYear: previousYearAverages.averageSessionsPerDay,
+      averageSessionsPerWeekPreviousYear: previousYearAverages.averageSessionsPerWeek,
+      averageSessionsPerMonthPreviousYear: previousYearAverages.averageSessionsPerMonth,
+      totalSessionsPreviousYear: sessionsPreviousYear.length, // Total for previous year
       bestDaySessions,
       bestMonthSessions,
       bestWeekSessions,
-      bestYearSessions, // Re-added
+      bestYearSessions,
     };
-  }, [sessions, visitedDays, homeofficeDays]); // Abhängigkeiten aktualisiert
+  }, [sessions, visitedDays, homeofficeDays]);
 
-  const { 
-    sessionsThisWeek, 
-    sessionsThisMonth, 
-    sessionsThisYear, 
+  const {
+    sessionsThisWeek,
+    sessionsThisMonth,
+    sessionsThisYear,
     combinedMonthlySessions,
-    averageSessionsPerDay,
-    averageSessionsPerMonth,
-    averageSessionsPerWeek,
-    averageSessionsPerYearExcludingCurrent, // Neu hinzugefügt
+    averageSessionsPerDayCurrentYear,
+    averageSessionsPerWeekCurrentYear,
+    averageSessionsPerMonthCurrentYear,
+    averageSessionsPerDayPreviousYear,
+    averageSessionsPerWeekPreviousYear,
+    averageSessionsPerMonthPreviousYear,
+    totalSessionsPreviousYear,
     bestDaySessions,
     bestMonthSessions,
     bestWeekSessions,
-    bestYearSessions, // Re-added
+    bestYearSessions,
   } = calculateAggregatedSessions();
 
   const resetAllData = useCallback(() => {
     removeLocalStorageItem("stehauf_sessions");
     removeLocalStorageItem("stehauf_active_days");
     removeLocalStorageItem("stehauf_homeoffice_days");
-    removeLocalStorageItem("stehauf_visited_days"); // Neu: visitedDays zurücksetzen
+    removeLocalStorageItem("stehauf_visited_days");
     setSessionsState([]);
     setActiveDaysState([]);
     setHomeofficeDaysState([]);
-    setVisitedDaysState([]); // Neu: visitedDays Zustand zurücksetzen
+    setVisitedDaysState([]);
     alert("Alle Daten wurden zurückgesetzt!");
     window.location.reload();
   }, []);
@@ -324,19 +342,22 @@ export const useSessionManager = (): UseSessionManagerResult => {
     sessionsPerMonth: sessionsThisMonth,
     sessionsPerYear: sessionsThisYear,
     combinedMonthlySessions,
-    averageSessionsPerDay,
-    averageSessionsPerMonth,
-    averageSessionsPerWeek,
-    averageSessionsPerYearExcludingCurrent, // Neu hinzugefügt
+    averageSessionsPerDayCurrentYear,
+    averageSessionsPerMonthCurrentYear,
+    averageSessionsPerWeekCurrentYear,
+    averageSessionsPerDayPreviousYear,
+    averageSessionsPerMonthPreviousYear,
+    averageSessionsPerWeekPreviousYear,
+    totalSessionsPreviousYear,
     resetAllData,
     activeDays,
     setActiveDays,
     homeofficeDays,
     markHomeofficeDay,
-    visitedDays, // Neu: visitedDays zurückgeben
+    visitedDays,
     bestDaySessions,
     bestMonthSessions,
     bestWeekSessions,
-    bestYearSessions, // Re-added
+    bestYearSessions,
   };
 };

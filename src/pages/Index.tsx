@@ -22,15 +22,18 @@ const Index = () => {
     sessionsPerMonth,
     sessionsPerYear,
     combinedMonthlySessions,
-    averageSessionsPerDay,
-    averageSessionsPerMonth,
-    averageSessionsPerWeek,
-    averageSessionsPerYearExcludingCurrent,
+    averageSessionsPerDayCurrentYear, // New
+    averageSessionsPerMonthCurrentYear, // New
+    averageSessionsPerWeekCurrentYear, // New
+    averageSessionsPerDayPreviousYear, // New
+    averageSessionsPerMonthPreviousYear, // New
+    averageSessionsPerWeekPreviousYear, // New
+    totalSessionsPreviousYear, // New
     activeDays,
     setActiveDays,
     homeofficeDays,
     markHomeofficeDay,
-    visitedDays, // Neu: Destrukturieren von visitedDays
+    visitedDays,
     bestDaySessions,
     bestMonthSessions,
     bestWeekSessions,
@@ -121,7 +124,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-background text-foreground p-4 sm:p-6">
-      <h1 className="text-4xl sm:text-5xl font-extrabold text-center text-primary mb-8"> {/* Moved here, adjusted mb */}
+      <h1 className="text-4xl sm:text-5xl font-extrabold text-center text-primary mb-8">
         {bonusSessionCompleted ? "Maschine!" : "StehAuf! Büro-Challenge"}
       </h1>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 w-full max-w-5xl mb-8">
@@ -133,10 +136,13 @@ const Index = () => {
             sessionsPerWeek={sessionsPerWeek}
             sessionsPerMonth={sessionsPerMonth}
             sessionsPerYear={sessionsPerYear}
-            averageSessionsPerDay={averageSessionsPerDay}
-            averageSessionsPerMonth={averageSessionsPerMonth}
-            averageSessionsPerWeek={averageSessionsPerWeek}
-            averageSessionsPerYearExcludingCurrent={averageSessionsPerYearExcludingCurrent}
+            averageSessionsPerDayCurrentYear={averageSessionsPerDayCurrentYear}
+            averageSessionsPerMonthCurrentYear={averageSessionsPerMonthCurrentYear}
+            averageSessionsPerWeekCurrentYear={averageSessionsPerWeekCurrentYear}
+            averageSessionsPerDayPreviousYear={averageSessionsPerDayPreviousYear}
+            averageSessionsPerMonthPreviousYear={averageSessionsPerMonthPreviousYear}
+            averageSessionsPerWeekPreviousYear={averageSessionsPerWeekPreviousYear}
+            totalSessionsPreviousYear={totalSessionsPreviousYear}
             homeofficeDays={homeofficeDays}
             bestDaySessions={bestDaySessions}
             bestMonthSessions={bestMonthSessions}
