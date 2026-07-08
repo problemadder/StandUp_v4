@@ -67,6 +67,76 @@
     --accent-foreground: 0 0% 10%;
 
     --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 4<dyad-write path="src/globals.css" description="Fix theme overrides and pulsating animation by disabling transition conflicts and using standard HSL values.">
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 10%; /* Dark background */
+    --foreground: 0 0% 98%; /* Light text */
+
+    --card: 0 0% 15%;
+    --card-foreground: 0 0% 98%;
+
+    --popover: 0 0% 15%;
+    --popover-foreground: 0 0% 98%;
+
+    --primary: 100 100% 50%; /* Neon Green HSL */
+    --primary-foreground: 0 0% 10%; /* Dark text on neon green */
+
+    --secondary: 25 100% 50%; /* Neon Orange HSL */
+    --secondary-foreground: 0 0% 10%; /* Dark text on neon orange */
+
+    --muted: 0 0% 20%;
+    --muted-foreground: 0 0% 70%;
+
+    --accent: 25 100% 50%; /* Neon Orange HSL */
+    --accent-foreground: 0 0% 10%;
+
+    --destructive: 0 84.2% 60.2%; /* Keep red for destructive */
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 0 0% 25%;
+    --input: 0 0% 20%;
+    --ring: 100 100% 50%; /* Neon Green for ring */
+
+    --radius: 0.5rem;
+
+    --sidebar-background: 0 0% 10%;
+    --sidebar-foreground: 0 0% 98%;
+    --sidebar-primary: 100 100% 50%;
+    --sidebar-primary-foreground: 0 0% 10%;
+    --sidebar-accent: 25 100% 50%;
+    --sidebar-accent-foreground: 0 0% 10%;
+    --sidebar-border: 0 0% 25%;
+    --sidebar-ring: 100 100% 50%;
+  }
+
+  .dark {
+    --background: 0 0% 10%;
+    --foreground: 0 0% 98%;
+
+    --card: 0 0% 15%;
+    --card-foreground: 0 0% 98%;
+
+    --popover: 0 0% 15%;
+    --popover-foreground: 0 0% 98%;
+
+    --primary: 100 100% 50%;
+    --primary-foreground: 0 0% 10%;
+
+    --secondary: 25 100% 50%;
+    --secondary-foreground: 0 0% 10%;
+
+    --muted: 0 0% 20%;
+    --muted-foreground: 0 0% 70%;
+
+    --accent: 25 100% 50%;
+    --accent-foreground: 0 0% 10%;
+
+    --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
 
     --border: 0 0% 25%;
@@ -92,21 +162,6 @@
     @apply bg-background text-foreground;
     transition: background-color 0.5s ease, border-color 0.5s ease, color 0.5s ease;
   }
-}
-
-/* Sitting Theme Overrides (0:00 to 30:00) */
-.theme-sitting {
-  --background: 0 0% 12%; /* Dark grey background */
-  --card: 0 0% 16%;
-  --popover: 0 0% 16%;
-  --border: 0 0% 25%;
-  --primary: 0 0% 60%; /* Grey */
-  --primary-foreground: 0 0% 10%;
-  --secondary: 0 0% 50%; /* Grey */
-  --secondary-foreground: 0 0% 10%;
-  --accent: 0 0% 50%; /* Grey */
-  --accent-foreground: 0 0% 10%;
-  --ring: 0 0% 60%;
 }
 
 /* Sitting Red Theme Overrides (30:00 to 45:00) */
@@ -141,16 +196,17 @@
 
 @keyframes pulsate-red {
   0% {
-    background-color: hsl(0 75% 12%);
+    background-color: hsl(0, 75%, 12%);
   }
   50% {
-    background-color: hsl(0 90% 22%);
+    background-color: hsl(0, 90%, 22%);
   }
   100% {
-    background-color: hsl(0 75% 12%);
+    background-color: hsl(0, 75%, 12%);
   }
 }
 
 .theme-sitting-warning {
   animation: pulsate-red 1.5s infinite ease-in-out !important;
+  transition: none !important; /* Disable transition to prevent animation lag/conflict */
 }

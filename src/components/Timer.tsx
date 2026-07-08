@@ -128,7 +128,7 @@ const Timer: React.FC<TimerProps> = ({ onSessionComplete }) => {
     const body = document.body;
     
     // Reset classes first
-    body.classList.remove("theme-sitting", "theme-sitting-red", "theme-sitting-warning", "theme-cooldown");
+    body.classList.remove("theme-sitting-red", "theme-sitting-warning", "theme-cooldown");
 
     if (cooldownRemaining > 0) {
       body.classList.add("theme-cooldown");
@@ -138,13 +138,12 @@ const Timer: React.FC<TimerProps> = ({ onSessionComplete }) => {
         body.classList.add("theme-sitting-warning");
       } else if (elapsedSittingTime >= 1800) { // 30 minutes = 1800 seconds
         body.classList.add("theme-sitting-red");
-      } else {
-        body.classList.add("theme-sitting");
       }
+      // Under 30 minutes, we do not add any class, keeping the original neon green/orange theme!
     }
     
     return () => {
-      body.classList.remove("theme-sitting", "theme-sitting-red", "theme-sitting-warning", "theme-cooldown");
+      body.classList.remove("theme-sitting-red", "theme-sitting-warning", "theme-cooldown");
     };
   }, [cooldownRemaining, isRunning, sittingStartTime, elapsedSittingTime]);
 
