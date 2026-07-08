@@ -123,6 +123,26 @@ const Timer: React.FC<TimerProps> = ({ onSessionComplete }) => {
     };
   }, [sittingStartTime, isRunning, cooldownRemaining]); // Dependencies for sitting time update
 
+  // Effect to dynamically apply theme classes to document body
+  useEffect(() => {
+    const body = document.body;
+    
+    // Reset classes first
+    body.classList.remove("theme-sitting", "theme-sitting-warning", "theme-cooldown");
+
+    if (cooldownRemaining > 0) {
+      body.classList.add("theme-cooldown");
+    } else if (!isRunning && sittingStartTime !== null) {
+      body.classList.add("theme-sitting");
+      if (elapsedSittingTime >= 1800) { // 30 minutes = 1800 seconds
+        body.classList.add("theme-sitting-warning");
+      }
+    }
+    
+    return () => {
+      body.classList.remove("theme-sitting", "theme-sitting-warning", "theme-cooldown");
+    };
+  }, [cooldownRemaining, isRunning, sittingStartTime, elapsedSittingTime]);
 
   const tick = useCallback(() => {
     const now = performance.now();
