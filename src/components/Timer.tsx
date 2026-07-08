@@ -128,19 +128,23 @@ const Timer: React.FC<TimerProps> = ({ onSessionComplete }) => {
     const body = document.body;
     
     // Reset classes first
-    body.classList.remove("theme-sitting", "theme-sitting-warning", "theme-cooldown");
+    body.classList.remove("theme-sitting", "theme-sitting-red", "theme-sitting-warning", "theme-cooldown");
 
     if (cooldownRemaining > 0) {
       body.classList.add("theme-cooldown");
     } else if (!isRunning && sittingStartTime !== null) {
-      body.classList.add("theme-sitting");
-      if (elapsedSittingTime >= 1800) { // 30 minutes = 1800 seconds
+      if (elapsedSittingTime >= 2700) { // 45 minutes = 2700 seconds
+        body.classList.add("theme-sitting-red");
         body.classList.add("theme-sitting-warning");
+      } else if (elapsedSittingTime >= 1800) { // 30 minutes = 1800 seconds
+        body.classList.add("theme-sitting-red");
+      } else {
+        body.classList.add("theme-sitting");
       }
     }
     
     return () => {
-      body.classList.remove("theme-sitting", "theme-sitting-warning", "theme-cooldown");
+      body.classList.remove("theme-sitting", "theme-sitting-red", "theme-sitting-warning", "theme-cooldown");
     };
   }, [cooldownRemaining, isRunning, sittingStartTime, elapsedSittingTime]);
 

@@ -94,12 +94,27 @@
   }
 }
 
-/* Sitting Theme Overrides */
+/* Sitting Theme Overrides (0:00 to 30:00) */
 .theme-sitting {
-  --background: 0 75% 8%;
-  --card: 0 65% 12%;
-  --popover: 0 65% 12%;
-  --border: 0 50% 20%;
+  --background: 0 0% 12%; /* Dark grey background */
+  --card: 0 0% 16%;
+  --popover: 0 0% 16%;
+  --border: 0 0% 25%;
+  --primary: 0 0% 60%; /* Grey */
+  --primary-foreground: 0 0% 10%;
+  --secondary: 0 0% 50%; /* Grey */
+  --secondary-foreground: 0 0% 10%;
+  --accent: 0 0% 50%; /* Grey */
+  --accent-foreground: 0 0% 10%;
+  --ring: 0 0% 60%;
+}
+
+/* Sitting Red Theme Overrides (30:00 to 45:00) */
+.theme-sitting-red {
+  --background: 0 75% 12%; /* Red background */
+  --card: 0 65% 16%;
+  --popover: 0 65% 16%;
+  --border: 0 50% 25%;
   --primary: 0 0% 60%; /* Grey */
   --primary-foreground: 0 0% 10%;
   --secondary: 0 0% 50%; /* Grey */
@@ -126,16 +141,16 @@
 
 @keyframes pulsate-red {
   0% {
-    background-color: hsl(0 75% 8%);
+    background-color: hsl(0 75% 12%);
   }
   50% {
-    background-color: hsl(0 90% 18%);
+    background-color: hsl(0 90% 22%);
   }
   100% {
-    background-color: hsl(0 75% 8%);
+    background-color: hsl(0 75% 12%);
   }
 }
 
 .theme-sitting-warning {
-  animation: pulsate-red 1.5s infinite ease-in-out;
+  animation: pulsate-red 1.5s infinite ease-in-out !important;
 }
