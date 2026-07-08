@@ -90,5 +90,52 @@
 
   body {
     @apply bg-background text-foreground;
+    transition: background-color 0.5s ease, border-color 0.5s ease, color 0.5s ease;
   }
+}
+
+/* Sitting Theme Overrides */
+.theme-sitting {
+  --background: 0 75% 8%;
+  --card: 0 65% 12%;
+  --popover: 0 65% 12%;
+  --border: 0 50% 20%;
+  --primary: 0 0% 60%; /* Grey */
+  --primary-foreground: 0 0% 10%;
+  --secondary: 0 0% 50%; /* Grey */
+  --secondary-foreground: 0 0% 10%;
+  --accent: 0 0% 50%; /* Grey */
+  --accent-foreground: 0 0% 10%;
+  --ring: 0 0% 60%;
+}
+
+/* Cooldown Theme Overrides (Ice Vibes) */
+.theme-cooldown {
+  --background: 205 70% 8%; /* Cool dark blue */
+  --card: 205 60% 13%;
+  --popover: 205 60% 13%;
+  --border: 205 40% 22%;
+  --primary: 190 100% 50%; /* Ice Blue / Cyan */
+  --primary-foreground: 205 100% 10%;
+  --secondary: 210 100% 65%; /* Cool Blue */
+  --secondary-foreground: 205 100% 10%;
+  --accent: 190 100% 50%;
+  --accent-foreground: 205 100% 10%;
+  --ring: 190 100% 50%;
+}
+
+@keyframes pulsate-red {
+  0% {
+    background-color: hsl(0 75% 8%);
+  }
+  50% {
+    background-color: hsl(0 90% 18%);
+  }
+  100% {
+    background-color: hsl(0 75% 8%);
+  }
+}
+
+.theme-sitting-warning {
+  animation: pulsate-red 1.5s infinite ease-in-out;
 }
