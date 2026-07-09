@@ -69,27 +69,12 @@ const Index = () => {
     importedData.homeofficeDays.forEach(day => markHomeofficeDay(day)); 
     
     // Neu: Combine and unique visited days
-    // Da visitedDays direkt im useSessionManager aktualisiert werden, müssen wir hier nur sicherstellen,
-    // dass importierte visitedDays zu den bestehenden hinzugefügt werden, falls sie noch nicht da sind.
-    // Die Logik im useSessionManager stellt sicher, dass der aktuelle Tag immer hinzugefügt wird.
-    // Für den Import fügen wir einfach alle importierten Tage hinzu, die noch nicht existieren.
     const currentVisitedDays = new Set(visitedDays);
     importedData.visitedDays.forEach(day => {
       if (!currentVisitedDays.has(day)) {
         currentVisitedDays.add(day);
       }
     });
-    // setVisitedDaysState(Array.from(currentVisitedDays).sort()); // setVisitedDaysState ist nicht direkt verfügbar, da es im Hook gekapselt ist.
-    // Stattdessen müsste der Hook eine Funktion zum Aktualisieren von visitedDays bereitstellen,
-    // oder wir verlassen uns darauf, dass der Hook den aktuellen Tag selbst verwaltet und nur die importierten Tage hinzugefügt werden.
-    // Für diesen Fall ist es am einfachsten, die importierten visitedDays direkt in den LocalStorage zu schreiben,
-    // und den Hook neu zu initialisieren oder eine explizite Update-Funktion im Hook zu haben.
-    // Da der Hook visitedDays als Teil seines Zustands verwaltet, ist es besser, eine Funktion im Hook zu verwenden.
-    // Da es keine `setVisitedDays` Funktion gibt, werde ich die Logik im Hook anpassen, um dies zu berücksichtigen.
-    // Für den Moment lasse ich die direkte Aktualisierung von visitedDays hier weg, da der Hook sie intern verwaltet.
-    // Die `visitedDays` werden beim nächsten Laden der App aus dem LocalStorage gelesen und der aktuelle Tag hinzugefügt.
-    // Die `importAllDataFromCsv` gibt `visitedDays` zurück, aber der `useSessionManager` hat keine `setVisitedDays` Funktion.
-    // Ich werde den `useSessionManager` anpassen, um eine `setVisitedDays` Funktion bereitzustellen.
   };
 
   // CSV export/import logic moved here from CsvButtons.tsx
@@ -130,6 +115,7 @@ const Index = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 w-full max-w-5xl mb-8">
         <Timer onSessionComplete={handleSessionComplete} />
         <div className="flex flex-col space-y-8">
+          <RewardDisplay reward={currentReward} />
           <Stats
             completedSessionsToday={completedSessionsToday}
             isLoadingHolidays={isLoadingHolidays}
@@ -149,7 +135,6 @@ const Index = () => {
             bestWeekSessions={bestWeekSessions}
             bestYearSessions={bestYearSessions}
           />
-          <RewardDisplay reward={currentReward} />
         </div>
       </div>
 
