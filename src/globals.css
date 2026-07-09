@@ -136,7 +136,7 @@
   }
 }
 
-.theme-sitting-warning {
+body.theme-sitting-warning {
   animation: pulsate-red 1.5s infinite ease-in-out !important;
   transition: none !important; /* Disable transition to prevent animation lag/conflict */
 }

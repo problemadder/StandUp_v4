@@ -26,11 +26,20 @@ const Timer: React.FC<TimerProps> = ({ onSessionComplete }) => {
   });
   const [cooldownRemaining, setCooldownRemaining] = useState(0);
 
-  // New state for sitting time
+  // New state for sitting time - starts fresh on a new day
   const [sittingStartTime, setSittingStartTime] = useState<number | null>(() => {
     const storedSittingTime = getLocalStorageItem<string | null>("stehauf_sitting_start_time", null);
     if (storedSittingTime) {
-      return parseInt(storedSittingTime, 10);
+      const storedDate = new Date(parseInt(storedSittingTime, 10)).toDateString();
+      const todayDate = new Date().toDateString();
+      if (storedDate === todayDate) {
+        return parseInt(storedSittingTime, 10);
+      } else {
+        // It's a new day! Start fresh.
+        const now = Date.now();
+        setLocalStorageItem("stehauf_sitting_start_time", now.toString());
+        return now;
+      }
     }
     return null;
   });
