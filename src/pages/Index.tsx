@@ -108,7 +108,7 @@ const Index = () => {
   const bonusSessionCompleted = completedSessionsToday >= 5;
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-background text-foreground p-4 sm:p-6">
+    <div className="min-h-screen flex flex-col items-center justify-center text-foreground p-4 sm:p-6">
       <h1 className="text-4xl sm:text-5xl font-extrabold text-center text-primary mb-8">
         {bonusSessionCompleted ? "Maschine!" : "StehAuf! Büro-Challenge"}
       </h1>
