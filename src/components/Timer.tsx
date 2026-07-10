@@ -156,6 +156,36 @@ const Timer: React.FC<TimerProps> = ({ onSessionComplete }) => {
     };
   }, [cooldownRemaining, isRunning, sittingStartTime, elapsedSittingTime]);
 
+  // Effect to dynamically update the favicon based on sitting time and cooldown
+  useEffect(() => {
+    let color = "#66ff00"; // Default green
+
+    if (cooldownRemaining > 0) {
+      color = "#00d2ff"; // Blue for cooldown
+    } else if (!isRunning && sittingStartTime !== null) {
+      if (elapsedSittingTime >= 1800) { // 30 minutes = 1800 seconds
+        color = "#ef4444"; // Red
+      } else {
+        color = "#66ff00"; // Green
+      }
+    } else {
+      color = "#66ff00"; // Green when timer is running or default
+    }
+
+    const link: HTMLLinkElement | null = document.querySelector("link[rel*='icon']");
+    const svg = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text x='50%' y='55%' dominant-baseline='central' text-anchor='middle' font-size='75' font-family='system-ui, sans-serif' font-weight='900' fill='${color}'>Up</text></svg>`;
+    const dataUrl = `data:image/svg+xml,${encodeURIComponent(svg)}`;
+
+    if (link) {
+      link.href = dataUrl;
+    } else {
+      const newLink = document.createElement("link");
+      newLink.rel = "icon";
+      newLink.href = dataUrl;
+      document.head.appendChild(newLink);
+    }
+  }, [cooldownRemaining, isRunning, sittingStartTime, elapsedSittingTime]);
+
   const tick = useCallback(() => {
     const now = performance.now();
     const elapsedTime = (now - startTimeRef.current) / 1000;
