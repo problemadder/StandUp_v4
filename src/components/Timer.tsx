@@ -159,11 +159,15 @@ const Timer: React.FC<TimerProps> = ({ onSessionComplete }) => {
   // Effect to dynamically update the favicon based on sitting time and cooldown
   useEffect(() => {
     let color = "#66ff00"; // Default green
+    let hasGreyBackground = false;
 
     if (cooldownRemaining > 0) {
       color = "#00d2ff"; // Blue for cooldown
     } else if (!isRunning && sittingStartTime !== null) {
-      if (elapsedSittingTime >= 1800) { // 30 minutes = 1800 seconds
+      if (elapsedSittingTime >= 2700) { // 45 minutes = 2700 seconds
+        color = "#ef4444"; // Red
+        hasGreyBackground = true;
+      } else if (elapsedSittingTime >= 1800) { // 30 minutes = 1800 seconds
         color = "#ef4444"; // Red
       } else {
         color = "#66ff00"; // Green
@@ -173,7 +177,8 @@ const Timer: React.FC<TimerProps> = ({ onSessionComplete }) => {
     }
 
     const link: HTMLLinkElement | null = document.querySelector("link[rel*='icon']");
-    const svg = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text x='50%' y='55%' dominant-baseline='central' text-anchor='middle' font-size='75' font-family='system-ui, sans-serif' font-weight='900' fill='${color}'>Up</text></svg>`;
+    const circleElement = hasGreyBackground ? `<circle cx='50' cy='50' r='45' fill='#4b5563' />` : '';
+    const svg = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'>${circleElement}<text x='50%' y='55%' dominant-baseline='central' text-anchor='middle' font-size='75' font-family='system-ui, sans-serif' font-weight='900' fill='${color}'>Up</text></svg>`;
     const dataUrl = `data:image/svg+xml,${encodeURIComponent(svg)}`;
 
     if (link) {
