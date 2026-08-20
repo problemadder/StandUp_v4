@@ -3,7 +3,8 @@ import { Reward, QuestionAnswerReward, FlagReward, VocabularyReward } from "@/li
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import RandomFactWidget from "@/components/RandomFactWidget";
-import QuoteOfTheDayWidget from "@/components/QuoteOfTheDayWidget"; // Import the new component
+import QuoteOfTheDayWidget from "@/components/QuoteOfTheDayWidget";
+import DadJokeWidget from "@/components/DadJokeWidget";
 
 interface RewardDisplayProps {
   reward: Reward | null;
@@ -13,7 +14,7 @@ const RewardDisplay: React.FC<RewardDisplayProps> = ({ reward }) => {
   const [showAnswer, setShowAnswer] = useState(false);
 
   useEffect(() => {
-    setShowAnswer(false); // Reset showAnswer when a new reward is displayed
+    setShowAnswer(false);
   }, [reward]);
 
   if (!reward) {
@@ -32,8 +33,8 @@ const RewardDisplay: React.FC<RewardDisplayProps> = ({ reward }) => {
   const renderContent = () => {
     switch (reward.type) {
       case "facts":
-        return <p>{reward.content as string}</p>;
-      case "questionsAnswers":
+        return <p className="text-lg">{reward.content as string}</p>;
+      case "questionsAnswers": {
         const qaReward = reward.content as QuestionAnswerReward;
         return (
           <div>
@@ -47,7 +48,8 @@ const RewardDisplay: React.FC<RewardDisplayProps> = ({ reward }) => {
             )}
           </div>
         );
-      case "flags":
+      }
+      case "flags": {
         const flagReward = reward.content as FlagReward;
         return (
           <div className="flex flex-col items-center">
@@ -58,7 +60,7 @@ const RewardDisplay: React.FC<RewardDisplayProps> = ({ reward }) => {
               width="144"
               height="108"
               alt={`Flagge von ${flagReward.countryName}`}
-              className="mb-4 border border-border shadow-md"
+              className="mb-4 border border-border shadow-md rounded"
             />
             {!showAnswer ? (
               <Button onClick={() => setShowAnswer(true)} className="mt-2 bg-secondary text-secondary-foreground hover:bg-secondary/90">
@@ -69,7 +71,8 @@ const RewardDisplay: React.FC<RewardDisplayProps> = ({ reward }) => {
             )}
           </div>
         );
-      case "vocabulary": // Neuer Fall für Vokabeln
+      }
+      case "vocabulary": {
         const vocabReward = reward.content as VocabularyReward;
         return (
           <div>
@@ -83,10 +86,13 @@ const RewardDisplay: React.FC<RewardDisplayProps> = ({ reward }) => {
             )}
           </div>
         );
+      }
       case "randomFactWidget":
         return <RandomFactWidget />;
-      case "quoteOfTheDayWidget": // New case for the Quote of the Day widget
+      case "quoteOfTheDayWidget":
         return <QuoteOfTheDayWidget />;
+      case "dadJokeWidget":
+        return <DadJokeWidget />;
       default:
         return <p>Unbekannte Belohnung.</p>;
     }
@@ -97,9 +103,10 @@ const RewardDisplay: React.FC<RewardDisplayProps> = ({ reward }) => {
       case "facts": return "Fakten";
       case "questionsAnswers": return "Frage & Antwort";
       case "flags": return "Flaggen-Quiz";
-      case "vocabulary": return "Vokabel-Quiz"; // Titel für Vokabeln
-      case "randomFactWidget": return "Bonus-Fakt!";
-      case "quoteOfTheDayWidget": return "Zitat des Tages!"; // Title for the Quote of the Day widget
+      case "vocabulary": return "Vokabel-Quiz";
+      case "randomFactWidget": return "6. Steher Bonus: Bonus-Fakt!";
+      case "quoteOfTheDayWidget": return "5. Steher Bonus: Zitat des Tages!";
+      case "dadJokeWidget": return "8. Steher Meister-Bonus!";
       default: return "Belohnung";
     }
   };

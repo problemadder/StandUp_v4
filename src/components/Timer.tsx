@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Play, Pause, RotateCcw } from "lucide-react";
-import { setLocalStorageItem, removeLocalStorageItem, getLocalStorageItem } from "@/lib/local-storage"; // Import localStorage utilities
+import { setLocalStorageItem, removeLocalStorageItem, getLocalStorageItem } from "@/lib/local-storage";
 
 interface TimerProps {
   onSessionComplete: () => void;
@@ -26,7 +26,6 @@ const Timer: React.FC<TimerProps> = ({ onSessionComplete }) => {
   });
   const [cooldownRemaining, setCooldownRemaining] = useState(0);
 
-  // New state for sitting time - starts fresh on a new day
   const [sittingStartTime, setSittingStartTime] = useState<number | null>(() => {
     const storedSittingTime = getLocalStorageItem<string | null>("stehauf_sitting_start_time", null);
     if (storedSittingTime) {
@@ -35,7 +34,6 @@ const Timer: React.FC<TimerProps> = ({ onSessionComplete }) => {
       if (storedDate === todayDate) {
         return parseInt(storedSittingTime, 10);
       } else {
-        // It's a new day! Start fresh.
         const now = Date.now();
         setLocalStorageItem("stehauf_sitting_start_time", now.toString());
         return now;
@@ -52,17 +50,9 @@ const Timer: React.FC<TimerProps> = ({ onSessionComplete }) => {
   const originalDocumentTitle = useRef(document.title);
 
   const requestNotificationPermission = async () => {
-    if (!("Notification" in window)) {
-      console.warn("Dieser Browser unterstützt keine Desktop-Benachrichtigungen.");
-      return;
-    }
+    if (!("Notification" in window)) return;
     if (Notification.permission === "default") {
-      const permission = await Notification.requestPermission();
-      if (permission === "granted") {
-        console.log("Benachrichtigungsberechtigung erteilt.");
-      } else {
-        console.warn("Benachrichtigungsberechtigung verweigert.");
-      }
+      await Notification.requestPermission();
     }
   };
 
@@ -84,7 +74,7 @@ const Timer: React.FC<TimerProps> = ({ onSessionComplete }) => {
           if (cooldownInterval) clearInterval(cooldownInterval);
         }
       };
-      updateCooldown(); // Initial update
+      updateCooldown();
       cooldownInterval = setInterval(updateCooldown, 1000);
     } else {
       setCooldownRemaining(0);
@@ -97,23 +87,21 @@ const Timer: React.FC<TimerProps> = ({ onSessionComplete }) => {
     };
   }, [cooldownEndTime]);
 
-  // Effect to manage sittingStartTime based on cooldown and timer state
+  // Manage sittingStartTime
   useEffect(() => {
-    // When cooldown ends and timer is not running, start sitting time
     if (cooldownEndTime === null && !isRunning && sittingStartTime === null) {
       const now = Date.now();
       setSittingStartTime(now);
       setLocalStorageItem("stehauf_sitting_start_time", now.toString());
     }
-    // When timer starts, reset sitting time
     if (isRunning && sittingStartTime !== null) {
       setSittingStartTime(null);
       removeLocalStorageItem("stehauf_sitting_start_time");
-      setElapsedSittingTime(0); // Reset elapsed sitting time
+      setElapsedSittingTime(0);
     }
   }, [cooldownEndTime, isRunning, sittingStartTime]);
 
-  // Effect to update elapsedSittingTime
+  // Update sitting time
   useEffect(() => {
     let sittingInterval: ReturnType<typeof setInterval> | null = null;
 
@@ -121,74 +109,46 @@ const Timer: React.FC<TimerProps> = ({ onSessionComplete }) => {
       const updateSittingTime = () => {
         setElapsedSittingTime(Math.floor((Date.now() - sittingStartTime) / 1000));
       };
-      updateSittingTime(); // Initial update
+      updateSittingTime();
       sittingInterval = setInterval(updateSittingTime, 1000);
     } else {
-      setElapsedSittingTime(0); // Reset if conditions are not met
+      setElapsedSittingTime(0);
     }
 
     return () => {
       if (sittingInterval) clearInterval(sittingInterval);
     };
-  }, [sittingStartTime, isRunning, cooldownRemaining]); // Dependencies for sitting time update
+  }, [sittingStartTime, isRunning, cooldownRemaining]);
 
-  // Effect to dynamically apply theme classes to document body
+  // Apply theme classes efficiently without reflow loop
   useEffect(() => {
     const body = document.body;
-    
-    // Reset classes first
-    body.classList.remove("theme-sitting-red", "theme-sitting-warning", "theme-cooldown");
 
+    let targetTheme = "";
     if (cooldownRemaining > 0) {
-      body.classList.add("theme-cooldown");
+      targetTheme = "theme-cooldown";
     } else if (!isRunning && sittingStartTime !== null) {
-      if (elapsedSittingTime >= 2700) { // 45 minutes = 2700 seconds
-        body.classList.add("theme-sitting-red");
-        body.classList.add("theme-sitting-warning");
-      } else if (elapsedSittingTime >= 1800) { // 30 minutes = 1800 seconds
-        body.classList.add("theme-sitting-red");
+      if (elapsedSittingTime >= 2700) {
+        targetTheme = "theme-sitting-red theme-sitting-warning";
+      } else if (elapsedSittingTime >= 1800) {
+        targetTheme = "theme-sitting-red";
       }
-      // Under 30 minutes, we do not add any class, keeping the original neon green/orange theme!
     }
-    
+
+    const currentClasses = Array.from(body.classList);
+    const themeClasses = ["theme-cooldown", "theme-sitting-red", "theme-sitting-warning"];
+
+    themeClasses.forEach((cls) => {
+      if (targetTheme.includes(cls)) {
+        if (!currentClasses.includes(cls)) body.classList.add(cls);
+      } else {
+        if (currentClasses.includes(cls)) body.classList.remove(cls);
+      }
+    });
+
     return () => {
       body.classList.remove("theme-sitting-red", "theme-sitting-warning", "theme-cooldown");
     };
-  }, [cooldownRemaining, isRunning, sittingStartTime, elapsedSittingTime]);
-
-  // Effect to dynamically update the favicon based on sitting time and cooldown
-  useEffect(() => {
-    let color = "#66ff00"; // Default green
-    let hasGreyBackground = false;
-
-    if (cooldownRemaining > 0) {
-      color = "#00d2ff"; // Blue for cooldown
-    } else if (!isRunning && sittingStartTime !== null) {
-      if (elapsedSittingTime >= 2700) { // 45 minutes = 2700 seconds
-        color = "#ef4444"; // Red
-        hasGreyBackground = true;
-      } else if (elapsedSittingTime >= 1800) { // 30 minutes = 1800 seconds
-        color = "#ef4444"; // Red
-      } else {
-        color = "#66ff00"; // Green
-      }
-    } else {
-      color = "#66ff00"; // Green when timer is running or default
-    }
-
-    const link: HTMLLinkElement | null = document.querySelector("link[rel*='icon']");
-    const circleElement = hasGreyBackground ? `<circle cx='50' cy='50' r='45' fill='#4b5563' />` : '';
-    const svg = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'>${circleElement}<text x='50%' y='55%' dominant-baseline='central' text-anchor='middle' font-size='75' font-family='system-ui, sans-serif' font-weight='900' fill='${color}'>Up</text></svg>`;
-    const dataUrl = `data:image/svg+xml,${encodeURIComponent(svg)}`;
-
-    if (link) {
-      link.href = dataUrl;
-    } else {
-      const newLink = document.createElement("link");
-      newLink.rel = "icon";
-      newLink.href = dataUrl;
-      document.head.appendChild(newLink);
-    }
   }, [cooldownRemaining, isRunning, sittingStartTime, elapsedSittingTime]);
 
   const tick = useCallback(() => {
@@ -204,7 +164,6 @@ const Timer: React.FC<TimerProps> = ({ onSessionComplete }) => {
       }
       onSessionComplete();
 
-      // Start cooldown
       const newCooldownEndTime = Date.now() + COOLDOWN_DURATION_SECONDS * 1000;
       setCooldownEndTime(newCooldownEndTime);
       setLocalStorageItem("stehauf_cooldown_end_time", newCooldownEndTime.toString());
@@ -252,10 +211,7 @@ const Timer: React.FC<TimerProps> = ({ onSessionComplete }) => {
   }, [isRunning, tick]);
 
   const startTimer = () => {
-    if (cooldownRemaining > 0) {
-      // Optionally, provide user feedback that cooldown is active
-      return;
-    }
+    if (cooldownRemaining > 0) return;
     setIsRunning(true);
   };
 
@@ -268,7 +224,6 @@ const Timer: React.FC<TimerProps> = ({ onSessionComplete }) => {
     setTimeRemaining(SESSION_DURATION_SECONDS);
     accumulatedTimeRef.current = 0;
     startTimeRef.current = 0;
-    // Cooldown and sitting time are not reset here, they are independent
   };
 
   const formatTime = (seconds: number) => {

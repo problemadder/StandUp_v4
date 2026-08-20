@@ -39,48 +39,6 @@ const DadJokeWidget: React.FC = () => {
     <div className="flex flex-col items-center justify-center p-6 bg-card text-card-foreground rounded-lg border border-border space-y-4 text-center">
       <div className="flex items-center space-x-2 text-primary font-bold text-lg">
         <Smile className="w-6 h-6" />
-        <span>8. Steher Meister<dyad-write path="src/components/DadJokeWidget.tsx" description="Component to display Dad Joke from icanhazdadjoke API">
-"use client";
-
-import React, { useEffect, useState } from "react";
-import { Loader2, RefreshCw, Smile } from "lucide-react";
-import { Button } from "@/components/ui/button";
-
-const DadJokeWidget: React.FC = () => {
-  const [joke, setJoke] = useState<string>("");
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<boolean>(false);
-
-  const fetchJoke = async () => {
-    setLoading(true);
-    setError(false);
-    try {
-      const response = await fetch("https://icanhazdadjoke.com/", {
-        headers: {
-          Accept: "application/json",
-          "User-Agent": "StehAuf-Challenge (https://dyad.sh)",
-        },
-      });
-      if (!response.ok) {
-        throw new Error("Failed to fetch dad joke");
-      }
-      const data = await response.json();
-      setJoke(data.joke);
-    } catch {
-      setError(true);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchJoke();
-  }, []);
-
-  return (
-    <div className="flex flex-col items-center justify-center p-6 bg-card text-card-foreground rounded-lg border border-border space-y-4 text-center">
-      <div className="flex items-center space-x-2 text-primary font-bold text-lg">
-        <Smile className="w-6 h-6" />
         <span>8. Steher Meister-Bonus: Dad Joke!</span>
       </div>
 
