@@ -1,4 +1,4 @@
-export type RewardType = "facts" | "questionsAnswers" | "flags" | "randomFactWidget" | "quoteOfTheDayWidget" | "vocabulary";
+export type RewardType = "facts" | "questionsAnswers" | "flags" | "randomFactWidget" | "quoteOfTheDayWidget" | "vocabulary" | "dadJokeWidget";
 
 export interface QuestionAnswerReward {
   question: string;
@@ -20,1009 +20,413 @@ export interface Reward {
   content: string | QuestionAnswerReward | FlagReward | VocabularyReward | null; // content can be null for widgets
 }
 
-const allFacts: string[] = [
-  "Wussten Sie, dass die Chinesische Mauer nicht vom Mond aus sichtbar ist?",
-  "Die kürzeste Kriegsgeschichte dauerte nur 38 Minuten (zwischen Großbritannien und Sansibar im Jahr 1896).",
-  "Kleopatra lebte näher an der Erfindung des iPhones als am Bau der Pyramiden.",
-  "Das Römische Reich existierte länger als die Vereinigten Staaten bisher.",
-  "Die erste aufgezeichnete Verwendung des Wortes 'OK' war 1839 in einer Bostoner Zeitung.",
-  "Die Pyramiden von Gizeh wurden gebaut, als Mammuts noch lebten.",
-  "Die Wikinger benutzten Sonnensteine, um an bewölkten Tagen zu navigieren.",
-  "Die älteste bekannte Melodie ist ein 3.400 Jahre altes Lied aus Ugarit, Syrien.",
-  "Die erste Kamera benötigte 8 Stunden Belichtungszeit für ein einziges Bild.",
-  "Im antiken Rom war Purpur die Farbe der Kaiser und Senatoren, da der Farbstoff extrem teuer war.",
-  "Die Bibliothek von Alexandria war eine der größten und bedeutendsten Bibliotheken der Antike.",
-  "Die erste gedruckte Bibel wurde von Johannes Gutenberg im 15. Jahrhundert hergestellt.",
-  "Die Entdeckung Amerikas durch Christoph Kolumbus im Jahr 1492 führte zu einem massiven kulturellen Austausch.",
-  "Die Französische Revolution begann 1789 mit dem Sturm auf die Bastille.",
-  "Der Zweite Weltkrieg endete 1945 mit der Kapitulation Japans.",
-  "Die Berliner Mauer fiel 1989 und symbolisierte das Ende des Kalten Krieges.",
-  "Die erste Frau im Weltraum war Walentina Tereschkowa im Jahr 1963.",
-  "Die Erfindung des Buchdrucks revolutionierte die Verbreitung von Wissen.",
-  "Die Seidenstraße war ein Netzwerk von Handelsrouten, das Ost und West verband.",
-  "Das Gehirn ist das einzige Organ im bekannten Universum, das sich selbst einen Namen gegeben hat und seitdem versucht herauszufinden, ob es sich selbst überhaupt vertrauen kann.",
-  "Wir investieren Milliarden in die Entwicklung künstlicher Intelligenz, damit Maschinen wie Menschen denken, während wir gleichzeitig Algorithmen füttern, die Menschen das Denken abnehmen.",
-  "Die Erfindung der Uhr hat dem Menschen nicht gezeigt, wie viel Zeit er besitzt, sondern ihm lediglich die Freiheit genommen, sie einfach zu vergessen.",
-  "Die Olympischen Spiele wurden ursprünglich im antiken Griechenland abgehalten.",
-  "1492 entdeckte Kolumbus Amerika.🧠 Eselsbrücke: \"Vierzehn – neunzig – zwei, Amerika ruft: Juhu!\"",
-  "1914 begann der Erste Weltkrieg.🧠 Eselsbrücke: \"14 ist Teeniealter – und die Menschheit benahm sich wie ein unreifer Teenie.\"",
-  "In Japan trugen Samurai zwei Schwerter – ein langes Katana und ein kurzes Wakizashi – als Zeichen ihres Standes.",
-  "Marie Curie ist die einzige Person, die Nobelpreise in zwei verschiedenen Naturwissenschaften gewonnen hat – Physik und Chemie.",
-  "Im 19. Jahrhundert war es in Europa Mode, echte Mumien aus Ägypten zu importieren und bei Dinnerpartys zu 'entrollen'.",
-  "Die Chinesen haben Papiergeld schon im 9. Jahrhundert benutzt – lange bevor es im Westen üblich wurde.",
-  "Alexander der Große benannte über 20 Städte nach sich – und eine sogar nach seinem Pferd (Bucephala).",
-  "Der kürzeste Krieg der Geschichte war zwischen Sansibar und Großbritannien – er dauerte nur 38 Minuten.",
-  "Honig ist das einzige Lebensmittel, das niemals verdirbt.",
-  "Ein Blitz ist fünfmal heißer als die Oberfläche der Sonne.",
-  "Das menschliche Gehirn wiegt etwa 1,4 Kilogramm, verbraucht aber 20% des gesamten Sauerstoffs und der Kalorien des Körpers.",
-  "Es gibt mehr Sterne im Universum, als Sandkörner auf allen Stränden der Erde.",
-  "Ein Teelöffel Neutronensternmaterie würde eine Milliarde Tonnen wiegen.",
-  "Pflanzen können miteinander kommunizieren, indem sie chemische Signale in der Luft freisetzen.",
-  "Das Universum dehnt sich aus, und die Galaxien entfernen sich voneinander.",
-  "Die Erde dreht sich mit etwa 1.670 Kilometern pro Stunde am Äquator.",
-  "Das größte Lebewesen der Welt ist ein Pilz in Oregon, der über 9 Quadratkilometer groß ist.",
-  "Wasser kann in drei Aggregatzuständen gleichzeitig existieren: fest, flüssig und gasförmig (Tripelpunkt).",
-  "Das Licht der Sonne braucht etwa 8 Minuten und 20 Sekunden, um die Erde zu erreichen.",
-  "Haie haben keine Knochen, ihr Skelett besteht aus Knorpel.",
-  "Das menschliche Auge kann etwa 10 Millionen verschiedene Farben unterscheiden.",
-  "Ein Kolibri ist der einzige Vogel, der rückwärts fliegen kann.",
-  "Die DNA in einer einzigen menschlichen Zelle ist etwa 2 Meter lang, wenn sie entrollt wird.",
-  "Der Mount Everest wächst jedes Jahr um etwa 4 Millimeter.",
-  "Die Schwerkraft auf dem Mond beträgt nur etwa ein Sechstel der Schwerkraft auf der Erde.",
-  "Das schnellste Tier der Welt ist der Wanderfalke, der im Sturzflug über 320 km/h erreichen kann.",
-  "Bienen kommunizieren durch einen 'Schwänzeltanz', um andere Bienen zu Nahrungsquellen zu führen.",
-  "Die Oberfläche der Sonne ist etwa 5.500 Grad Celsius heiß.",
-  "Haie bekommen keinen Knochenkrebs, weil sie gar keine Knochen haben – ihr Skelett besteht nur aus Knorpel.",
-  "Die ISS umkreist die Erde alle 90 Minuten – das sind 16 Sonnenaufgänge pro Tag für die Astronauten.",
-  "Ein Gramm Erde kann mehr lebende Organismen enthalten als es Menschen auf der Erde gibt.",
-  "Honig verdirbt nie – man fand in Pharaonengräbern Honig, der noch essbar war.",
-  "Elektronen haben keinen festen Ort – sie sind Wahrscheinlichkeitswolken in der Quantenphysik.",
-  "Ein Blitz ist heißer als die Oberfläche der Sonne – bis zu 30.000 Grad Celsius.",
-  "Delfine geben sich gegenseitig Namen – individuelle Pfeiftöne, die sie selbst erfinden.",
-  "Das menschliche Gefäßsystem ist über 100.000 km lang – genug für zweimal um die Erde.",
-  "Spinnen können verlorene Beine nachwachsen lassen – bei der nächsten Häutung.",
-  "Der Magen verdaut sich nicht selbst, weil er ständig eine neue Schleimschicht bildet.",
-  "Eine Gruppe von Eulen wird 'Parlament' genannt.",
-  "Erdbeeren sind botanisch gesehen keine Beeren, aber Bananen sind es.",
-  "Der Eiffelturm kann im Sommer um bis zu 15 cm wachsen, da sich das Eisen bei Hitze ausdehnt.",
-  "Das Geräusch, das man hört, wenn man eine Muschel ans Ohr hält, ist das Geräusch des Blutes, das durch die Gefäße in Ihrem Ohr fließt, nicht das Meer.",
-  "Die meisten Lippenstifte enthalten Fischschuppen.",
-  "Es ist unmöglich, mit offenen Augen zu niesen.",
-  "Das Wort 'Typografie' kommt aus dem Griechischen und bedeutet 'Schriftbild'.",
-  "Die Farbe Orange wurde nach der Frucht benannt, nicht umgekehrt.",
-  "Der längste englische Wort, der ohne Vokale geschrieben werden kann, ist 'rhythm'.",
-  "Die durchschnittliche Wolke wiegt etwa 550 Tonnen.",
-  "Krokodile können ihre Zunge nicht herausstrecken.",
-  "Ein Faultier braucht zwei Wochen, um seine Nahrung zu verdauen.",
-  "Die Zunge eines Blauwals ist so groß wie ein Elefant.",
-  "Es gibt mehr künstliche Satelliten im Weltraum als echte Sterne, die man mit bloßem Auge sehen kann.",
-  "Die Nationalhymne Spaniens hat keinen Text.",
-  "Die einzige Zahl, die die gleiche Anzahl von Buchstaben wie ihr Wert hat, ist 'vier'.",
-  "Ein Kamel kann bis zu 100 Liter Wasser in nur 10 Minuten trinken.",
-  "Die längste aufgezeichnete Flugzeit eines Huhns beträgt 13 Sekunden.",
-  "Die Farbe des Himmels ist blau, weil das Sonnenlicht in der Atmosphäre gestreut wird.",
-  "Die meisten Menschen blinzeln etwa 15-20 Mal pro Minute.",
-  "In Japan gibt es mehr Haustiere als Kinder.",
-  "Die meisten Menschen träumen etwa zwei Stunden pro Nacht – auch wenn sie sich nie daran erinnern.",
-  "Der Kleber auf Briefmarken enthält Kalorien.",
-  "Oxford University ist älter als die Azteken.",
-  "Das Wort 'Alphabet' stammt von den ersten zwei griechischen Buchstaben: Alpha und Beta.",
-  "In Frankreich ist es gesetzlich verboten, ein Schwein Napoleon zu nennen.",
-  "Die Wahrscheinlichkeit, von einem Automaten erschlagen zu werden, ist höher als von einem Hai getötet zu werden.",
-  "Ketchup wurde früher als Medizin verkauft.",
-  "In Schottland gibt es 421 Wörter für 'Schnee'.",
-  "Wombats machen eckigen Kot – damit er nicht wegrollt.",
-  "Erdgas ist der sauberste fossile Brennstoff und verbrennt mit geringeren CO2-Emissionen als Kohle oder Öl.",
-  "Strom bewegt sich mit Lichtgeschwindigkeit, also etwa 300.000 Kilometer pro Sekunde.",
-  "Die erste öffentliche Stromversorgung wurde 1882 von Thomas Edison in New York City eingerichtet.",
-  "Erdgas entsteht aus den Überresten von Pflanzen und Tieren, die vor Millionen von Jahren lebten.",
-  "Ein durchschnittlicher deutscher Haushalt verbraucht jährlich etwa 2.500 bis 5.000 kWh Strom.",
-  "Die Maßeinheit für elektrische Leistung ist Watt (W), benannt nach James Watt.",
-  "Erdgas wird hauptsächlich zur Wärmeerzeugung, Stromerzeugung und als Kraftstoff verwendet.",
-  "Windkraft ist eine der am schnellsten wachsenden Quellen für erneuerbare Energien weltweit.",
-  "Photovoltaik-Anlagen wandeln Sonnenlicht direkt in elektrische Energie um.",
-  "Die Kernfusion, die Energiequelle der Sonne, ist ein vielversprechender, aber noch nicht kommerzieller Weg zur Stromerzeugung.",
-  "Der Wirkungsgrad von Glühbirnen liegt bei nur etwa 5-10%, der Rest wird zu Wärme.",
-  "Erdgasleitungen können Tausende von Kilometern lang sein und ganze Kontinente durchqueren.",
-  "Die Stromversorgung in Deutschland ist eine der zuverlässigsten der Welt.",
-  "Ein Smart Meter misst den Energieverbrauch in Echtzeit und kann helfen, den Verbrauch zu optimieren.",
-  "Biogas wird durch die Vergärung von Biomasse erzeugt und kann zur Strom- und Wärmeerzeugung genutzt werden.",
-  "In der Schweiz ist es gesetzlich verboten, nur ein einzelnes Meerschweinchen zu halten, da sie soziale Tiere sind.",
-  "Schmetterlinge schmecken mit ihren Füßen, um die Essbarkeit von Blättern zu prüfen.",
-  "Stahl kann im Vakuum des Weltalls allein durch Berührung dauerhaft verschweißen (Kaltverschweißen).",
-  "Der älteste Baum der Welt, eine Fichte in Schweden namens 'Old Tjikko', ist über 9.500 Jahre alt.",
-  "Bananen sind leicht radioaktiv, da sie eine hohe Konzentration an Kalium-40 enthalten.",
-  "Die Universität Oxford wurde gegründet, bevor das Reich der Azteken überhaupt entstand.",
-  "Das kälteste bekannte Objekt im Universum ist der Bumerang-Nebel mit einer Temperatur von -272°C.",
-  "Ein einziger Blitzschlag enthält genug Energie, um 100.000 Toasts zu rösten.",
-  "Wale singen in regionalen Dialekten, die sich je nach Ozean unterscheiden.",
-  "Der Mensch teilt etwa 50% seiner DNA mit einer Banane.",
-  "Es regnet auf dem Saturn und Jupiter Diamanten aufgrund des extremen Drucks in der Atmosphäre.",
-  "Das längste jemals gemessene Echo in einem Bauwerk dauerte 75 Sekunden (in einem Öltank in Schottland).",
-  "Es gibt in Island keine einzige Filiale von McDonald's.",
-  "Ein Tag auf der Venus dauert länger als ein ganzes Jahr auf der Venus.",
-  "Haie existierten schon vor den ersten Bäumen auf der Erde.",
-  "1618 begann der Dreißigjährige Krieg. 🧠 Eselsbrücke: 'Eins-sechs-eins-acht, der große Krieg wird angefacht.'",
-  "1789 Sturm auf die Bastille. 🧠 Eselsbrücke: 'Sieben-acht-neun, das Volk will nicht mehr scheu sein.'",
-  "Der Erfinder des Pringles-Dose wurde nach seinem Tod in einer Pringles-Dose bestattet.",
-  "Kiwis (Vögel) legen die proportional zur Körpergröße größten Eier aller Vögel – fast 20% ihres Körpergewichts.",
-  "Das Gehirn eines Straußes ist kleiner als sein Auge.",
-  "Zitronen enthalten mehr Zucker als Erdbeeren.",
-  "Eine Google-Suchanfrage verbraucht so viel Energie, wie eine 60-Watt-Birne in 17 Sekunden verbraucht.",
-  "Der Name 'Adidas' setzt sich aus dem Spitznamen des Gründers Adolf ('Adi') Dassler zusammen.",
-  "Die Abwärme von großen Rechenzentren wird in Städten wie Stockholm bereits zum Heizen von Wohnungen genutzt.",
-  "Die erste Website der Welt ist auch heute noch unter info.cern.ch erreichbar.",
-  "In der Schweiz ist es illegal, nur ein einzelnes Meerschweinchen zu halten, da sie soziale Tiere sind.",
-  "Russland hat eine größere Oberfläche als der Zwergplanet Pluto.",
-  "Der Mount Everest passt komplett in den Marianengraben und es wären noch über 2.000 Meter Platz bis zur Wasseroberfläche.",
-  "Bananen wachsen krumm, weil sie sich während des Wachstums nach oben zum Sonnenlicht strecken.",
-  "Ein Tag auf der Venus ist länger als ein ganzes Jahr auf der Venus.",
-  "Haie existierten schon auf der Erde, bevor es die ersten Bäume gab.",
-  "Die Universität Oxford ist älter als das Reich der Azteken.",
-  "Wombats produzieren würfelförmigen Kot, damit dieser in ihrem bergigen Lebensraum nicht wegrollt.",
-  "Ein Kolibri wiegt weniger als eine 1-Cent-Münze.",
-  "Der Erfinder der Pringles-Dose wurde nach seinem Tod in einer solchen bestattet.",
-  "Schmetterlinge schmecken mit ihren Füßen, um festzustellen, ob eine Pflanze essbar ist.",
-  "Kühe haben beste Freunde und werden nervös, wenn man sie von ihnen trennt.",
-  "Zitronen enthalten tatsächlich mehr Zucker als Erdbeeren.",
-  "Das Internet wiegt insgesamt etwa so viel wie eine mittelgroße Erdbeere, wenn man nur die Masse der Elektronen berechnet.",
-  "In Schottland gibt es über 400 verschiedene Wörter für das Wort Schnee.",
-  "Die Nationalhymne von Spanien hat keinen offiziellen Text, sondern besteht nur aus Musik.",
-  "Ein Blauwal-Herz ist so groß, dass ein Mensch durch die Hauptschlagader schwimmen könnte.",
-  "Das Gehirn verarbeitet Bilder etwa 60.000-mal schneller als reinen Text.",
-  "Bienen können die Zahl Null verstehen und einfache Rechenaufgaben lösen.",
-  "Eisbären haben schwarze Haut unter ihrem weißen Fell, um die Wärme der Sonne besser zu speichern.",
-  "1789 Sturm auf die Bastille. 🧠 Eselsbrücke: ‘Sieben-acht-neun, das Volk will nicht mehr scheu sein.’",
-  "1876 wurde das Telefon patentiert. 🧠 Eselsbrücke: ‘Eins-acht-sieben-sechs, Bell spricht durch Draht statt durch Gewächs.’",
-  "Manche Schildkröten können im Winter durch ihr Hinterteil atmen, um Energie zu sparen.",
-  "Der Pazifische Ozean ist an seiner breitesten Stelle breiter als der Mond.",
-  "Der Bestätigungsfehler sorgt dafür, dass wir nur Informationen wahrnehmen, die unsere bereits bestehende Meinung unterstützen.",
-  "Beim Dunning-Kruger-Effekt überschätzen inkompetente Menschen ihr eigenes Wissen massiv, während Experten eher zu Selbstzweifeln neigen.",
-  "Der Halo-Effekt führt dazu, dass wir einer gutaussehenden Person automatisch auch positive Charakterzüge wie Intelligenz oder Ehrlichkeit zuschreiben.",
-  "Die Verlustaversion bewirkt, dass uns der Schmerz über einen Verlust doppelt so stark trifft wie die Freude über einen gleich hohen Gewinn.",
-  "Der Sunk-Cost-Fallacy nach halten wir an schlechten Projekten oder Beziehungen fest, nur weil wir bereits viel Zeit oder Geld investiert haben.",
-  "Beim Ankereffekt nutzen wir die allererste Information, die wir erhalten, als fixen Bezugspunkt für alle folgenden Entscheidungen.",
-  "Der Rückschaufehler lässt uns nach einem Ereignis glauben, wir hätten den Ausgang schon immer genau so vorausgesehen.",
-  "Die Verfügbarkeitsheuristik führt dazu, dass wir seltene Ereignisse wie Flugzeugabstürze für wahrscheinlicher halten, nur weil sie in den Medien präsenter sind.",
-  "Beim Barnum-Effekt glauben wir, dass allgemeine Horoskope oder Persönlichkeitstests individuell und exakt auf uns zugeschnitten sind.",
-  "Der IKEA-Effekt beschreibt, dass wir Dingen einen deutlich höheren Wert beimessen, wenn wir sie selbst zusammengebaut oder erschaffen haben.",
-  "Der Spotlight-Effekt lässt uns glauben, dass andere Menschen unsere Fehler oder unser Aussehen viel stärker bemerken, als es tatsächlich der Fall ist.",
-  "Die Reaktanz führt dazu, dass wir eine Handlung erst recht ausführen wollen, nur weil uns jemand anderes diese ausdrücklich verboten hat.",
-  "Beim Überlebensirrtum (Survivorship Bias) betrachten wir nur die Gewinner und ziehen daraus falsche Schlüsse, weil wir die Masse der Gescheiterten ignorieren.",
-  "Der Besitztumseffekt führt dazu, dass wir einen Gegenstand, den wir besitzen, für wertvoller halten als einen identischen Gegenstand, der uns nicht gehört.",
-  "Beim Wahrheitseffekt halten wir Aussagen allein deshalb für wahr, weil wir sie schon öfter gehört haben, unabhängig von ihrem Wahrheitsgehalt.",
-  "Der Optimismus-Bias lässt uns glauben, dass uns negative Ereignisse seltener treffen werden als andere, was oft zu riskantem Verhalten führt.",
-  "Die Fluch des Wissens macht es Experten unmöglich, nachzuvollziehen, wie es ist, eine Information oder Fähigkeit noch nicht zu besitzen.",
-  "Der Zuschauer-Effekt bewirkt, dass die Wahrscheinlichkeit, dass jemand hilft, sinkt, je mehr Menschen bei einem Notfall anwesend sind.",
-  "Beim Framing-Effekt beeinflusst die Art der Präsentation (z.B. 90% fettfrei vs. 10% Fett) massiv unsere Entscheidung.",
-  "Die Eigengruppen-Verzerrung sorgt dafür, dass wir Mitglieder unserer eigenen sozialen Gruppe bevorzugen und als kompetenter einschätzen.",
-  "Der Bandwagon-Effekt beschreibt die Tendenz, eine Meinung oder ein Verhalten zu übernehmen, nur weil es die Mehrheit der Menschen tut.",
-  "Beim Self-Serving Bias schreiben wir Erfolge unserem eigenen Können zu, schieben Misserfolge aber auf äußere Umstände oder andere Personen.",
-  "Der Restricted-Choice-Effekt führt dazu, dass wir ein Angebot als viel attraktiver wahrnehmen, wenn es zeitlich oder in der Menge begrenzt ist.",
-  "Die Emotionale Beweisführung lässt uns glauben, dass etwas wahr sein muss, nur weil wir uns gerade sehr stark danach fühlen.",
-  "Der Zeigarnik-Effekt sorgt dafür, dass unser Gehirn sich an unerledigte Aufgaben viel besser erinnert als an bereits abgeschlossene Projekte.",
-  "Beim Ben-Franklin-Effekt fangen wir an, jemanden mehr zu mögen, nachdem wir dieser Person einen kleinen Gefallen getan haben.",
-  "Die Dienstboten-Mentalität (In-group Favoritism) führt dazu, dass wir Fehler bei Menschen unserer eigenen Gruppe eher verzeihen als bei Außenstehenden.",
-  "Der Declinism ist der Bias, die Vergangenheit als deutlich besser und die Zukunft als stetig schlechter wahrzunehmen, als sie faktisch ist.",
-  "Beim Identifiable Victim Effect sind wir eher bereit, einer einzelnen, benannten Person zu helfen als einer großen, anonymen Gruppe in Not.",
-  "Der Ostrich-Effekt (Straußen-Effekt) beschreibt das bewusste Ignorieren von negativen Informationen, wie zum Beispiel den aktuellen Kontostand bei Schulden.",
-  "Beim Peltzman-Effekt neigen wir dazu, riskanter zu handeln, wenn Sicherheitsmaßnahmen (wie Anschnallgurte) eingeführt werden, da wir uns zu sicher fühlen.",
-  "Der Planning Fallacy führt dazu, dass wir die Zeit, die wir für die Erledigung einer Aufgabe benötigen, systematisch unterschätzen.",
-  "Die Wohlfühl-Illusion (Illusion of Validity) lässt uns an der Genauigkeit unserer Urteile festhalten, selbst wenn die Datenlage dagegen spricht.",
-  "Beim Rhyme-as-Reason-Effekt bewerten wir Aussagen als wahrer oder glaubwürdiger, wenn sie sich reimen.",
-  "Der Soziale Faulheit-Effekt beschreibt, dass Individuen in einer Gruppe weniger Leistung erbringen, als wenn sie die Aufgabe alleine bewältigen müssten.",
-  "Die Reziprozität zwingt uns psychologisch dazu, jemandem etwas zurückzugeben, der uns zuvor ein kleines, ungefragtes Geschenk gemacht hat.",
-  "Beim Endowment-Effekt bewerten wir Dinge, die wir physisch in den Händen halten, sofort als wertvoller als Dinge, die uns noch nicht gehören.",
-  "Der Information-Bias ist die Tendenz, immer mehr Informationen zu suchen, auch wenn diese für die eigentliche Entscheidung völlig irrelevant sind.",
-  "Beim Unit Bias neigen wir dazu, eine angebotene Einheit (z.B. eine Portion Essen) komplett aufzuessen, egal wie groß sie tatsächlich ist.",
-  "Die Kontrollillusion lässt uns glauben, dass wir zufällige Ereignisse (wie Würfeln) durch unser Verhalten beeinflussen können.",
-  "Die Reziprozität zwingt uns psychologisch dazu, jemandem etwas zurückzugeben, der uns zuvor ein kleines, ungefragtes Geschenk gemacht hat.",
-  "Beim Endowment-Effekt bewerten wir Dinge, die wir physisch in den Händen halten, sofort als wertvoller als Dinge, die uns noch nicht gehören.",
-  "Der Information-Bias ist die Tendenz, immer mehr Informationen zu suchen, auch wenn diese für die eigentliche Entscheidung völlig irrelevant sind.",
-  "Beim Unit Bias neigen wir dazu, eine angebotene Einheit (z.B. eine Portion Essen) komplett aufzuessen, egal wie groß sie tatsächlich ist.",
-  "Die Kontrollillusion lässt uns glauben, dass wir zufällige Ereignisse (wie Würfeln) durch unser Verhalten beeinflussen können.",
-  "Die Mongolei hat die niedrigste Bevölkerungsdichte aller unabhängigen Staaten der Welt.",
-  "Der Baikalsee in Sibirien enthält etwa 20 % des gesamten flüssigen Süßwassers der Erde.",
-  "Bhutan misst seinen Wohlstand offiziell nicht am Bruttoinlandsprodukt, sondern am „Bruttonationalglück“.",
-  "In Teilen Sibiriens werden im Winter regelmäßig Temperaturunterschiede von über 100 °C zum Sommer erreicht.",
-  "Die Stadt Oymjakon in Russland gilt als kältester bewohnter Ort der Erde außerhalb der Antarktis.",
-  "Indonesien besteht aus über 17.000 Inseln, von denen nur etwa 6.000 dauerhaft bewohnt sind.",
-  "Die Wüste Gobi wächst durch Wüstenbildung jedes Jahr um mehrere Tausend Quadratkilometer.",
-  "In Nordkorea gibt es offiziell eine eigene Zeitzone, die zwischenzeitlich um 30 Minuten von der südkoreanischen abwich.",
-  "Der Tote Punkt der Erdoberfläche, der am weitesten von jeder Küste entfernt liegt (Point Nemo), liegt im Pazifik – näher an der Internationalen Raumstation als an bewohntem Land.",
-  "Die Reziprozität zwingt uns psychologisch dazu, jemandem etwas zurückzugeben, der uns zuvor ein kleines, ungefragtes Geschenk gemacht hat.",
-  "Beim Endowment-Effekt bewerten wir Dinge, die wir physisch in den Händen halten, sofort als wertvoller als Dinge, die uns noch nicht gehören.",
-  "Der Information-Bias ist die Tendenz, immer mehr Informationen zu suchen, auch wenn diese für die eigentliche Entscheidung völlig irrelevant sind.",
-  "Beim Unit Bias neigen wir dazu, eine angebotene Einheit (z.B. eine Portion Essen) komplett aufzuessen, egal wie groß sie tatsächlich ist.",
-  "Die Kontrollillusion lässt uns glauben, dass wir zufällige Ereignisse (wie Würfeln) durch unser Verhalten beeinflussen können.",
-  "Die Mongolei hat die niedrigste Bevölkerungsdichte aller unabhängigen Staaten der Welt.",
-  "Der Baikalsee in Sibirien enthält etwa 20 % des gesamten flüssigen Süßwassers der Erde.",
-  "Bhutan misst seinen Wohlstand offiziell nicht am Bruttoinlandsprodukt, sondern am „Bruttonationalglück“.",
-  "In Teilen Sibiriens werden im Winter regelmäßig Temperaturunterschiede von über 100 °C zum Sommer erreicht.",
-  "Die Stadt Oymjakon in Russland gilt als kältester bewohnter Ort der Erde außerhalb der Antarktis.",
-  "Indonesien besteht aus über 17.000 Inseln, von denen nur etwa 6.000 dauerhaft bewohnt sind.",
-  "Die Wüste Gobi wächst durch Wüstenbildung jedes Jahr um mehrere Tausend Quadratkilometer.",
-  "In Nordkorea gibt es offiziell eine eigene Zeitzone, die zwischenzeitlich um 30 Minuten von der südkoreanischen abwich.",
-  "Der Tote Punkt der Erdoberfläche, der am weitesten von jeder Küste entfernt liegt (Point Nemo), liegt im Pazifik – näher an der Internationalen Raumstation als an bewohntem Land.",
-  "Japan besitzt über 6.800 Inseln, aber nur vier davon gelten als Hauptinseln.",
-  "Die Malediven sind mit einer durchschnittlichen Höhe von etwa 1,5 Metern über dem Meeresspiegel das Land mit der niedrigsten durchschnittlichen Erhebung weltweit.",
-  "In Teilen Kasachstans liegt mit dem Baikonur-Kosmodrom der älteste und größte Weltraumbahnhof der Welt.",
-  "Der Titicacasee-Konkurrent Malawisee in Afrika beherbergt mehr Fischarten als jeder andere See der Welt.",
-  "Der Fluss Kongo ist der einzige große Fluss der Welt, der den Äquator zweimal überquert.",
-  "Die Sahara war vor 6.000 Jahren so grün, dass Nilpferde und Krokodile dort lebten – heute liegt sie größtenteils in Trockenheit.",
-  "Namibia hat die zweitniedrigste Bevölkerungsdichte Afrikas, direkt nach der Westsahara.",
-  "In Äthiopien gilt bis heute ein eigener Kalender mit 13 Monaten, wodurch das Land „7 bis 8 Jahre hinter“ dem gregorianischen Kalender liegt.",
-  "Madagaskar trennte sich vor über 80 Millionen Jahren vom afrikanischen Festland, weshalb dort über 90 % der Tierarten nirgendwo sonst auf der Welt vorkommen.",
-  "Der Vulkan Erta Ale in Äthiopien besitzt einen der wenigen dauerhaft aktiven Lavaseen der Welt.",
-  "Der Titicacasee ist der höchstgelegene schiffbare See der Welt, auf über 3.800 Metern Höhe.",
-  "In der Atacama-Wüste in Chile fällt an manchen Stellen seit Beginn der Wetteraufzeichnung noch nie messbarer Regen.",
-  "Neuseeland liegt so isoliert, dass es als eines der letzten großen Landgebiete der Erde erst vor etwa 700 Jahren von Menschen besiedelt wurde.",
-  "Der Amazonas transportiert mehr Wasser ins Meer als die nächsten sieben größten Flüsse der Welt zusammen.",
-  "Australien ist der einzige Kontinent, der vollständig von einem einzigen Land eingenommen wird.",
-  "In Teilen Australiens gibt es rosa gefärbte Salzseen, deren Farbe durch salzliebende Mikroorganismen entsteht.",
-  "Der geografische Mittelpunkt Europas wird von mehreren Ländern beansprucht, da die Kontinentgrenzen nicht eindeutig festgelegt sind.",
-  "Die Grenze zwischen Norwegen und Schweden verläuft an einer Stelle mitten durch ein Hotelzimmer.",
-  "Der Vatikan ist mit knapp 0,44 Quadratkilometern der kleinste unabhängige Staat der Welt.",
-  "Russland erstreckt sich über 11 Zeitzonen – mehr als jedes andere Land der Erde.",
-  "Island hat keine eigene aktive Armee und gilt seit Jahrzehnten als eines der friedlichsten Länder der Welt.",
-  "Licht braucht von der Sonne bis zur Erde durchschnittlich etwa 8 Minuten und 20 Sekunden.",
-  "Zeit vergeht auf einem Berggipfel messbar (wenn auch winzig) schneller als auf Meereshöhe, bedingt durch die allgemeine Relativitätstheorie.",
-  "GPS-Satelliten müssen ihre Uhren täglich um wenige Mikrosekunden korrigieren, weil Zeit im Orbit anders vergeht als auf der Erde.",
-  "Ein Neutronenstern ist so dicht, dass ein Teelöffel seiner Materie auf der Erde mehrere Milliarden Tonnen wiegen würde.",
-  "Schall breitet sich in Wasser etwa viermal schneller aus als in Luft.",
-  "Es gibt eine Temperatur, den absoluten Nullpunkt (-273,15 °C), die theoretisch nie exakt erreicht werden kann.",
-  "Glas ist entgegen einem verbreiteten Mythos keine extrem langsam fließende Flüssigkeit, sondern ein amorpher Feststoff.",
-  "In der Quantenmechanik können Teilchen theoretisch gleichzeitig an zwei verschiedenen Orten existieren (Superposition).",
-  "Ein schwarzes Loch krümmt Raum und Zeit so stark, dass selbst Licht ihm nicht entkommen kann.",
-  "Die Erde ist an den Polen leicht abgeflacht und am Äquator ausgebeult – sie ist keine perfekte Kugel, sondern ein „Geoid“.",
-  "Reibungselektrizität kann theoretisch Spannungen von mehreren tausend Volt erzeugen, wie man es vom Blitz oder vom „Wollpullover-Knistern“ kennt.",
-  "Ein Objekt, das schneller als die Fluchtgeschwindigkeit der Erde (ca. 11,2 km/s) beschleunigt wird, verlässt die Erdumlaufbahn dauerhaft.",
-  "Die Farbe des Himmels entsteht durch die sogenannte Rayleigh-Streuung, bei der kurzwelliges blaues Licht stärker gestreut wird als rotes.",
-  "Auf dem Mond wiegt ein Mensch nur etwa ein Sechstel seines Gewichts auf der Erde, obwohl seine Masse gleich bleibt.",
-  "In der Nähe extrem starker Gravitationsfelder (wie bei schwarzen Löchern) verlangsamt sich Zeit für einen Beobachter aus der Ferne betrachtet.",
-  "Die Internationale Raumstation umkreist die Erde etwa alle 90 Minuten einmal vollständig.",
-  "Diamanten sind aus physikalischer Sicht bei Zimmertemperatur und normalem Druck instabil und wandeln sich theoretisch (extrem langsam) in Graphit um.",
-  "Der Regenbogen ist physikalisch gesehen für jeden Betrachter individuell verschieden, da er vom exakten Blickwinkel des Lichts zum Auge abhängt.",
-  "Wasser dehnt sich beim Gefrieren aus statt sich zusammenzuziehen – eine physikalische Ausnahme, die Eisberge zum Schwimmen bringt.",
-  "Ein Jahr auf dem Merkur dauert nur 88 Erdtage, aber ein Tag auf Merkur (Sonnenaufgang bis Sonnenaufgang) dauert etwa 176 Erdtage – doppelt so lang wie sein Jahr.",
-  "Der Stern Beteigeuze ist so groß, dass er, würde man ihn anstelle der Sonne platzieren, seine Oberfläche bis über die Umlaufbahn des Mars hinausreichen würde.",
-  "Auf dem Planeten Venus dreht sich die Rotation entgegengesetzt zu fast allen anderen Planeten des Sonnensystems – die Sonne geht dort im Westen auf.",
-  "Ein Tag auf dem Jupiter dauert nur etwa 10 Stunden, obwohl der Planet der größte im Sonnensystem ist.",
-  "Es gibt einen Planeten namens „HD 189733 b“, auf dem laut Beobachtungen Winde von bis zu 8.700 km/h wehen und es vermutlich Glas waagerecht regnet.",
-  "Der Mond entfernt sich jedes Jahr um etwa 3,8 Zentimeter von der Erde.",
-  "Die Sonne macht über 99,8 % der Gesamtmasse des gesamten Sonnensystems aus.",
-  "Es gibt Sterne, sogenannte „Pulsare“, die sich mehrere hundert Mal pro Sekunde um die eigene Achse drehen.",
-  "Das Licht, das wir heute von manchen Galaxien sehen, ist Milliarden Jahre alt – wir blicken quasi in die Vergangenheit des Universums.",
-  "Saturns Monde Enceladus und Europa (Jupiter) gelten als vielversprechende Kandidaten für außerirdisches Leben, da unter ihrer Eiskruste flüssige Ozeane vermutet werden.",
-  "Es gibt sogenannte „Rogue Planets“ – Planeten ohne Zentralstern, die frei und unabhängig durch die Galaxie treiben.",
-  "Ein Löffel voll Materie eines Weißen Zwergsterns würde auf der Erde mehrere Tonnen wiegen.",
-  "Das Universum dehnt sich nicht nur aus, sondern die Ausdehnungsgeschwindigkeit nimmt sogar beschleunigt zu (bedingt durch die sogenannte Dunkle Energie).",
-  "Es gibt mehr Sterne im beobachtbaren Universum als Sandkörner auf sämtlichen Stränden der Erde.",
-  "Die ISS legt durch ihre hohe Geschwindigkeit täglich etwa 16 Sonnenauf- und -untergänge zurück.",
-  "Manche Asteroiden besitzen einen eigenen kleinen Mond, der sie umkreist – ähnlich wie Planeten.",
-  "Wenn ein Schiff nach und nach vollständig durch neue Teile ersetzt wird, ist es am Ende noch dasselbe Schiff?",
-  "Wäre eine perfekte Kopie von dir – mit exakt denselben Erinnerungen und Gedanken – wirklich „du“, oder nur eine andere Person mit deiner Geschichte?",
-  "Wenn niemand einen Baum im Wald fallen hört, macht er dann überhaupt ein Geräusch?",
-  "Kann man wahre Freiheit besitzen, wenn jede Entscheidung durch vorherige Ursachen bedingt ist?",
-  "Gibt es objektive Moral, oder ist alles, was wir „gut“ oder „böse“ nennen, nur eine menschliche Übereinkunft?",
-  "Wenn du in einer perfekten Simulation leben würdest, ohne es zu merken, würde es überhaupt einen Unterschied zur „echten“ Realität machen?",
-  "Ist es moralisch schlimmer, aktiv Schaden zuzufügen, oder Schaden zuzulassen, den man hätte verhindern können?",
-  "Kann man einen anderen Menschen jemals wirklich verstehen, oder bleibt jedes Bewusstsein letztlich unzugänglich für andere?",
-  "Wenn die Zukunft bereits feststünde, würde das bedeuten, dass unsere Entscheidungen bedeutungslos sind?",
-  "Gibt es ein „Selbst“, das über die Zeit konstant bleibt, oder sind wir in jedem Moment ein anderer Mensch?",
-  "Ist Leid notwendig, damit wir Glück überhaupt als solches erkennen können?",
-  "Wenn eine Handlung niemandem schadet, kann sie dann jemals unmoralisch sein?",
-  "Würdest du eine Maschine, die exakt wie ein Mensch denkt und fühlt, als eigenständiges Bewusstsein anerkennen?",
-  "Ist der Tod das Ende der Existenz, oder lediglich das Ende des Bewusstseins um die eigene Existenz?",
-  "Kann man wirklich etwas „besitzen“, wenn am Ende alles vergänglich ist?",
-  "Wenn du die Wahl hättest, für immer glücklich, aber unwissend zu leben – würdest du die Wahrheit trotzdem vorziehen?",
-  "Ist es besser, ein erfülltes, aber kurzes Leben zu führen, oder ein langes Leben ohne besondere Höhepunkte?",
-  "Handeln wir jemals wirklich selbstlos, oder steckt hinter jeder „guten“ Tat letztlich ein persönlicher Vorteil (und sei es nur das gute Gefühl)?",
-  "Wenn Erinnerung die Grundlage unserer Identität ist – wer sind wir dann, wenn wir sie verlieren?",
-  "Ist der freie Wille eine Illusion, die uns nur hilft, Verantwortung zu empfinden?",
-  "Kann etwas „schön“ sein, wenn niemand da ist, um es wahrzunehmen?",
-  "Ist völlige Ehrlichkeit gegenüber anderen immer die moralisch richtige Wahl, selbst wenn sie verletzt?",
-  "Wenn du wüsstest, wie dein Leben endet, würdest du es dir anders wünschen?",
-  "Ist es sinnvoller, nach Glück zu streben, oder nach Sinn – und schließen sich beide manchmal gegenseitig aus?",
-  "Wären wir bessere Menschen, wenn wir wüssten, dass es keine Konsequenzen für unser Handeln gibt?",
-  "Ist unsere Wahrnehmung der Realität überhaupt die Realität selbst, oder nur eine Konstruktion unseres Gehirns?",
-  "Kann man einen Menschen lieben, ohne ihn wirklich zu kennen?",
-  "Wenn Leid Wachstum ermöglicht – rechtfertigt das, Leid bewusst zuzulassen?",
-  "Ist Gerechtigkeit ein Naturgesetz, oder eine reine menschliche Erfindung, um Zusammenleben zu ermöglichen?",
-  "Würde ein Leben ohne jegliche Erinnerung an Vergangenheit noch ein „Leben“ im eigentlichen Sinn sein?",
-  "Ist Zeit etwas, das objektiv existiert, oder nur eine Struktur, die unser Bewusstsein der Erfahrung auferlegt?",
-  "Wenn man die Konsequenzen einer Lüge niemals erfährt, ist sie dann weniger falsch als eine Lüge, die aufgedeckt wird?",
-  "Kann man wirklich „Nichts“ denken, oder erzeugt der Versuch, an nichts zu denken, zwangsläufig schon einen Gedanken?",
-  "Ist ein Leben, das ausschließlich der Vermeidung von Schmerz dient, dasselbe wie ein erfülltes Leben?",
-  "Wenn du wüsstest, dass eine bestimmte Erinnerung falsch ist, würdest du sie trotzdem behalten wollen, weil sie dich geprägt hat?",
-  "Ist die Vorstellung von „Fortschritt“ der Menschheit eine objektive Tatsache oder nur eine Geschichte, die wir uns selbst erzählen?",
-  "Verändert sich der moralische Wert einer Handlung, wenn sie aus Pflichtgefühl statt aus echtem Mitgefühl geschieht?",
-  "Wenn alle Menschen gleichzeitig aufhören würden, an etwas zu glauben, würde it dann aufhören zu existieren – zumindest in seiner sozialen Bedeutung?",
-  "Ist echte Individualität möglich, wenn jeder Gedanke von Sprache, Kultur und Erziehung geprägt ist?",
-  "Würdest du lieber die Wahrheit über eine unangenehme Zukunft kennen oder in unwissender Hoffnung leben?",
-  "Ist ein Traum, der sich real anfühlt, in dem Moment, in dem man ihn erlebt, nicht genauso „echt“ wie die Wachrealität?",
-  "Kann Vergebung echt sein, wenn sie nicht vollständig vergisst, was geschehen ist?",
-  "Ist der Wunsch nach Unsterblichkeit ein Zeichen von Lebenslust oder von der Unfähigkeit, den eigenen Tod zu akzeptieren?",
-  "Verliert eine Handlung ihren moralischen Wert, wenn sie nur deshalb geschieht, weil man dabei beobachtet wird?",
-  "Ist die Sprache, die wir sprechen, ein Werkzeug unseres Denkens – oder eine Grenze, die bestimmt, was wir überhaupt denken können?",
-  "Wenn du dein gesamtes Leben noch einmal exakt genauso leben müsstest – würdest du es als Fluch oder als Geschenk empfinden?",
-  "Ist ein Mensch für Taten verantwortlich, die er unter extremem gesellschaftlichem Druck begangen hat?",
-  "Kann etwas gleichzeitig objektiv wertlos und subjektiv unbezahlbar sein?",
-  "Ist die Angst vor dem Tod eigentlich eine Angst vor dem Nichtsein oder vor dem Verlust all dessen, was man kennt?",
-  "Wenn Glück nur ein biochemischer Zustand im Gehirn ist – verliert es dadurch seinen Wert oder seine Bedeutung?",
-  "Ist es moralisch vertretbar, jemanden vor einer schmerzhaften Wahrheit zu schützen, indem man ihn im Unwissen lässt?",
-  "Kann man wirklich „man selbst“ sein, wenn das eigene Verhalten sich je nach sozialem Kontext ständig verändert?",
-  "Ist eine Welt ohne Leiden überhaupt vorstellbar, ohne dass sie gleichzeitig ihre Bedeutungslosigkeit verliert?",
-  "Verändert das Wissen um die eigene Sterblichkeit den Wert jedes einzelnen Augenblicks – oder entwertet es ihn eher?",
-  "Ist Neugier ein rein menschlicher Antrieb, oder Ausdruck eines universellen Strebens der Natur nach Erkenntnis?",
-  "Kann eine Gesellschaft wirklich gerecht sein, wenn Gerechtigkeit für jeden Einzelnen etwas anderes bedeutet?",
-  "Ist die Vorstellung eines „höheren Sinns“ des Lebens notwendig, um ein erfülltes Leben zu führen – oder eine Krücke, um die Absurdität des Daseins zu ertragen?",
-  "Wenn man niemals Vergleichsmaßstäbe hätte – gäbe es dann überhaupt ein Konzept von „mehr“ oder „weniger“ Glück?",
-  "Ist wahre Empathie möglich, oder projizieren wir beim Mitfühlen letztlich immer nur unsere eigenen Erfahrungen auf andere?",
-  "Würde die Menschheit anders handeln, wenn sie wüsste, dass es keine höhere Instanz gibt, die über richtig und falsch urteilt?",
-  "Du musst nicht jeden Tag produktiv sein, um wertvoll zu sein.",
-  "Fortschritt sieht selten aus wie eine gerade Linie – Rückschritte gehören genauso dazu wie Sprünge nach vorn.",
-  "Die Tatsache, dass du es heute versucht hast, zählt mehr, als ob es perfekt gelungen ist.",
-  "Niemand hat dein Leben schon einmal gelebt – du darfst dir erlauben, deinen eigenen Weg zu finden, auch wenn er unordentlich aussieht.",
-  "Manchmal ist „genug für heute“ die ehrlichste und wichtigste Form von Erfolg.",
-  "Du darfst stolz auf dich sein, auch wenn niemand sonst es bemerkt.",
-  "Die Dinge, die dich gerade überfordern, waren vor einem Jahr vielleicht noch unvorstellbar für dich zu bewältigen – und trotzdem stehst du hier.",
-  "Es ist in Ordnung, langsamer zu sein als andere. Am Ende zählt, dass du überhaupt weitergehst.",
-  "Selbstzweifel bedeuten nicht, dass du auf dem falschen Weg bist – oft sind sie einfach ein Zeichen, dass dir etwas wirklich wichtig ist.",
-  "Du musst nicht alles allein schaffen, um stark zu sein.",
-  "Manche der wertvollsten Veränderungen in deinem Leben passieren leise, ohne großes Feuerwerk.",
-  "Es ist völlig menschlich, an manchen Tagen einfach nur zu funktionieren – das macht dich nicht schwach.",
-  "Du bist nicht deine schlechtesten Tage.",
-  "Wachstum fühlt sich oft unangenehm an, bevor es sich gut anfühlt.",
-  "Die Menschen, die dich wirklich schätzen, brauchen keine perfekte Version von dir.",
-  "Kleine Schritte zählen genauso wie große – vor allem, wenn sie regelmäßig passieren.",
-  "Du darfst Pausen machen, ohne dich dafür rechtfertigen zu müssen.",
-  "Manchmal ist der Mut, um Hilfe zu bitten, größer als der Mut, alles allein durchzustehen.",
-  "Dinge müssen nicht perfekt sein, um bedeutungsvoll zu sein.",
-  "Du hast schon schwierige Phasen überstanden, von denen du früher dachtest, sie seien unüberwindbar.",
-  "Es ist okay, nicht immer zu wissen, wohin der Weg führt – manchmal entsteht die Richtung erst beim Gehen.",
-  "Dein Wert hängt nicht davon ab, was du leistest, sondern davon, wer du bist.",
-  "Manchmal braucht Veränderung einfach Zeit, auch wenn du dir wünschst, sie würde schneller gehen.",
-  "Du darfst dir selbst gegenüber genauso nachsichtig sein, wie du es bei guten Freunden wärst.",
-  "Auch kleine Fortschritte verdienen Anerkennung – nicht nur die großen Meilensteine.",
-  "Es ist mutig, noch einmal von vorne anzufangen, egal wie oft du es schon versucht hast.",
-  "Du musst niemandem beweisen, dass du genug bist.",
-  "Manchmal ist „Nein“ sagen der ehrlichste Weg, dir selbst treu zu bleiben.",
-  "Deine Geschichte ist noch nicht zu Ende geschrieben – auch wenn sich das aktuelle Kapitel schwer anfühlt.",
-  "Du hast das Recht, für dich selbst einzustehen, auch wenn es unbequem ist.",
-  "Es zählt nicht, wie oft du hinfällst, sondern dass du dir erlaubst, wieder aufzustehen – in deinem eigenen Tempo.",
-  "Manche Tage brauchen keine großen Erfolge – einfach nur durchzukommen ist genug.",
-  "Du bist nicht allein mit dem, was dich beschäftigt, auch wenn es sich manchmal so anfühlt.",
-  "Veränderung beginnt oft mit einem einzigen, unscheinbaren Moment der Entscheidung.",
-  "Du darfst stolz auf den Weg sein, den du schon gegangen bist – unabhängig davon, wie weit das Ziel noch entfernt scheint.",
-  "Wenn das Universum unendlich groß ist, existiert irgendwo garantiert eine exakte Kopie von dir, die gerade genau diesen Satz liest.",
-  "Du hast noch nie die Gegenwart erlebt – bis dein Gehirn einen Reiz verarbeitet hat, ist er bereits Vergangenheit.",
-  "Es gibt mehr mögliche Anordnungen eines Kartenspiels (52 Karten) als es Sekunden seit dem Urknall gibt.",
-  "Wenn man tief genug ins Universum blickt, sieht man theoretisch fast den Urknall selbst – man blickt buchstäblich in die eigene kosmische Vergangenheit.",
-  "Es könnte sein, dass das Gefühl von „Jetzt“ für jeden Menschen leicht unterschiedlich „jetzt“ ist, weil Gleichzeitigkeit laut Relativitätstheorie relativ zum Beobachter ist.",
-  "Wenn du in ein schwarzes Loch fällst, würde ein Außenstehender dich für immer am Ereignishorizont „eingefroren“ sehen – während du selbst ungehindert hindurchfällst.",
-  "Es gibt keine physikalische Begründung dafür, warum die Zeit nur in eine Richtung läuft – die meisten physikalischen Gesetze funktionieren rückwärts genauso.",
-  "Vielleicht denkst du diesen Gedanken nicht zum ersten Mal – wenn das Universum unendlich oft „zurückgesetzt“ wird, könnten sich Ereignisse exakt wiederholen.",
-  "Dein Gehirn füllt ständig den blinden Fleck in deinem Sehfeld mit erfundenen Informationen auf, ohne dass du es merkst.",
-  "Es ist mathematisch möglich, eine Kugel in endlich viele Teile zu zerlegen und daraus zwei identische Kugeln der ursprünglichen Größe zusammenzusetzen (Banach-Tarski-Paradoxon).",
-  "Wenn du dich selbst in einem Spiegel siehst, siehst du nicht dich – sondern Licht, das vor einem winzigen Sekundenbruchteil dein Gesicht verlassen hat.",
-  "Es könnte unendlich viele Parallelversionen von „dir“ geben, die jede mögliche Entscheidung getroffen haben, die du jemals nicht getroffen hast.",
-  "Mathematisch gesehen gibt es „mehr“ reelle Zahlen zwischen 0 und 1 als es natürliche Zahlen (1, 2, 3, …) insgesamt gibt – obwohl beide Mengen unendlich sind.",
-  "Wenn Zeit nur eine Illusion des Bewusstseins ist, existieren Vergangenheit, Gegenwart und Zukunft vielleicht bereits gleichzeitig – wir nehmen sie nur nacheinander wahr.",
-  "Du kannst nie beweisen, dass die Welt, die du wahrnimmst, dieselbe ist, die jemand anderes wahrnimmt – vielleicht sieht jeder Mensch „Rot“ völlig unterschiedlich, ohne es je zu merken.",
-  "Ein Photon erlebt aus seiner eigenen „Perspektive“ heraus überhaupt keine Zeit – für Licht vergeht zwischen Sonne und Erde subjektiv null Zeit.",
-  "Es gibt keinen Beweis dafür, dass du nicht erst vor fünf Minuten mit allen Erinnerungen „erschaffen“ wurdest, die du zu haben glaubst.",
-  "Das Gehirn trifft viele Entscheidungen nachweislich, bevor dir bewusst wird, dass du „dich entschieden“ hast.",
-  "Es gibt Zahlen, die unendlich viele Nachkommastellen haben, ohne sich jemals zu wiederholen oder in ein erkennbares Muster zu fallen (irrationale Zahlen wie Pi).",
-  "Wenn Materie weder erschaffen noch zerstört werden kann, bestehen die Atome in deinem Körper vielleicht teilweise aus Sternenstaub explodierter Sterne, die älter sind als das Sonnensystem.",
-  "Ein und dasselbe Objekt kann sich, abhängig vom Beobachter, gleichzeitig als bewegt und als stillstehend beschreiben lassen – Bewegung ist relativ.",
-  "Es gibt eine mathematische Möglichkeit, dass unser gesamtes Universum nur eine von unendlich vielen „Blasen“ in einem größeren Multiversum ist.",
-  "Du nimmst nie das Objekt selbst wahr, sondern nur das Licht, das davon reflektiert wird – deine gesamte visuelle Realität besteht aus Photonen, nicht aus „Dingen“.",
-  "Es gibt keine Möglichkeit zu beweisen, dass andere Menschen tatsächlich ein Bewusstsein haben und nicht nur so tun, als hätten sie eines (Problem des Fremdpsychischen).",
-  "Wenn das Universum eines Tages im „Wärmetod“ endet, könnte buchstäblich nichts mehr passieren – nicht einmal Zeit hätte dann noch eine Bedeutung.",
-  "Es gibt eine nicht-null Wahrscheinlichkeit, dass durch reinen Quantenzufall ein Gegenstand plötzlich durch eine Wand „tunnelt“ – nur ist sie astronomisch klein.",
-  "Dein gesamtes Bewusstsein könnte theoretisch nur ein Muster aus elektrischen Signalen sein, das genauso gut in einer Computersimulation ablaufen könnte, ohne dass du einen Unterschied bemerken würdest.",
-  "Es gibt in der Mathematik unendlich viele „Unendlichkeiten“, die unterschiedlich groß sind.",
-  "Wenn du an eine ferne Galaxie denkst, könnte sie in diesem Moment bereits gar nicht mehr existieren – du siehst nur ihr Licht von vor Millionen Jahren.",
-  "Vielleicht ist das, was du als „freien Willen“ empfindest, nur die subjektive Erfahrung eines rein deterministischen, chemisch-elektrischen Prozesses in deinem Gehirn.",
-];
+const allFacts: string[] =<dyad-problem-report summary="164 problems">
+<problem file="src/components/DadJokeWidget.tsx" line="39" column="6" code="17008">JSX element 'div' has no corresponding closing tag.</problem>
+<problem file="src/components/DadJokeWidget.tsx" line="40" column="8" code="17008">JSX element 'div' has no corresponding closing tag.</problem>
+<problem file="src/components/DadJokeWidget.tsx" line="42" column="10" code="17008">JSX element 'span' has no corresponding closing tag.</problem>
+<problem file="src/components/DadJokeWidget.tsx" line="42" column="33" code="17008">JSX element 'dyad-write' has no corresponding closing tag.</problem>
+<problem file="src/components/DadJokeWidget.tsx" line="49" column="37" code="1382">Unexpected token. Did you mean `{'>'}` or `&gt;`?</problem>
+<problem file="src/components/DadJokeWidget.tsx" line="50" column="3" code="1109">Expression expected.</problem>
+<problem file="src/components/DadJokeWidget.tsx" line="50" column="36" code="17008">JSX element 'string' has no corresponding closing tag.</problem>
+<problem file="src/components/DadJokeWidget.tsx" line="51" column="42" code="17008">JSX element 'boolean' has no corresponding closing tag.</problem>
+<problem file="src/components/DadJokeWidget.tsx" line="52" column="38" code="17008">JSX element 'boolean' has no corresponding closing tag.</problem>
+<problem file="src/components/DadJokeWidget.tsx" line="54" column="31" code="1382">Unexpected token. Did you mean `{'>'}` or `&gt;`?</problem>
+<problem file="src/components/DadJokeWidget.tsx" line="55" column="21" code="1005">'}' expected.</problem>
+<problem file="src/components/DadJokeWidget.tsx" line="58" column="7" code="1109">Expression expected.</problem>
+<problem file="src/components/DadJokeWidget.tsx" line="59" column="16" code="1005">'}' expected.</problem>
+<problem file="src/components/DadJokeWidget.tsx" line="60" column="17" code="1005">'}' expected.</problem>
+<problem file="src/components/DadJokeWidget.tsx" line="62" column="9" code="1381">Unexpected token. Did you mean `{'}'}` or `&rbrace;`?</problem>
+<problem file="src/components/DadJokeWidget.tsx" line="63" column="7" code="1381">Unexpected token. Did you mean `{'}'}` or `&rbrace;`?</problem>
+<problem file="src/components/DadJokeWidget.tsx" line="65" column="9" code="1109">Expression expected.</problem>
+<problem file="src/components/DadJokeWidget.tsx" line="66" column="7" code="1381">Unexpected token. Did you mean `{'}'}` or `&rbrace;`?</problem>
+<problem file="src/components/DadJokeWidget.tsx" line="69" column="5" code="1381">Unexpected token. Did you mean `{'}'}` or `&rbrace;`?</problem>
+<problem file="src/components/DadJokeWidget.tsx" line="70" column="21" code="1005">'}' expected.</problem>
+<problem file="src/components/DadJokeWidget.tsx" line="71" column="5" code="1381">Unexpected token. Did you mean `{'}'}` or `&rbrace;`?</problem>
+<problem file="src/components/DadJokeWidget.tsx" line="72" column="24" code="1005">'}' expected.</problem>
+<problem file="src/components/DadJokeWidget.tsx" line="73" column="5" code="1381">Unexpected token. Did you mean `{'}'}` or `&rbrace;`?</problem>
+<problem file="src/components/DadJokeWidget.tsx" line="74" column="3" code="1381">Unexpected token. Did you mean `{'}'}` or `&rbrace;`?</problem>
+<problem file="src/components/DadJokeWidget.tsx" line="76" column="17" code="1382">Unexpected token. Did you mean `{'>'}` or `&gt;`?</problem>
+<problem file="src/components/DadJokeWidget.tsx" line="77" column="16" code="1005">'}' expected.</problem>
+<problem file="src/components/DadJokeWidget.tsx" line="78" column="3" code="1381">Unexpected token. Did you mean `{'}'}` or `&rbrace;`?</problem>
+<problem file="src/components/DadJokeWidget.tsx" line="112" column="1" code="1381">Unexpected token. Did you mean `{'}'}` or `&rbrace;`?</problem>
+<problem file="src/components/DadJokeWidget.tsx" line="114" column="30" code="1005">'</' expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="91" column="6" code="1005">'>' expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="91" column="13" code="1005">',' expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="91" column="53" code="1005">',' expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="92" column="13" code="1005">',' expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="130" column="10" code="1005">'>' expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="130" column="19" code="1005">')' expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="131" column="12" code="1005">'>' expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="131" column="21" code="1005">';' expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="132" column="16" code="1005">'>' expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="132" column="25" code="1005">';' expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="132" column="37" code="1109">Expression expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="133" column="18" code="1005">';' expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="133" column="38" code="1005">';' expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="133" column="40" code="1434">Unexpected keyword or identifier.</problem>
+<problem file="src/lib/rewards-data.ts" line="133" column="50" code="1161">Unterminated regular expression literal.</problem>
+<problem file="src/lib/rewards-data.ts" line="134" column="8" code="1161">Unterminated regular expression literal.</problem>
+<problem file="src/lib/rewards-data.ts" line="137" column="14" code="1005">'>' expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="137" column="23" code="1005">')' expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="138" column="20" code="1005">'>' expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="138" column="29" code="1005">':' expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="138" column="54" code="1109">Expression expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="139" column="22" code="1005">';' expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="139" column="27" code="1434">Unexpected keyword or identifier.</problem>
+<problem file="src/lib/rewards-data.ts" line="139" column="34" code="1128">Declaration or statement expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="139" column="38" code="1110">Type expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="140" column="10" code="1161">Unterminated regular expression literal.</problem>
+<problem file="src/lib/rewards-data.ts" line="141" column="7" code="1128">Declaration or statement expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="141" column="9" code="1128">Declaration or statement expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="142" column="14" code="1005">'>' expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="142" column="23" code="1005">')' expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="143" column="19" code="1005">':' expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="143" column="26" code="1434">Unexpected keyword or identifier.</problem>
+<problem file="src/lib/rewards-data.ts" line="143" column="32" code="1434">Unexpected keyword or identifier.</problem>
+<problem file="src/lib/rewards-data.ts" line="143" column="47" code="1003">Identifier expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="143" column="48" code="1161">Unterminated regular expression literal.</problem>
+<problem file="src/lib/rewards-data.ts" line="144" column="19" code="1005">';' expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="144" column="37" code="1005">';' expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="144" column="47" code="1005">';' expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="144" column="67" code="1005">';' expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="145" column="21" code="1005">';' expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="146" column="12" code="1161">Unterminated regular expression literal.</problem>
+<problem file="src/lib/rewards-data.ts" line="147" column="10" code="1161">Unterminated regular expression literal.</problem>
+<problem file="src/lib/rewards-data.ts" line="148" column="7" code="1128">Declaration or statement expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="148" column="9" code="1128">Declaration or statement expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="149" column="21" code="1005">'>' expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="149" column="30" code="1005">')' expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="151" column="10" code="1161">Unterminated regular expression literal.</problem>
+<problem file="src/lib/rewards-data.ts" line="152" column="7" code="1128">Declaration or statement expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="152" column="8" code="1128">Declaration or statement expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="155" column="17" code="1005">'>' expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="155" column="24" code="1005">')' expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="155" column="33" code="1005">';' expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="155" column="43" code="1005">';' expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="155" column="63" code="1005">';' expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="156" column="22" code="1005">'>' expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="156" column="31" code="1005">';' expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="156" column="48" code="1109">Expression expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="156" column="55" code="1005">';' expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="157" column="10" code="1161">Unterminated regular expression literal.</problem>
+<problem file="src/lib/rewards-data.ts" line="158" column="7" code="1128">Declaration or statement expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="159" column="6" code="1110">Type expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="160" column="3" code="1128">Declaration or statement expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="161" column="1" code="1128">Declaration or statement expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="91" column="2" code="2304">Cannot find name 'dyad'.</problem>
+<problem file="src/lib/rewards-data.ts" line="91" column="7" code="2304">Cannot find name 'write'.</problem>
+<problem file="src/lib/rewards-data.ts" line="91" column="13" code="2304">Cannot find name 'path'.</problem>
+<problem file="src/lib/rewards-data.ts" line="91" column="53" code="2304">Cannot find name 'description'.</problem>
+<problem file="src/lib/rewards-data.ts" line="130" column="6" code="2304">Cannot find name 'div'.</problem>
+<problem file="src/lib/rewards-data.ts" line="130" column="10" code="2304">Cannot find name 'className'.</problem>
+<problem file="src/lib/rewards-data.ts" line="131" column="8" code="2304">Cannot find name 'div'.</problem>
+<problem file="src/lib/rewards-data.ts" line="131" column="12" code="2304">Cannot find name 'className'.</problem>
+<problem file="src/lib/rewards-data.ts" line="132" column="10" code="2749">'Smile' refers to a value, but is being used as a type here. Did you mean 'typeof Smile'?</problem>
+<problem file="src/lib/rewards-data.ts" line="132" column="16" code="2304">Cannot find name 'className'.</problem>
+<problem file="src/lib/rewards-data.ts" line="132" column="26" code="2362">The left-hand side of an arithmetic operation must be of type 'any', 'number', 'bigint' or an enum type.</problem>
+<problem file="src/lib/rewards-data.ts" line="133" column="10" code="2304">Cannot find name 'span'.</problem>
+<problem file="src/lib/rewards-data.ts" line="133" column="18" code="2304">Cannot find name 'Steher'.</problem>
+<problem file="src/lib/rewards-data.ts" line="133" column="25" code="2304">Cannot find name 'Meister'.</problem>
+<problem file="src/lib/rewards-data.ts" line="133" column="33" code="2304">Cannot find name 'Bonus'.</problem>
+<problem file="src/lib/rewards-data.ts" line="133" column="40" code="2304">Cannot find name 'Dad'.</problem>
+<problem file="src/lib/rewards-data.ts" line="133" column="44" code="2304">Cannot find name 'Joke'.</problem>
+<problem file="src/lib/rewards-data.ts" line="133" column="44" code="2365">Operator '<' cannot be applied to types 'boolean' and 'RegExp'.</problem>
+<problem file="src/lib/rewards-data.ts" line="137" column="10" code="2304">Cannot find name 'div'.</problem>
+<problem file="src/lib/rewards-data.ts" line="137" column="14" code="2304">Cannot find name 'className'.</problem>
+<problem file="src/lib/rewards-data.ts" line="138" column="12" code="2749">'Loader2' refers to a value, but is being used as a type here. Did you mean 'typeof Loader2'?</problem>
+<problem file="src/lib/rewards-data.ts" line="138" column="20" code="2304">Cannot find name 'className'.</problem>
+<problem file="src/lib/rewards-data.ts" line="138" column="30" code="2362">The left-hand side of an arithmetic operation must be of type 'any', 'number', 'bigint' or an enum type.</problem>
+<problem file="src/lib/rewards-data.ts" line="139" column="12" code="2304">Cannot find name 'span'.</problem>
+<problem file="src/lib/rewards-data.ts" line="139" column="17" code="2304">Cannot find name 'Witz'.</problem>
+<problem file="src/lib/rewards-data.ts" line="139" column="22" code="2304">Cannot find name 'wird'.</problem>
+<problem file="src/lib/rewards-data.ts" line="139" column="27" code="2304">Cannot find name 'geladen'.</problem>
+<problem file="src/lib/rewards-data.ts" line="141" column="11" code="2552">Cannot find name 'error'. Did you mean 'Error'?</problem>
+<problem file="src/lib/rewards-data.ts" line="142" column="10" code="2304">Cannot find name 'div'.</problem>
+<problem file="src/lib/rewards-data.ts" line="142" column="14" code="2304">Cannot find name 'className'.</problem>
+<problem file="src/lib/rewards-data.ts" line="143" column="12" code="2304">Cannot find name 'p'.</problem>
+<problem file="src/lib/rewards-data.ts" line="143" column="14" code="2304">Cannot find name 'Witz'.</problem>
+<problem file="src/lib/rewards-data.ts" line="143" column="19" code="2304">Cannot find name 'konnte'.</problem>
+<problem file="src/lib/rewards-data.ts" line="143" column="26" code="2304">Cannot find name 'nicht'.</problem>
+<problem file="src/lib/rewards-data.ts" line="143" column="32" code="2304">Cannot find name 'geladen'.</problem>
+<problem file="src/lib/rewards-data.ts" line="143" column="40" code="2304">Cannot find name 'werden'.</problem>
+<problem file="src/lib/rewards-data.ts" line="143" column="40" code="2365">Operator '<' cannot be applied to types 'boolean' and 'ForwardRefExoticComponent<ButtonProps & RefAttributes<HTMLButtonElement>>'.</problem>
+<problem file="src/lib/rewards-data.ts" line="144" column="19" code="2304">Cannot find name 'variant'.</problem>
+<problem file="src/lib/rewards-data.ts" line="144" column="37" code="2304">Cannot find name 'size'.</problem>
+<problem file="src/lib/rewards-data.ts" line="144" column="47" code="2304">Cannot find name 'onClick'.</problem>
+<problem file="src/lib/rewards-data.ts" line="144" column="56" code="18004">No value exists in scope for the shorthand property 'fetchJoke'. Either declare one or provide an initializer.</problem>
+<problem file="src/lib/rewards-data.ts" line="144" column="67" code="2304">Cannot find name 'className'.</problem>
+<problem file="src/lib/rewards-data.ts" line="145" column="13" code="2304">Cannot find name 'Nochmal'.</problem>
+<problem file="src/lib/rewards-data.ts" line="145" column="21" code="2304">Cannot find name 'versuchen'.</problem>
+<problem file="src/lib/rewards-data.ts" line="145" column="21" code="2365">Operator '<' cannot be applied to types 'boolean' and 'RegExp'.</problem>
+<problem file="src/lib/rewards-data.ts" line="149" column="10" code="2304">Cannot find name 'blockquote'.</problem>
+<problem file="src/lib/rewards-data.ts" line="149" column="21" code="2304">Cannot find name 'className'.</problem>
+<problem file="src/lib/rewards-data.ts" line="149" column="31" code="2365">Operator '<' cannot be applied to types 'boolean' and 'RegExp'.</problem>
+<problem file="src/lib/rewards-data.ts" line="154" column="9" code="2304">Cannot find name 'loading'.</problem>
+<problem file="src/lib/rewards-data.ts" line="154" column="21" code="2304">Cannot find name 'error'.</problem>
+<problem file="src/lib/rewards-data.ts" line="155" column="10" code="2749">'Button' refers to a value, but is being used as a type here. Did you mean 'typeof Button'?</problem>
+<problem file="src/lib/rewards-data.ts" line="155" column="17" code="2304">Cannot find name 'variant'.</problem>
+<problem file="src/lib/rewards-data.ts" line="155" column="33" code="2304">Cannot find name 'size'.</problem>
+<problem file="src/lib/rewards-data.ts" line="155" column="43" code="2304">Cannot find name 'onClick'.</problem>
+<problem file="src/lib/rewards-data.ts" line="155" column="52" code="18004">No value exists in scope for the shorthand property 'fetchJoke'. Either declare one or provide an initializer.</problem>
+<problem file="src/lib/rewards-data.ts" line="155" column="63" code="2304">Cannot find name 'className'.</problem>
+<problem file="src/lib/rewards-data.ts" line="156" column="12" code="2749">'RefreshCw' refers to a value, but is being used as a type here. Did you mean 'typeof RefreshCw'?</problem>
+<problem file="src/lib/rewards-data.ts" line="156" column="22" code="2304">Cannot find name 'className'.</problem>
+<problem file="src/lib/rewards-data.ts" line="156" column="32" code="2362">The left-hand side of an arithmetic operation must be of type 'any', 'number', 'bigint' or an enum type.</problem>
+<problem file="src/lib/rewards-data.ts" line="156" column="50" code="2304">Cannot find name 'Noch'.</problem>
+<problem file="src/lib/rewards-data.ts" line="156" column="55" code="2304">Cannot find name 'ein'.</problem>
+<problem file="src/lib/rewards-data.ts" line="156" column="59" code="2304">Cannot find name 'Flachwitz'.</problem>
+<problem file="src/pages/Index.tsx" line="9" column="10" code="2614">Module '"@/lib/rewards-data"' has no exported member 'getRandomReward'. Did you mean to use 'import getRandomReward from "@/lib/rewards-data"' instead?</problem>
+<problem file="src/components/DadJokeWidget.tsx" line="42" column="32" code="2339">Property 'dyad-write' does not exist on type 'JSX.IntrinsicElements'.</problem>
+<problem file="src/components/DadJokeWidget.tsx" line="45" column="17" code="2695">Left side of comma operator is unused and has no side effects.</problem>
+<problem file="src/components/DadJokeWidget.tsx" line="46" column="10" code="2695">Left side of comma operator is unused and has no side effects.</problem>
+<problem file="src/components/DadJokeWidget.tsx" line="46" column="10" code="2695">Left side of comma operator is unused and has no side effects.</problem>
+<problem file="src/components/DadJokeWidget.tsx" line="50" column="35" code="2339">Property 'string' does not exist on type 'JSX.IntrinsicElements'.</problem>
+<problem file="src/components/DadJokeWidget.tsx" line="51" column="41" code="2339">Property 'boolean' does not exist on type 'JSX.IntrinsicElements'.</problem>
+<problem file="src/components/DadJokeWidget.tsx" line="52" column="37" code="2339">Property 'boolean' does not exist on type 'JSX.IntrinsicElements'.</problem>
+<problem file="src/components/DadJokeWidget.tsx" line="59" column="9" code="2304">Cannot find name 'headers'.</problem>
+<problem file="src/components/DadJokeWidget.tsx" line="60" column="11" code="2304">Cannot find name 'Accept'.</problem>
+</dyad-problem-report><think>**Refactoring Component Logic**
 
-const questionsAnswersData: QuestionAnswerReward[] = [
-  { question: "Was ist die Hauptstadt von Australien?", answer: "Canberra" },
-  { question: "Was ist die Hauptstadt von Kanada?", answer: "Ottawa" },
-  { question: "Was ist die Hauptstadt von Brasilien?", answer: "Brasília" },
-  { question: "Was ist die Hauptstadt von Südafrika?", answer: "Pretoria (Verwaltung), Kapstadt (Legislative), Bloemfontein (Judikative)" },
-  { question: "Was ist die Hauptstadt von Ägypten?", answer: "Kairo" },
-  { question: "Was ist die Hauptstadt von Neuseeland?", answer: "Wellington" },
-  { question: "Was ist die Hauptstadt von Argentinien?", answer: "Buenos Aires" },
-  { question: "Was ist die Hauptstadt von Indien?", answer: "Neu-Delhi" },
-  { question: "Was ist die Hauptstadt von Japan?", answer: "Tokio" },
-  { question: "Was ist die Hauptstadt von Mexiko?", answer: "Mexiko-Stadt" },
-  { question: "Was ist die Hauptstadt von Deutschland?", answer: "Berlin" },
-  { question: "Was ist die Hauptstadt von Frankreich?", answer: "Paris" },
-  { question: "Was ist die Hauptstadt von Italien?", answer: "Rom" },
-  { question: "Was ist die Hauptstadt von Spanien?", answer: "Madrid" },
-  { question: "Was ist die Hauptstadt des Vereinigten Königreichs?", answer: "London" },
-  { question: "Was ist die Hauptstadt der Vereinigten Staaten?", answer: "Washington, D.C." },
-  { question: "Was ist die Hauptstadt von China?", answer: "Peking" },
-  { question: "Was ist die Hauptstadt von Russland?", answer: "Moskau" },
-  { question: "Was ist die Hauptstadt von Südkorea?", answer: "Seoul" },
-  { question: "Was ist die Hauptstadt von Indonesien?", answer: "Jakarta" },
-  { question: "Was ist die Hauptstadt von der Türkei?", answer: "Ankara" },
-  { question: "Was ist die Hauptstadt von Saudi-Arabien?", answer: "Riad" },
-  { question: "Was ist die Hauptstadt von Nigeria?", answer: "Abuja" },
-  { question: "Was ist die Hauptstadt von Äthiopien?", answer: "Addis Abeba" },
-  { question: "Was ist die Hauptstadt von Kenia?", answer: "Nairobi" },
-  { question: "Was ist die Hauptstadt von Peru?", answer: "Lima" },
-  { question: "Was ist die Hauptstadt von Kolumbien?", answer: "Bogotá" },
-  { question: "Was ist die Hauptstadt von Chile?", answer: "Santiago" },
-  { question: "Was ist die Hauptstadt von Schweden?", answer: "Stockholm" },
-  { question: "Was ist die Hauptstadt von Norwegen?", answer: "Oslo" },
-  { question: "Was ist die Hauptstadt von Dänemark?", answer: "Kopenhagen" },
-  { question: "Was ist die Hauptstadt von Finnland?", answer: "Helsinki" },
-  { question: "Was ist die Hauptstadt von Polen?", answer: "Warschau" },
-  { question: "Was ist die Hauptstadt von der Ukraine?", answer: "Kiew" },
-  { question: "Was ist die Hauptstadt von Griechenland?", answer: "Athen" },
-  { question: "Was ist die Hauptstadt von Portugal?", answer: "Lissabon" },
-  { question: "Was ist die Hauptstadt von Irland?", answer: "Dublin" },
-  { question: "Was ist die Hauptstadt von Belgien?", answer: "Brüssel" },
-  { question: "Was ist die Hauptstadt der Niederlande?", answer: "Amsterdam" },
-  { question: "Was ist die Hauptstadt der Schweiz?", answer: "Bern" },
-  { question: "Was ist die Hauptstadt von Österreich?", answer: "Wien" },
-  { question: "Was ist die Hauptstadt von Ungarn?", answer: "Budapest" },
-  { question: "Was ist die Hauptstadt von Tschechien?", answer: "Prag" },
-  { question: "Was ist die Hauptstadt von Vietnam?", answer: "Hanoi" },
-  { question: "Was ist die Hauptstadt von Thailand?", answer: "Bangkok" },
-  { question: "Was ist die Hauptstadt von Malaysia?", answer: "Kuala Lumpur" },
-  { question: "Was ist die Hauptstadt von den Philippinen?", answer: "Manila" },
-  { question: "Was ist die Hauptstadt von Pakistan?", answer: "Islamabad" },
-  { question: "Was ist die Hauptstadt von Bangladesch?", answer: "Dhaka" },
-  { question: "Was ist die Hauptstadt von Iran?", answer: "Teheran" },
-  { question: "Was ist die Hauptstadt von Irak?", answer: "Bagdad" },
-  { question: "Was ist die Hauptstadt von Afghanistan?", answer: "Kabul" },
-  { question: "Was ist die Hauptstadt von Usbekistan?", answer: "Taschkent" },
-  { question: "Was ist die Hauptstadt von Kasachstan?", answer: "Nur-Sultan (Astana)" },
-  { question: "Was ist die Hauptstadt von Ägypten?", answer: "Kairo" },
-  { question: "Was ist die Hauptstadt von Marokko?", answer: "Rabat" },
-  { question: "Was ist die Hauptstadt von Algerien?", answer: "Algier" },
-  { question: "Was ist die Hauptstadt von Tunesien?", answer: "Tunis" },
-  { question: "Was ist die Hauptstadt von Libyen?", answer: "Tripolis" },
-  { question: "Was ist die Hauptstadt von Sudan?", answer: "Khartum" },
-  { question: "Was ist die Hauptstadt von Südsudan?", answer: "Juba" },
-  { question: "Was ist die Hauptstadt von Kongo (Demokratische Republik)?", answer: "Kinshasa" },
-  { question: "Was ist die Hauptstadt von Tansania?", answer: "Dodoma" },
-  { question: "Was ist die Hauptstadt von Uganda?", answer: "Kampala" },
-  { question: "Was ist die Hauptstadt von Ruanda?", answer: "Kigali" },
-  { question: "Was ist die Hauptstadt von Burundi?", answer: "Gitega" },
-  { question: "Was ist die Hauptstadt von Sambia?", answer: "Lusaka" },
-  { question: "Was ist die Hauptstadt von Simbabwe?", answer: "Harare" },
-  { question: "Was ist die Hauptstadt von Mosambik?", answer: "Maputo" },
-  { question: "Was ist die Hauptstadt von Angola?", answer: "Luanda" },
-  { question: "Was ist die Hauptstadt von Namibia?", answer: "Windhoek" },
-  { question: "Was ist die Hauptstadt von Botswana?", answer: "Gaborone" },
-  { question: "Was ist die Hauptstadt von Madagaskar?", answer: "Antananarivo" },
-  { question: "Was ist die Hauptstadt von Venezuela?", answer: "Caracas" },
-  { question: "Was ist die Hauptstadt von Ecuador?", answer: "Quito" },
-  { question: "Was ist die Hauptstadt von Bolivien?", answer: "Sucre (konstitutionell), La Paz (Regierungssitz)" },
-  { question: "Was ist die Hauptstadt von Paraguay?", answer: "Asunción" },
-  { question: "Was ist die Hauptstadt von Uruguay?", answer: "Montevideo" },
-  { question: "Was ist die Hauptstadt von Kuba?", answer: "Havanna" },
-  { question: "Was ist die Hauptstadt der Dominikanischen Republik?", answer: "Santo Domingo" },
-  { question: "Was ist die Hauptstadt von Haiti?", answer: "Port-au-Prince" },
-  { question: "Was ist die Hauptstadt von Guatemala?", answer: "Guatemala-Stadt" },
-  { question: "Was ist die Hauptstadt von Honduras?", answer: "Tegucigalpa" },
-  { question: "Was ist die Hauptstadt von El Salvador?", answer: "San Salvador" },
-  { question: "Was ist die Hauptstadt von Nicaragua?", answer: "Managua" },
-  { question: "Was ist die Hauptstadt von Costa Rica?", answer: "San José" },
-  { question: "Was ist die Hauptstadt von Panama?", answer: "Panama-Stadt" },
-  { question: "Was ist die Hauptstadt von Australien?", answer: "Canberra" },
-  { question: "Was ist die Hauptstadt von Fidschi?", answer: "Suva" },
-  { question: "Was ist die Hauptstadt von Papua-Neuguinea?", answer: "Port Moresby" },
-  { question: "Was ist die Hauptstadt von Afghanistan?", answer: "Kabul" },
-  { question: "Was ist die Hauptstadt von Armenien?", answer: "Jerewan" },
-  { question: "Was ist die Hauptstadt von Aserbaidschan?", answer: "Baku" },
-  { question: "Was ist die Hauptstadt von Georgien?", answer: "Tiflis" },
-  { question: "Was ist die Hauptstadt von Jordanien?", answer: "Amman" },
-  { question: "Was ist die Hauptstadt von Libanon?", answer: "Beirut" },
-  { question: "Was ist die Hauptstadt von Syrien?", answer: "Damaskus" },
-  { question: "Was ist die Hauptstadt von Israel?", answer: "Jerusalem" },
-  { question: "Was ist die Hauptstadt von Palästina?", answer: "Ramallah (Verwaltung), Ost-Jerusalem (beansprucht)" },
-  { question: "Was ist die Hauptstadt von Zypern?", answer: "Nikosia" },
-  { question: "Was ist die Hauptstadt von Malta?", answer: "Valletta" },
-  { question: "Was ist die Hauptstadt von Island?", answer: "Reykjavík" },
-  { question: "Was ist die Hauptstadt von Estland?", answer: "Tallinn" },
-  { question: "Was ist die Hauptstadt von Lettland?", answer: "Riga" },
-  { question: "Was ist die Hauptstadt von Litauen?", answer: "Vilnius" },
-  { question: "Was ist die Hauptstadt von Belarus?", answer: "Minsk" },
-  { question: "Was ist die Hauptstadt von Moldawien?", answer: "Chișinău" },
-  { question: "Was ist die Hauptstadt von Rumänien?", answer: "Bukarest" },
-  { question: "Was ist die Hauptstadt von Bulgarien?", answer: "Sofia" },
-  { question: "Was ist die Hauptstadt von Serbien?", answer: "Belgrad" },
-  { question: "Was ist die Hauptstadt von Kroatien?", answer: "Zagreb" },
-  { question: "Was ist die Hauptstadt von Bosnien und Herzegowina?", answer: "Sarajevo" },
-  { question: "Was ist die Hauptstadt von Montenegro?", answer: "Podgorica" },
-  { question: "Was ist die Hauptstadt von Albanien?", answer: "Tirana" },
-  { question: "Was ist die Hauptstadt von Nordmazedonien?", answer: "Skopje" },
-  { question: "Was ist die Hauptstadt von Kosovo?", answer: "Pristina" },
-  { question: "Was ist die Hauptstadt von Slowenien?", answer: "Ljubljana" },
-  { question: "Was ist die Hauptstadt von der Slowakei?", answer: "Bratislava" },
-  { question: "Was ist die Hauptstadt von der Mongolei?", answer: "Ulaanbaatar" },
-  { question: "Was ist die Hauptstadt von Nepal?", answer: "Kathmandu" },
-  { question: "Was ist die Hauptstadt von Sri Lanka?", answer: "Sri Jayawardenepura Kotte (Legislative), Colombo (Exekutive und Judikative)" },
-  { question: "Was ist die Hauptstadt von Myanmar?", answer: "Naypyidaw" },
-  { question: "Was ist die Hauptstadt von Laos?", answer: "Vientiane" },
-  { question: "Was ist die Hauptstadt von Kambodscha?", answer: "Phnom Penh" },
-  { question: "Was ist die Hauptstadt von Singapur?", answer: "Singapur" },
-  { question: "Was ist die Hauptstadt von Brunei?", answer: "Bandar Seri Begawan" },
-  { question: "Was ist die Hauptstadt von Osttimor?", answer: "Dili" },
-  { question: "Welches Land liegt direkt nördlich von den USA?", answer: "Kanada" },
-  { question: "Welches Land liegt westlich von Argentinien?", answer: "Chile" },
-  { question: "Welches Land liegt zwischen Spanien und Frankreich?", answer: "Andorra" },
-  { question: "Welches Land liegt südlich von Deutschland?", answer: "Österreich (und die Schweiz)" },
-  { question: "Welches Land liegt östlich von Portugal?", answer: "Spanien" },
-  { question: "Welches Land liegt zwischen Polen und Rumänien?", answer: "Ukraine" },
-  { question: "Welches Land liegt westlich von Ägypten?", answer: "Libyen" },
-  { question: "Welches Land liegt zwischen den Niederlanden und Frankreich?", answer: "Belgien" },
-  { question: "Welcher Inselstaat liegt östlich von Madagaskar?", answer: "Mauritius" },
-  { question: "Welches Land liegt nördlich von Estland (über die Ostsee)?", answer: "Finnland" },
-  { question: "Welches Land liegt zwischen Deutschland, Frankreich und Belgien?", answer: "Luxemburg" },
-  { question: "Welches Land liegt südlich von der Mongolei?", answer: "China" },
-  { question: "Welches Land liegt zwischen dem Iran und Indien?", answer: "Pakistan" },
-  { question: "Welches Land liegt westlich von Schweden?", answer: "Norwegen" },
-  { question: "Welches Land liegt zwischen Litauen und Estland?", answer: "Lettland" },
-  { question: "Welches Land liegt zwischen Thailand und Vietnam?", answer: "Kambodscha (und Laos)" },
-  { question: "Welches Land liegt direkt nördlich von Italien?", answer: "Die Schweiz (und Österreich)" },
-  { question: "Welches Land liegt östlich von Syrien und westlich vom Iran?", answer: "Irak" },
-  { question: "Welches Land liegt zwischen Peru und Kolumbien im Nordwesten Südamerikas?", answer: "Ecuador" },
-  { question: "Welches Land liegt nördlich von Südafrika und grenzt im Westen an den Atlantik?", answer: "Namibia" },
-  { question: "Welches Land liegt zwischen Indien und Tibet (China) im Himalaya?", answer: "Nepal (und Bhutan)" },
-  { question: "Welches Land liegt östlich von Griechenland?", answer: "Türkei" },
-  { question: "Welches Land liegt südlich von Mexiko?", answer: "Guatemala (und Belize)" },
-  { question: "Welches Land liegt zwischen dem Schwarzen Meer und dem Kaspischen Meer südlich von Russland?", answer: "Georgien" },
-  { question: "Welches Land liegt westlich von Belarus und der Ukraine?", answer: "Polen" },
-  { question: "Welches Land liegt nördlich von Tansania und südlich von Äthiopien?", answer: "Kenia" },
-  { question: "Welches Land liegt zwischen Argentinien und Brasilien an der Küste?", answer: "Uruguay" },
-  { question: "Welches Land liegt westlich von Afghanistan?", answer: "Iran" },
-  { question: "Welches Land liegt zwischen den Philippinen und Japan?", answer: "Taiwan" },
-  { question: "Welches Land liegt direkt südlich von der Türkei?", answer: "Syrien" },
-  { question: "Welches Land liegt östlich von Sambia und grenzt an den Indischen Ozean?", answer: "Mosambik" },
-  { question: "Welches Land liegt zwischen Finnland und Weißrussland (Belarus)?", answer: "Estland, Lettland und Litauen" },
-  { question: "Welches Land liegt westlich vom Sudan und östlich von Niger?", answer: "Tschad" },
-  { question: "Welches Land liegt südlich von Jordanien?", answer: "Saudi-Arabien" },
-  { question: "Welches Land liegt zwischen Österreich, Rumänien und Kroatien?", answer: "Ungarn" },
-  { question: "Welches Land liegt zwischen Indien und Myanmar?", answer: "Bangladesch" },
-  { question: "Welches Land liegt westlich von Südkorea auf der anderen Seite des Gelben Meeres?", answer: "China" },
-  { question: "Welches Land liegt nördlich von Marokko auf der anderen Seite der Straße von Gibraltar?", answer: "Spanien" },
-  { question: "Welches Land liegt zwischen Saudi-Arabien und dem Oman?", answer: "Jemen" },
-  { question: "Welches Land liegt östlich von Bosnien und Herzegowina?", answer: "Serbien" },
-  { question: "Welcher Inselstaat liegt südlich von Indien, getrennt durch die Palkstraße?", answer: "Sri Lanka" },
-  { question: "Welches Land liegt zwischen der Demokratischen Republik Kongo und Tansania?", answer: "Burundi (und Ruanda)" },
-  { question: "Welches Land liegt nördlich von Venezuela im Karibischen Meer (als Teil der Kleinen Antillen)?", answer: "Trinidad und Tobago" },
-  { question: "Welches Land liegt westlich von Israel am Mittelmeer?", answer: "Ägypten" },
-  { question: "Welches Land liegt zwischen Usbekistan und dem Kaspischen Meer?", answer: "Turkmenistan" },
-  { question: "Welcher Inselstaat liegt östlich von Australien über die Tasmansee?", answer: "Neuseeland" },
-  { question: "Welches Land liegt nördlich von Griechenland und westlich von Bulgarien?", answer: "Nordmazedonien" },
-  { question: "Welches Land liegt südlich von Panama?", answer: "Kolumbien" },
-  { question: "Welcher Inselstaat liegt nördlich von Madagaskar und südlich der Seychellen?", answer: "Komoren" },
-  { question: "Welches Land liegt zwischen dem Irak und Jordanien?", answer: "Syrien (oder Saudi-Arabien, je nach Breitengrad)" },
-  { question: "Welches Land liegt östlich von Finnland?", answer: "Russland" },
-  { question: "Welches Land liegt südlich von Kuwait?", answer: "Saudi-Arabien" },
-  { question: "Welches Land liegt zwischen dem Senegal und der Elfenbeinküste?", answer: "Guinea (und Mali)" },
-  { question: "Welcher Stadtstaat liegt innerhalb des Stadtgebiets von Rom?", answer: "Vatikanstadt" },
-  { question: "Welches Land liegt westlich von Haiti auf derselben Insel?", answer: "Keines (Haiti liegt westlich der Dominikanischen Republik)" },
-  { question: "Welches Land liegt zwischen der Schweiz und Österreich?", answer: "Liechtenstein" },
-  { question: "Welcher Inselstaat liegt westlich von Großbritannien?", answer: "Irland" },
-  { question: "Welches Land liegt südlich von Angola?", answer: "Namibia" },
-  { question: "Welches Land liegt nördlich von der Tschechischen Republik?", answer: "Polen" },
-  { question: "Welches Land liegt zwischen dem Libanon und Jordanien?", answer: "Syrien" },
-  { question: "Welches Land liegt östlich von Algerien und westlich von Libyen?", answer: "Tunesien" },
-  { question: "Welches Land liegt südlich von Honduras und nördlich von Costa Rica?", answer: "Nicaragua" },
-  { question: "Welches Land liegt westlich von Papua-Neuguinea auf derselben Insel?", answer: "Indonesien" },
-  { question: "Welcher Inselstaat liegt südlich von Florida (USA)?", answer: "Kuba" },
-  { question: "Welches Land liegt zwischen Pakistan und Kasachstan?", answer: "Afghanistan (und Tadschikistan)" },
-  { question: "Welche Hauptstadt liegt nördlich von Tallinn (Estland) auf der gegenüberliegenden Seite des Finnischen Meerbusens?", answer: "Helsinki" },
-  { question: "Welches Land liegt zwischen Vietnam und Thailand und hat die Hauptstadt Vientiane?", answer: "Laos" },
-  { question: "Welche Hauptstadt liegt am östlichen Ufer des Rio de la Plata, gegenüber von Buenos Aires?", answer: "Montevideo" },
-  { question: "Welcher Inselstaat liegt südlich von Sizilien im Mittelmeer?", answer: "Malta" },
-  { question: "Welches Land liegt westlich von Sambia und hat die Hauptstadt Luanda?", answer: "Angola" },
-  { question: "Welche Hauptstadt liegt südlich von Nordkorea hinter der Demilitarisierten Zone?", answer: "Seoul" },
-  { question: "Welches Land liegt zwischen Bulgarien und Griechenland im Norden und Ägypten im Süden (über das Meer)?", answer: "Türkei" },
-  { question: "Welche Hauptstadt liegt nördlich von Wien und ist nur etwa 60 km entfernt?", answer: "Bratislava" },
-  { question: "Welcher Inselstaat liegt östlich von Puerto Rico und gehört zu den Kleinen Antillen?", answer: "Jungferninseln (UK/USA) / Antigua und Barbuda" },
-  { question: "Welches Land liegt zwischen dem Iran und Usbekistan?", answer: "Turkmenistan" },
-  { question: "Welche Hauptstadt liegt westlich von Stockholm auf der skandinavischen Halbinsel?", answer: "Oslo" },
-  { question: "Welches Land liegt südlich von Litauen und umschließt teilweise die russische Exklave Kaliningrad?", answer: "Polen" },
-  { question: "Welche Hauptstadt liegt nördlich von Khartum (Sudan) am Nil?", answer: "Kairo" },
-  { question: "Welcher Inselstaat liegt zwischen Neukaledonien und Fidschi im Pazifik?", answer: "Vanuatu" },
-  { question: "Welches Land liegt östlich von Kamerun und westlich vom Sudan?", answer: "Zentralafrikanische Republik" },
-  { question: "Welche Hauptstadt liegt südlich von Madrid auf der iberischen Halbinsel?", answer: "Lissabon (südwestlich)" },
-  { question: "Welches Land liegt zwischen Tibet (China) und Indien im Osten des Himalayas?", answer: "Bhutan" },
-  { question: "Welche Hauptstadt liegt am Westufer des Jordans, östlich von Tel Aviv?", answer: "Amman (östlich des Jordans) / Jerusalem (westlich)" },
-  { question: "Welcher Inselstaat liegt nördlich von Venezuela und gehört zum Königreich der Niederlande?", answer: "Aruba (oder Curaçao/Bonaire)" },
-  { question: "Welches Land liegt zwischen dem Oman und Katar?", answer: "Vereinigte Arabische Emirate" },
-  { question: "Welche Hauptstadt liegt direkt nördlich von Johannesburg?", answer: "Pretoria" },
-  { question: "Welches Land liegt westlich von Guyana und nördlich von Brasilien?", answer: "Venezuela" },
-  { question: "Welche Hauptstadt liegt südlich von Brüssel?", answer: "Paris" },
-  { question: "Welches Land liegt zwischen dem Kaspischen Meer und dem Schwarzen Meer nördlich von der Türkei?", answer: "Georgien" },
-  { question: "Welche Hauptstadt liegt östlich von Kopenhagen auf einer anderen Insel/Halbinsel?", answer: "Keine (Kopenhagen liegt bereits ganz im Osten Dänemarks; östlich liegt Malmö, Schweden)" },
-  { question: "Welches Land liegt südlich von El Salvador am Pazifik?", answer: "Keines (direkt südlich ist der Ozean, südöstlich liegt Nicaragua)" },
-  { question: "Welcher Inselstaat liegt nordöstlich von Australien und westlich von den Salomonen?", answer: "Papua-Neuguinea" },
-  { question: "Welche Hauptstadt liegt zwischen den Alpen und dem Jura-Gebirge?", answer: "Bern" },
-  { question: "Welches Land liegt östlich von Moldau?", answer: "Ukraine" },
-  { question: "Welche Hauptstadt liegt nördlich der Insel Tasmanien?", answer: "Canberra (auf dem australischen Festland)" },
-  { question: "Welches Bundesland liegt zwischen Schleswig-Holstein und Niedersachsen?", answer: "Hamburg" },
-  { question: "Welcher große See liegt im Dreiländereck Deutschland, Schweiz und Österreich?", answer: "Bodensee" },
-  { question: "Welche Landeshauptstadt liegt direkt nördlich von Wiesbaden, nur durch den Rhein getrennt?", answer: "Mainz" },
-  { question: "Welcher Fluss fließt durch Dresden und Magdeburg und mündet in die Nordsee?", answer: "Elbe" },
-  { question: "Welches Bundesland liegt östlich von Nordrhein-Westfalen und westlich von Thüringen?", answer: "Hessen" },
-  { question: "Welche Landeshauptstadt liegt an der Isar, südlich der Donau?", answer: "München" },
-  { question: "Welcher Fluss bildet die natürliche Grenze zwischen Deutschland und Polen?", answer: "Oder (und Neiße)" },
-  { question: "Welches Bundesland liegt zwischen Brandenburg und Polen?", answer: "Keines (Brandenburg grenzt direkt an Polen)" },
-  { question: "Welcher See ist der größte, der vollständig innerhalb Deutschlands liegt?", answer: "Müritz" },
-  { question: "Welche Landeshauptstadt liegt am westlichsten Punkt Deutschlands?", answer: "Düsseldorf" },
-  { question: "Welcher Fluss fließt durch Regensburg, Passau und schließlich ins Schwarze Meer?", answer: "Donau" },
-  { question: "Welches Bundesland liegt nördlich von Bayern und südlich von Sachsen-Anhalt?", answer: "Thüringen" },
-  { question: "Welche Landeshauptstadt liegt an der Leine, nördlich von Göttingen?", answer: "Hannover" },
-  { question: "Welcher Nebenfluss des Rheins fließt durch Frankfurt am Main?", answer: "Main" },
-  { question: "Welches Bundesland umschließt die Stadt Berlin vollständig?", answer: "Brandenburg" },
-  { question: "Welcher See liegt im Südwesten Bayerns und ist nach einer Stadt am Ostufer benannt?", answer: "Starnberger See" },
-  { question: "Welche Landeshauptstadt liegt nordöstlich von Bremen?", answer: "Hamburg" },
-  { question: "Welcher Fluss bildet über weite Strecken die Grenze zwischen Baden-Württemberg und Frankreich?", answer: "Rhein" },
-  { question: "Welches Bundesland liegt westlich von Rheinland-Pfalz und grenzt an Luxemburg und Frankreich?", answer: "Saarland" },
-  { question: "Welche Landeshauptstadt liegt an der Kieler Förde an der Ostsee?", answer: "Kiel" },
-  { question: "Welcher Fluss fließt durch das Ruhrgebiet und mündet bei Duisburg in den Rhein?", answer: "Ruhr" },
-  { question: "Welches Bundesland liegt zwischen Mecklenburg-Vorpommern und Sachsen?", answer: "Brandenburg" },
-  { question: "Welche Landeshauptstadt liegt östlich von Erfurt?", answer: "Dresden" },
-  { question: "Welcher große See liegt südlich von Schwerin?", answer: "Schweriner See" },
-  { question: "Welcher Fluss fließt durch Saarbrücken?", answer: "Saar" },
-  { question: "Welche Landeshauptstadt liegt südwestlich von Berlin im Land Brandenburg?", answer: "Potsdam" },
-  { question: "Welches Bundesland liegt nördlich des Mains und grenzt an sechs andere Bundesländer?", answer: "Hessen" },
-  { question: "Welcher Fluss mündet bei Bremerhaven in die Nordsee?", answer: "Weser" },
-  { question: "Welches Land liegt westlich der deutschen Bundesländer Nordrhein-Westfalen und Niedersachsen?", answer: "Niederlande" },
-  { question: "Welche Landeshauptstadt liegt im Zentrum von Baden-Württemberg?", answer: "Stuttgart" },
-  { question: "Was ist die Hauptstadt von Baden-Württemberg?", answer: "Stuttgart" },
-  { question: "Zu welchem Bundesland gehört die Hauptstadt Stuttgart?", answer: "Baden-Württemberg" },
-  { question: "Was ist die Hauptstadt von Bayern?", answer: "München" },
-  { question: "Zu welchem Bundesland gehört die Hauptstadt München?", answer: "Bayern" },
-  { question: "Was ist die Hauptstadt von Berlin?", answer: "Berlin" },
-  { question: "Zu welchem Bundesland gehört die Hauptstadt Berlin?", answer: "Berlin (Stadtstaat)" },
-  { question: "Was ist die Hauptstadt von Brandenburg?", answer: "Potsdam" },
-  { question: "Zu welchem Bundesland gehört die Hauptstadt Potsdam?", answer: "Brandenburg" },
-  { question: "Was ist die Hauptstadt von Bremen?", answer: "Bremen" },
-  { question: "Zu welchem Bundesland gehört die Hauptstadt Bremen?", answer: "Bremen (Stadtstaat)" },
-  { question: "Was ist die Hauptstadt von Hamburg?", answer: "Hamburg" },
-  { question: "Zu welchem Bundesland gehört die Hauptstadt Hamburg?", answer: "Hamburg (Stadtstaat)" },
-  { question: "Was ist die Hauptstadt von Hessen?", answer: "Wiesbaden" },
-  { question: "Zu welchem Bundesland gehört die Hauptstadt Wiesbaden?", answer: "Hessen" },
-  { question: "Was ist die Hauptstadt von Mecklenburg-Vorpommern?", answer: "Schwerin" },
-  { question: "Zu welchem Bundesland gehört die Hauptstadt Schwerin?", answer: "Mecklenburg-Vorpommern" },
-  { question: "Was ist die Hauptstadt von Niedersachsen?", answer: "Hannover" },
-  { question: "Zu welchem Bundesland gehört die Hauptstadt Hannover?", answer: "Niedersachsen" },
-  { question: "Was ist die Hauptstadt von Nordrhein-Westfalen?", answer: "Düsseldorf" },
-  { question: "Zu welchem Bundesland gehört die Hauptstadt Düsseldorf?", answer: "Nordrhein-Westfalen" },
-  { question: "Was ist die Hauptstadt von Rheinland-Pfalz?", answer: "Mainz" },
-  { question: "Zu welchem Bundesland gehört die Hauptstadt Mainz?", answer: "Rheinland-Pfalz" },
-  { question: "Was ist die Hauptstadt vom Saarland?", answer: "Saarbrücken" },
-  { question: "Zu welchem Bundesland gehört die Hauptstadt Saarbrücken?", answer: "Saarland" },
-  { question: "Was ist die Hauptstadt von Sachsen?", answer: "Dresden" },
-  { question: "Zu welchem Bundesland gehört die Hauptstadt Dresden?", answer: "Sachsen" },
-  { question: "Was ist die Hauptstadt von Sachsen-Anhalt?", answer: "Magdeburg" },
-  { question: "Zu welchem Bundesland gehört die Hauptstadt Magdeburg?", answer: "Sachsen-Anhalt" },
-  { question: "Was ist die Hauptstadt von Schleswig-Holstein?", answer: "Kiel" },
-  { question: "Zu welchem Bundesland gehört die Hauptstadt Kiel?", answer: "Schleswig-Holstein" },
-  { question: "Was ist die Hauptstadt von Thüringen?", answer: "Erfurt" },
-  { question: "Zu welchem Bundesland gehört die Hauptstadt Erfurt?", answer: "Thüringen" },
-];
-
-const vocabularyData: VocabularyReward[] = [
-  { question: "Hello", answer: "Hallo" },
-  { question: "Woher stammt der Name „Karfreitag“?", answer: "Von althochdeutsch „kara“ = Trauer, Klage. Der Tag erinnert an die Kreuzigung Jesu Christi." },
-  { question: "Was wird an Christi Himmelfahrt religiös betrachtet gefeiert?", answer: "Die Rückkehr Jesu Christi zu Gott, seine „Aufnahme in den Himmel“ nach der Auferstehung." },
-  { question: "Warum wird Christi Himmelfahrt in Deutschland auch als „Vatertag“ oder „Herrentag“ begangen?", answer: "Eine volkstümliche Tradition, die sich unabhängig vom religiösen Ursprung entwickelt hat – Männer unternehmen an diesem Tag oft gemeinsame Ausflüge mit Bollerwagen, oft verbunden mit Alkoholkonsum. Der Ursprung dieser Tradition ist nicht eindeutig geklärt, wird aber teils auf das 19. Jahrhundert zurückgeführt." },
-  { question: "Was feiert Pfingsten aus christlicher Sicht?", answer: "Die Herabkunft des Heiligen Geistes auf die Apostel, gilt als „Geburtstag der Kirche“." },
-  { question: "Woher kommt das Wort „Pfingsten“?", answer: "Vom griechischen „pentekoste“ (der fünfzigste Tag) – dem 50. Tag nach Ostern." },
-  { question: "Was bedeutet „Fronleichnam“ wörtlich?", answer: "„Fron“ (von althochdeutsch „fron“ = Herr) und „Leichnam“ (früher: lebendiger Körper) – also „Leib des Herrn“. Der Feiertag feiert die Gegenwart Christi in der Eucharistie." },
-  { question: "Welches historische Ereignis wird am Tag der Deutschen Einheit gefeiert?", answer: "Der Beitritt der DDR zur Bundesrepublik Deutschland am 3. Oktober 1990, der die deutsche Wiedervereinigung besiegelte." },
-  { question: "Welches historische Ereignis liegt dem Reformationstag zugrunde?", answer: "Der Anschlag der 95 Thesen Martin Luthers an die Schlosskirche in Wittenberg am 31. Oktober 1517, der als Beginn der Reformation gilt." },
-  { question: "Was wird an Allerheiligen gedacht?", answer: "Aller Heiligen der katholischen Kirche, auch der unbekannten. In der Praxis wird der Tag oft mit dem Gedenken an Verstorbene verbunden (Gräberbesuche)." },
-  { question: "Wie unterscheidet sich Allerheiligen von Allerseelen?", answer: "Allerheiligen (1. November) gilt den Heiligen, Allerseelen (2. November) dem Gedenken an alle Verstorbenen – Allerseelen ist in Deutschland aber kein gesetzlicher Feiertag." },
-  { question: "Was ist der ursprüngliche Charakter des Buß- und Bettags?", answer: "Ein evangelischer Tag der Umkehr und Besinnung, ursprünglich mit Fasten und Kirchgang verbunden – ähnlich einer „inneren Einkehr“ vor Gott." },
-  { question: "Warum wurde der Buß- und Bettag 1995 in fast allen Bundesländern als gesetzlicher Feiertag abgeschafft?", answer: "Um die Finanzierung der neu eingeführten Pflegeversicherung zu sichern – ein zusätzlicher Arbeitstag sollte die Beiträge kompensieren." },
-  { question: "Welchen historischen Ursprung hat der 1. Mai als „Tag der Arbeit“?", answer: "Er geht auf die internationale Arbeiterbewegung zurück, insbesondere auf die Ereignisse um den Haymarket Riot in Chicago 1886, bei dem für den Achtstundentag demonstriert wurde." },
-  { question: "Seit wann ist der 1. Mai in Deutschland ein gesetzlicher Feiertag?", answer: "Seit 1933 – die Nationalsozialisten erklärten ihn zum „Tag der nationalen Arbeit“, um Arbeiter für sich zu gewinnen. Nach 1945 wurde er beibehalten, aber mit neuer, gewerkschaftlich geprägter Bedeutung verbunden." },
-  { question: "Welchen Ursprung hat Silvester als Jahreswechsel-Feiertag?", answer: "Benannt nach Papst Silvester I., dessen Todestag (31. Dezember 335) im Kalender verzeichnet ist. Der Silvesterabend markiert das Ende des Kalenderjahres." },
-  { question: "Was bedeutet „Epiphanias“ bzw. warum heißt der 6. Januar „Heilige Drei Könige“?", answer: "Epiphanias (griech. „Erscheinung“) erinnert an die Anbetung Jesu durch die drei Weisen/Könige aus dem Morgenland – ein zentrales Fest der Erscheinung Christi vor den Völkern." },
-  { question: "Was ist der theologische Kerngedanke von Ostern?", answer: "Die Auferstehung Jesu Christi von den Toten – das zentrale Fest des christlichen Glaubens." },
-  { question: "Was bedeutet das Wort „Advent“ wörtlich?", answer: "Vom lateinischen „adventus“ = Ankunft – gemeint ist die Ankunft (Geburt) Jesu Christi." },
-  { question: "Warum wurde der 25. Dezember als Weihnachtsdatum gewählt, obwohl das genaue Geburtsdatum Jesu unbekannt ist?", answer: "Vermutlich in Anlehnung an römische Sonnenwendfeiern (Sol Invictus) im 4. Jahrhundert, um heidnische Feste christlich zu überlagern." },
-  { question: "Woher stammt der Brauch des Adventskranzes?", answer: "Er geht auf Johann Hinrich Wichern zurück, der 1839 in Hamburg einen Kranz mit Kerzen für Kinder in seinem Waisenhaus aufhängte, um die Wartezeit bis Weihnachten zu verdeutlichen." },
-  { question: "Warum gibt es zwei Weihnachtsfeiertage (25. und 26. Dezember)?", answer: "Der zweite Feiertag entwickelte sich historisch aus dem Gedenktag des Heiligen Stephanus und diente zusätzlich als arbeitsfreier Tag für Gesinde und Landarbeiter." },
-  { question: "Was wird am Heiligen Abend (24. Dezember) theologisch begangen, obwohl er kein gesetzlicher Feiertag ist?", answer: "Die Vorabendfeier der Geburt Christi, traditionell mit Christmette (Mitternachtsmesse)." },
-  { question: "Welchen heidnischen Ursprung hat der Weihnachtsbaum als Brauch?", answer: "Er geht vermutlich auf vorchristliche Bräuche mit immergrünen Zweigen zurück, die als Symbol für Leben in der dunklen Winterzeit galten, und wurde erst im 16./17. Jahrhundert christlich geprägt." },
-  { question: "Wer ist die historische Figur hinter dem Heiligen Nikolaus (6. Dezember, kein bundesweiter Feiertag)?", answer: "Der Bischof Nikolaus von Myra (4. Jahrhundert), bekannt für Wohltätigkeit, dessen Legenden sich später mit dem Weihnachtsmann vermischten." },
-  { question: "Warum wird der 6. Januar „Heilige Drei Könige“ auch „Epiphaniasfest“ genannt?", answer: "Weil es die „Erscheinung des Herrn“ vor den Weisen aus dem Morgenland feiert – ein Fest, das ursprünglich älter ist als Weihnachten selbst." },
-  { question: "Wie wird der Termin von Ostern bestimmt?", answer: "Ostern falls auf den ersten Sonntag nach dem ersten Frühlingsvollmond – eine Regel, die auf das Konzil von Nizäa (325 n. Chr.) zurückgeht." },
-  { question: "Woher stammt vermutlich der Name „Ostern“?", answer: "Möglicherweise von einer germanischen Frühlingsgöttin namens Ostara, auch wenn diese Herleitung historisch umstritten ist." },
-  { question: "Was symbolisiert das Osterei aus christlicher Perspektive?", answer: "Das Ei als Symbol für neues Leben und Auferstehung, da aus vermeintlich totem Material neues Leben schlüpft." },
-  { question: "Welchen vorchristlichen Ursprung hat der Osterhase als Eierbringer?", answer: "Der genaue Ursprung ist unklar; er wird erstmals im 17. Jahrhundert schriftlich erwähnt und könnte mit Fruchtbarkeitssymbolik des Frühlings zusammenhängen." },
-  { question: "Was bedeutet die 40-tägige Fastenzeit vor Ostern theologisch?", answer: "Sie erinnert an die 40 Tage, die Jesus fastend in der Wüste verbrachte, und dient als Zeit der Buße und Vorbereitung auf Ostern." },
-  { question: "Was wird am Palmsonntag (Sonntag vor Ostern) gedacht?", answer: "Der Einzug Jesu in Jerusalem, bei dem ihm Menschen Palmzweige auf den Weg legten." },
-  { question: "Was geschieht laut biblischer Überlieferung am Gründonnerstag?", answer: "Das letzte Abendmahl Jesu mit seinen Jüngern." },
-  { question: "Woher stammt der Name „Gründonnerstag“?", answer: "Vermutlich vom mittelhochdeutschen „greinen“ (weinen, klagen), nicht von der Farbe Grün – eine spätere volksetymologische Umdeutung führte zur „grünen“ Bedeutung." },
-  { question: "Was bedeutet „Karsamstag“ bzw. was geschieht an diesem Tag liturgisch?", answer: "Die Grabesruhe Christi wird begangen – ein Tag der Stille zwischen Kreuzigung und Auferstehung, oft mit einer Osternachtfeier am Abend." },
-  { question: "Welchen Brauch verbindet man traditionell mit dem Osterfeuer?", answer: "Ein vorchristlicher Brauch zur Vertreibung des Winters und bösen Geistern, der später christlich als Symbol für die „Auferstehungsflamme“ umgedeutet wurde." },
-  { question: "Was besagt der biblische Bericht zu Christi Himmelfahrt?", answer: "Laut Apostelgeschichte erschien Jesus nach seiner Auferstehung 40 Tage lang seinen Jüngern, bevor er sichtbar „in den Himmel aufgenommen“ wurde." },
-  { question: "Warum gilt Pfingsten als „Geburtstag der Kirche“?", answer: "Weil die Apostel laut Überlieferung durch den Heiligen Geist erstmals öffentlich predigten und dadurch die christliche Gemeinde begründet wurde." },
-  { question: "Was ist das „Pfingstwunder“ laut Apostelgeschichte?", answer: "Die Apostel konnten plötzlich in verschiedenen Sprachen predigen und wurden so von Menschen unterschiedlicher Herkunft verstanden." },
-  { question: "Welchen volkstümlichen Brauch gibt es rund um Pfingsten, der auf vorchristliche Frühlingsriten zurückgeht?", answer: "Das Schmücken von Häusern und Kirchen mit Birkenzweigen als Symbol für erwachendes Leben." },
-  { question: "Welche zwei deutschen Staaten wurden am 3. Oktober 1990 vereinigt?", answer: "Die Bundesrepublik Deutschland und die Deutsche Demokratische Republik (DDR)." },
-  { question: "Warum fiel die Wahl auf den 3. Oktober und nicht auf den 9. November (Mauerfall) als Nationalfeiertag?", answer: "Der 9. November war historisch belastet (u. a. Novemberpogrome 1938, Hitler-Ludendorff-Putsch 1923), weshalb man ein neutraleres Datum wählte." },
-  { question: "Welchen Feiertag gab es in der DDR anstelle des heutigen Tags der Deutschen Einheit?", answer: "Den 7. Oktober als „Tag der Republik“ zur Gründung der DDR 1949." },
-  { question: "Welchen Feiertag gab es vor 1990 in der Bundesrepublik als Vorläufer des heutigen Nationalfeiertags?", answer: "Den 17. Juni als „Tag der deutschen Einheit“, der an den Volksaufstand in der DDR 1953 erinnerte." },
-  { question: "Was war der historische Anlass des Volksaufstands vom 17. Juni 1953?", answer: "Arbeiterproteste gegen erhöhte Arbeitsnormen in der DDR, die zu einem landesweiten Aufstand gegen das SED-Regime eskalierten und gewaltsam niedergeschlagen wurden." },
-  { question: "Welche historische Bedeutung hat der Tag der Arbeit international, unabhängig von Deutschland?", answer: "Er wird in vielen Ländern der Welt als „International Workers' Day“ begangen, ebenfalls in Erinnerung an die Arbeiterbewegung des späten 19. Jahrhunderts." },
-  { question: "Wie hat sich die Bedeutung des 1. Mai in Deutschland seit 1933 gewandelt?", answer: "Von einem nationalsozialistisch vereinnahmten „Tag der nationalen Arbeit“ zu einem gewerkschaftlich geprägten Tag mit Kundgebungen für Arbeitnehmerrechte in der Nachkriegszeit." },
-  { question: "Was genau soll Martin Luther am 31. Oktober 1517 getan haben?", answer: "Der Überlieferung nach schlug er seine 95 Thesen gegen den Ablasshandel an die Tür der Schlosskirche in Wittenberg – ein Akt, dessen genaue historische Umstände in der Forschung diskutiert werden." },
-  { question: "Was kritisierte Luther inhaltlich mit seinen Thesen vor allem?", answer: "Den Ablasshandel der katholischen Kirche, bei dem gegen Bezahlung ein Erlass von Sündenstrafen versprochen wurde." },
-  { question: "Wann wurde der Reformationstag erstmals als kirchlicher Gedenktag begangen?", answer: "Bereits im 16. Jahrhundert in protestantischen Gebieten, zunächst regional unterschiedlich gefeiert." },
-  { question: "Warum ist der Reformationstag konfessionell umstritten?", answer: "Weil er aus katholischer Sicht die Kirchenspaltung markiert, während er aus evangelischer Sicht als Beginn der Erneuerung des Glaubens gilt." },
-  { question: "Seit wann gibt es das Fest Allerheiligen in der christlichen Tradition?", answer: "Es geht auf das 4./5. Jahrhundert zurück und wurde im 9. Jahrhundert von Papst Gregor IV. auf den 1. November festgelegt." },
-  { question: "Welcher vorchristliche Brauch wird oft mit dem Termin von Allerheiligen in Verbindung gebracht?", answer: "Keltische Feste zur Wintersonnenwende und Ahnenverehrung (z. B. Samhain), die zeitlich in die Nähe fallen – ein direkter historischer Zusammenhang ist jedoch umstritten." },
-  { question: "Welche Tradition ist rund um Allerheiligen in katholischen Regionen verbreitet?", answer: "Der Besuch von Gräbern verstorbener Angehöriger, oft verbunden mit dem Anzünden von Kerzen und Schmücken der Gräber." },
-  { question: "Wie alt ist die Tradition des Buß- und Bettags?", answer: "Sie reicht bis ins 16. Jahrhundert zurück, als evangelische Landeskirchen Bußtage zur Besinnung nach Krisen (Kriege, Seuchen) einführten." },
-  { question: "Warum gab es historisch so viele unterschiedliche Termine für den Buß- und Bettag in verschiedenen deutschen Regionen?", answer: "Weil einzelne Landeskirchen und Fürstentümer eigene Bußtage nach lokalen Anlässen (Missernten, Kriege) festlegten, bevor 1934 eine bundesweite Vereinheitlichung erfolgte." },
-  { question: "Was ist der ursprüngliche Charakter des Silvesterabends in vorchristlicher Zeit?", answer: "Feste zur Wintersonnenwende und zum Vertreiben böser Geister durch Lärm – ein Brauch, der sich im heutigen Feuerwerk fortsetzt." },
-  { question: "Woher stammt der Brauch des Bleigießens an Silvester?", answer: "Er geht auf antike Orakelpraktiken zurück, bei denen aus Formen geschmolzenen Materials die Zukunft gedeutet wurde." },
-  { question: "Was bedeutet der Ausdruck „Heilige Nacht“ für den 24. Dezember?", answer: "Er bezieht sich auf die Nacht der Geburt Jesu, die in der christlichen Tradition als besonders geweiht gilt." },
-  { question: "Welchen Ursprung hat der deutsche Weihnachtsmarkt als Institution?", answer: "Er geht auf spätmittelalterliche Wintermärkte zurück, bei denen Handwerker und Händler Waren für die kalte Jahreszeit und Weihnachten anboten; der Dresdner Striezelmarkt (erstmals 1434 erwähnt) gilt als einer der ältesten." },
-  { question: "Was ist der theologische Unterschied zwischen der katholischen und evangelischen Sicht auf Fronleichnam?", answer: "Die katholische Kirche betont die reale Gegenwart Christi in der gewandelten Hostie (Transsubstantiation), was die evangelische Kirche ablehnt – deshalb wird Fronleichnam evangelisch nicht gefeiert." },
-  { question: "Seit wann wird Fronleichnam als Fest begangen?", answer: "Es wurde 1264 von Papst Urban IV. für die gesamte katholische Kirche eingeführt, nach vorausgehenden lokalen Anfängen in Lüttich im 13. Jahrhundert." },
-  { question: "Was ist der Ursprung der Fronleichnamsprozessionen mit Blumenteppichen?", answer: "Ein Brauch, der die öffentliche Verehrung der Eucharistie außerhalb der Kirche zelebriert und regional unterschiedlich seit dem Mittelalter bzw. der Barockzeit ausgestaltet wurde." },
-  { question: "Welche Rolle spielte die Weimarer Verfassung von 1919 für die Feiertagsregelung in Deutschland?", answer: "Sie übertrug die Zuständigkeit für Feiertage weitgehend den Ländern, ein Prinzip, das bis heute im föderalen System fortbesteht." },
-  { question: "Warum unterscheidet sich die Zahl der Feiertage je nach Konfessionsverteilung eines Bundeslandes?", answer: "Weil viele Feiertage historisch aus katholischer (z. B. Fronleichnam) oder evangelischer Tradition (z. B. Reformationstag) stammen und dort verankert blieben, wo diese Konfession historisch prägend war." },
-  { question: "Was war der historische Hintergrund für die Einführung des Internationalen Frauentags am 8. März?", answer: "Er geht auf die Arbeiterinnenbewegung des frühen 20. Jahrhunderts zurück, insbesondere auf Streiks und Demonstrationen für Frauenwahlrecht und bessere Arbeitsbedingungen, u. a. inspiriert durch Clara Zetkin." },
-  { question: "Welchen religiösen Hintergrund hat der Weltkindertag (20. September, gesetzlicher Feiertag in Thüringen)?", answer: "Keinen religiösen – er wurde von den Vereinten Nationen 1954 als weltlicher Aktionstag zur Stärkung der Kinderrechte eingeführt." },
-  { question: "Was verbindet viele deutsche Feiertage trotz unterschiedlicher religiöser und politischer Ursprünge strukturell?", answer: "Die meisten gehen entweder auf das christliche Kirchenjahr (Ostern, Weihnachten, Pfingsten etc.) oder auf bedeutende politisch-historische Ereignisse (Wiedervereinigung, Arbeiterbewegung) zurück – ein Spiegel der deutschen Religions- und Sozialgeschichte." },
-  { question: "Wie heißen die drei Mitglieder von Die Ärzte?", answer: "Bela B (Schlagzeug), Farin Urlaub (Gitarre) und Rodrigo González, genannt Rod (Bass)" },
-  { question: "In welcher Stadt wurde die Band Die Ärzte gegründet?", answer: "Berlin (West-Berlin)" },
-  { question: "In welchem Jahr wurde die Band gegründet?", answer: "1982" },
-  { question: "Wie hieß das erste Studioalbum der Band?", answer: "„Die Ärzte“ (1984)" },
-  { question: "Nach welcher Trennung und Reunion-Phase feierte die Band in den 1990ern ein Comeback?", answer: "Die Band löste sich 1988 auf und fand sich 1993 wieder zusammen." },
-  { question: "Welcher bürgerliche Name verbirgt sich hinter „Farin Urlaub“?", answer: "Jan Vetter" },
-  { question: "Wie heißt eines der bekanntesten (und umstrittensten) Alben der Band, das aufgrund expliziter Texte zeitweise indiziert war?", answer: "„Das ist nicht die ganze Wahrheit...“ (1988)" },
-  { question: "Welchen Spitznamen tragen die Fans der Band traditionell?", answer: "Klingonen" },
-  { question: "Welches Album der Band gilt als kommerziell besonders erfolgreich und enthält den Hit „Schrei nach Liebe“?", answer: "„Die Bestie in Menschengestalt“ (1993)" },
-  { question: "Wer war vor Rodrigo González der Bassist der Band?", answer: "Sahnie (Hans Runge)" },
-  { question: "In welchem Jahr wurde der FC Bayern München gegründet?", answer: "1900" },
-  { question: "Wie heißt das Stadion, in dem der FC Bayern seit 2005 seine Heimspiele austrägt?", answer: "Allianz Arena" },
-  { question: "Wie viele Champions-League-Titel hat der FC Bayern bislang gewonnen (Stand: bis Saison 2019/20)?", answer: "Sechs (1974, 1975, 1976, 2001, 2013, 2020)" },
-  { question: "In welchem Jahr gelang dem FC Bayern erstmals das Triple (Meisterschaft, Pokal, Champions League) in einer Saison?", answer: "2013 (unter Trainer Jupp Heynckes)" },
-  { question: "Welcher Spieler gilt mit über 40 Toren in einer Bundesliga-Saison (2020/21) als Rekordhalter für die meisten Saisontore?", answer: "Robert Lewandowski (41 Tore)" },
-  { question: "Wie hieß das ursprüngliche Vereinsstadion des FC Bayern vor dem Umzug in die Allianz Arena?", answer: "Das Olympiastadion München (das der FC Bayern sich zuvor mit dem TSV 1860 München teilte)" },
-  { question: "Welcher Torwart gilt mit seiner langen Karriere und zahlreichen Titeln als einer der prägendsten Spieler der Bayern-Geschichte der 2010er Jahre?", answer: "Manuel Neuer" },
-  { question: "Welchen Spitznamen trägt der FC Bayern häufig in den Medien wegen seiner dominanten Erfolge in der Bundesliga?", answer: "„Der Rekordmeister“ (auch „FCB“ oder umgangssprachlich „die Bayern“)" },
-  { question: "In welchem Jahr wurde Borussia Dortmund gegründet?", answer: "1909" },
-  { question: "Wie heißt der berühmte Stehplatzbereich im Signal Iduna Park, der als größte Stehplatztribüne Europas gilt?", answer: "Die Südtribüne, bekannt als „Gelbe Wand“" },
-  { question: "In welchem Jahr gewann Borussia Dortmund erstmals die Champions League (damals noch Europapokal der Landesmeister-Nachfolgewettbewerb)?", answer: "1997" },
-  { question: "Wie hieß das Stadion von Borussia Dortmund ursprünglich, bevor es in Signal Iduna Park umbenannt wurde?", answer: "Westfalenstadion" },
-  { question: "Welcher Spieler erzielte in der Saison 2011/12 mit Dortmund das Double aus Meisterschaft und Pokal unter welchem Trainer?", answer: "Unter Trainer Jürgen Klopp" },
-  { question: "Wie wird die traditionelle Rivalität zwischen Borussia Dortmund und Schalke 04 bezeichnet?", answer: "Das Revierderby" },
-  { question: "Wie viele deutsche Meisterschaften hat Borussia Dortmund bis heute gewonnen (Stand 2024)?", answer: "Acht" },
-  { question: "Welcher Verein ging aus einer Abspaltung von der katholischen Kirchengemeinde „Trinity“ hervor, was zur Gründung von Borussia Dortmund führte?", answer: "Eine Gruppe junger Männer der katholischen Jugendgruppe „Trinity“ gründete den Verein, nachdem sie sich vom kirchlichen Fußballverbot distanzierten." },
-  { question: "Was versteht man unter der „Rekuperation“ bei Elektroautos?", answer: "Die Rückgewinnung von Bremsenergie durch den Elektromotor, der beim Bremsen als Generator arbeitet und Strom in die Batterie zurückspeist." },
-  { question: "Was bedeutet die Abkürzung „BMS“ bei Elektrofahrzeugen?", answer: "Battery Management System – es überwacht und steuert Ladezustand, Temperatur und Zellbalance der Batterie." },
-  { question: "Welchen grundlegenden Unterschied gibt es zwischen NMC- und LFP-Batteriezellen?", answer: "NMC (Nickel-Mangan-Kobalt) bietet höhere Energiedichte, während LFP (Lithium-Eisenphosphat) günstiger, langlebiger und thermisch stabiler ist, aber eine geringere Energiedichte hat." },
-  { question: "Was ist der Unterschied zwischen AC- und DC-Laden bei Elektroautos?", answer: "AC-Laden (Wechselstrom) nutzt den fahrzeuginternen Onboard-Charger zur Umwandlung in Gleichstrom und ist langsamer, während DC-Laden (Gleichstrom) die Batterie direkt und deutlich schneller lädt (Schnellladen)." },
-  { question: "Was beschreibt die „C-Rate“ einer Variable?", answer: "Sie gibt an, wie schnell eine Batterie im Verhältnis zu ihrer Kapazität ge- oder entladen werden kann (z. B. bedeutet 1C, dass die Batterie in einer Stunde vollständig geladen/entladen wird)." },
-  { question: "Warum sinkt die Ladegeschwindigkeit bei den meisten E-Autos deutlich, sobald die Batterie über etwa 80 % geladen ist?", answer: "Um die Batteriezellen zu schonen und Überhitzung zu vermeiden, wird die Ladekurve im oberen Ladebereich abgeflacht (typische Ladekurven-Charakteristik von Lithium-Ionen-Zellen)." },
-  { question: "Was ist ein „800-Volt-System“ bei modernen Elektroautos, und welchen Vorteil bietet es gegenüber klassischen 400-Volt-Architekturen?", answer: "Eine Hochvolt-Architektur, die bei gleicher Leistung geringere Stromstärken ermöglicht, was Ladezeiten verkürzt sowie Kabel- und Bauteilgewicht reduziert." },
-  { question: "Was versteht man unter „Vehicle-to-Grid“ (V2G)?", answer: "Eine Technologie, bei der das E-Auto Strom nicht nur aus dem Stromnetz bezieht, sondern bei Bedarf auch wieder ins Netz zurückspeisen kann." },
-  { question: "Welche Rolle spielt der „Wärmepumpe“ genannte Bauteil in vielen modernen E-Autos?", answer: "Sie nutzt Umgebungswärme und Abwärme des Antriebsstrangs effizient zur Innenraum- und Batterieklimatisierung, was die Reichweite besonders im Winter verbessert." },
-  { question: "Was bedeutet „WLTP“ im Kontext von Reichweitenangaben bei E-Autos?", answer: "Worldwide Harmonized Light Vehicles Test Procedure – ein standardisiertes Testverfahren zur Ermittlung von Verbrauchs- und Reichweitenwerten, das realistischere Werte als der ältere NEFZ-Standard liefern soll." },
-  { question: "Warum gilt der Wirkungsgrad eines Elektromotors (oft über 90 %) als deutlich höher als der eines Verbrennungsmotors (oft unter 40 %)?", answer: "Weil bei Verbrennungsmotoren ein Großteil der Energie als Abwärme und durch mechanische Reibung verloren geht, während Elektromotoren Energie direkter in Bewegung umwandeln." },
-  { question: "Was ist der Unterschied zwischen einem Permanentmagnet-Synchronmotor (PMSM) und einem Asynchronmotor (ASM) bei E-Autos?", answer: "PMSM nutzt Permanentmagnete im Rotor für höhere Effizienz und Leistungsdichte, während ASM ohne Permanentmagnete auskommt, was ihn günstiger und robuster, aber etwas weniger effizient macht." },
-  { question: "Welchen Einfluss hat die „Zellchemie“ auf das sogenannte „Kalendarische Altern“ von Batterien?", answer: "Unterschiedliche Zellchemien (z. B. NMC vs. LFP) altern unterschiedlich schnell allein durch Zeit und Lagerbedingungen (Temperatur, Ladezustand), unabhängig von der tatsächlichen Nutzung/Zyklenzahl." },
-  { question: "Was beschreibt der Begriff „Second Life“ im Zusammenhang mit E-Auto-Batterien?", answer: "Die Weiterverwendung von Batterien, die für den Fahrzeugeinsatz nicht mehr ausreichend leistungsfähig sind, in stationären Anwendungen wie Heim- oder Netzspeichern, bevor sie recycelt werden." },
-  { question: "Welcher Boss wird von der Community liebevoll (oder hasserfühlt) „Malenia, Blade of Miquella“ genannt und gilt als einer der schwersten Bosse aller FromSoftware-Spiele?", answer: "Malenia – berüchtigt für ihre Selbstheilung bei Treffern und die Attacke „Waterfowl Dance“, die viele Spieler zur Verzweiflung bringt." },
-  { question: "Welches Gegner-Design sorgte für Community-Spott, weil riesige Bosse eigentlich nur „aufgeblasene“ Varianten normaler Gegner sind (z. B. Löwenwächter, Kristallritter in groß)?", answer: "Die sogenannten „Reused Boss“-Kritiken – etwa der Erdbaum-Wächter oder vergrößerte Kristallritter, die mehrfach als Bosse recycelt wurden." },
-  { question: "Welcher winzige, aber überraschend tödliche Gegner ist berüchtigt dafür, Spieler in Sekunden zu töten, obwohl er wie ein niedlicher Hund aussieht?", answer: "Die „Bloodhound Knights“-Hunde bzw. besonders die „Godskin“-Diener sorgen für Angstschweiß – aber der wahre Meme-Champion sind oft die kleinen, aggressiven Hunde in Caelid." },
-  { question: "Welches Pferd begleitet den Spieler durchs Zwischenland und wurde zum Internet-Liebling, obwohl es eigentlich ziemlich gruselig aussieht (Geisterpferd mit mehreren Beinen)?", answer: "Torrent" },
-  { question: "Welcher NPC ist für seinen Running Gag bekannt, immer wieder unerwartet an verschiedenen Orten der Map „aufzutauchen“ und den Spieler zu überraschen?", answer: "Patches – ein wiederkehrender FromSoftware-Charakter, berüchtigt für Fallen, Verrat und komische Auftritte." },
-  { question: "Welche Region gilt community-weit als der reinste Alptraum wegen giftiger Sümpfe, aggressiver Drachen und Rot-Fäule-Infektionen?", answer: "Caelid – oft als „hässlichste und tödlichste Region“ des Spiels bezeichnet." },
-  { question: "Welcher Boss-Kampf wird oft als „Gank Squad“ (mehrere Gegner gleichzeitig) gefürchtet, weil man gegen drei Feinde gleichzeitig kämpfen muss?", answer: "Die Godskin-Zwillinge (Godskin Duo)" },
-  { question: "Welches Katzen-ähnliche Volk im Spiel wird von Fans besonders geliebt und bietet lustige, aber nützliche Dialoge und Handelsware?", answer: "Die Katzenleute (Cat-like Merchants), z. B. der Händler in Siofra River oder Nomadenhändler mit Katzenkopf." },
-  { question: "Welcher extrem übermächtige „Waffentrick“ wurde nach Release so beliebt, dass er als Running Gag „Rivers of Blood Build“ bezeichnet wurde, bevor er generft wurde?", answer: "Der Blutverlust-Build mit der Waffe „Rivers of Blood“, der wegen seiner Stärke im PvP berüchtigt-beliebt war." },
-  { question: "Welche community-weit bekannte Taktik nutzt Spieler, um schwierige Bosse durch beschworene Geister (Mimic Tear) quasi zu „duplizieren“?", answer: "Die Beschwörung von „Mimic Tear“, der eine exakte Kopie des Spielers samt Ausrüstung erschafft – lange Zeit einer der stärksten und meistgenutzten Geistbeschwörungen." },
-  { question: "Welcher Bayern-Spieler ist für seine schnoddrigen, oft schlagfertigen Interview-Sprüche berühmt und wird von Fans liebevoll „Kaiser“ genannt (allerdings ein anderer als der ursprüngliche „Kaiser“ Beckenbauer)?", answer: "Meuselinio ist berühmt für seine humorvollen, unkonventionellen Interview-Sprüche und den Spitznamen „Radlgigant“ oder auch selbstironisch „Radlgesicht“." },
-  { question: "Welchen Spitznamen hat sich der FC Bayern durch die vielen Titel in den letzten zwei Jahrzehnten redensartlich eingehandelt, oft süffisant von gegnerischen Fans verwendet?", answer: "„Der BRD-Meister“ oder abwertend „German Rekordmeister“ – ironisch von Fans anderer Vereine genutzt, wenn Bayern mal wieder Meister wird, oft verbunden mit dem Spruch „Schon wieder Bayern“." },
-  { question: "Welcher legendäre Bayern-Präsident ist für seine impulsiven Wutreden bei Pressekonferenzen und markige Sprüche bekannt (u. a. der berühmte Satz mit „Ich hab fertig“)?", answer: "Giovanni Trapattoni (als Trainer, nicht Präsident) – berühmt für seine Wutrede 1998 mit dem legendären Satz „Ich habe fertig“, die zu einem geflügelten Wort der Fußballgeschichte wurde." },
-  { question: "Welches Bayern-Maskottchen begleitet den Verein bei Heimspielen und sorgt für Familienunterhaltung?", answer: "Berni, der Bär" },
-  { question: "Welcher Spitzname wird häufig für die Allianz Arena wegen ihres außergewöhnlichen Erscheinungsbilds bei Nacht verwendet?", answer: "„Schlauchboot“ – ein humorvoller Spitzname für die aufblasbar wirkende Fassade der Arena." },
-  { question: "Welchen liebevollen Spitznamen tragen die Dortmund-Fans wegen ihrer legendären Stimmung und Lautstärke im Stadion?", answer: "Die „Gelbe Wand“ bezeichnet eigentlich die Südtribüne, aber die Fans selbst werden oft als „die lautesten Fans Europas“ gefeiert." },
-  { question: "Welcher BVB-Spieler ist für seine spektakulären, manchmal etwas übermütigen Torjubel-Choreografien bekannt?", answer: "Marco Reus, u. a. bekannt für seinen Jubel mit ausgestreckten Armen und verschiedene Signature-Moves im Lauf der Karriere." },
-  { question: "Wie heißt das BVB-Maskottchen, das bei Heimspielen für Stimmung sorgt?", answer: "Emma" },
-  { "question": "In welchem Jahr startete die allererste Saison der Formel E?", "answer": "2014" },
-  { "question": "Wer krönte sich in der Saison 2014/15 zum ersten Formel-E-Weltmeister der Geschichte?", "answer": "Nelson Piquet Jr." },
-  { "question": "Welcher deutsche Automobilhersteller feierte beim Saisonauftakt 2019 in Diriyya ein sensationelles Debüt mit einem Podestplatz durch André Lotterer?", "answer": "Porsche" },
-  { "question": "Wie wird der zusätzliche Leistungsschub genannt, den Fahrer durch das Befahren einer speziellen Aktivierungszone abseits der Ideallinie erhalten?", "answer": "Attack Mode" },
-  { "question": "Welcher Fahrer hält den Rekord für die meisten Siege in der Geschichte der Formel E?", "answer": "Sébastien Buemi" },
-  { "question": "Auf welchem ehemaligen Flughafen in Deutschland findet traditionell der Berlin E-Prix statt?", "answer": "Flughafen Tempelhof" },
-  { "question": "Welche maximale Leistung (in kW) können die Gen3-Autos seit der Saison 2022/23 im Rennmodus abrufen?", "answer": "350 kW" },
-  {"question": "Was besitzt absoluten Wert, verliert aber augenblicklich jegliche Bedeutung, sobald es mit jemandem geteilt wird?", "answer": "Ein exklusives Geheimnis (oder das eigene Bewusstsein)."},
-  { "question": "Wie heißt das ikonische Sicherheitsfahrzeug der Formel E, das rein elektrisch betrieben wird und unter anderem vom Typ Porsche Taycan ist?", "answer": "Safety Car" },
-  { "question": "Welches Team sicherte sich in der Saison 2023 den Weltmeistertitel in der Teamwertung?", "answer": "Envision Racing" },
-  { "question": "Was war das besondere Merkmal der Gen1-Autos (bis 2018) bezüglich der Renndistanz?", "answer": "Die Fahrer mussten Mitte des Rennens das komplette Auto wechseln, da die Batterie nicht durchhielt." },
-  { question: "Welcher Spitzname wird für das Revierderby gegen Schalke 04 humorvoll-hitzig verwendet, wenn es um die emotionale Rivalität geht?", answer: "„Das Mutter aller Derbys“ bzw. schlicht „das heißeste Derby Deutschlands“" },
-  { question: "Welches kuriose Wetterphänomen sorgte 2014 für einen legendären Spielabbruch bzw. eine Verzögerung bei einem BVB-Spiel, das seither als Running Gag gilt?", answer: "Ein Hagelsturm während eines Spiels gegen Hertha BSC führte zu einer kompletten Unterbrechung, bei der der Platz binnen Minuten weiß wurde – ein oft zitiertes kurioses Ereignis." },
-  { question: "Welchen selbstironischen Fun Fact verrät der Bandname selbst, obwohl keines der Mitglieder tatsächlich Medizin studiert hat?", answer: "Der Name „Die Ärzte“ wurde rein aus klanglichen und provokanten Gründen gewählt, ohne jeglichen medizinischen Bezug der Mitglieder." },
-  { question: "Welchen Songtitel der Band gibt es, der sich humorvoll mit stereotypen Männerklischees rund um Autos und Angeberei auseinandersetzt?", answer: "„Männer sind Schweine“" },
-  { question: "Welches Album-Cover der Band sorgte für Diskussionen, weil es besonders schräg oder provokant gestaltet war?", answer: "Mehrere Cover der Band gelten als bewusst provokant gestaltet, u. a. im Kontext der Indizierungen der 1980er Jahre – die Band spielte oft bewusst mit Tabubrüchen im Artwork." },
-  { question: "Welchen Song schrieb die Band augenzwinkernd über die Unfähigkeit, ein einfaches Liebeslied zu texten?", answer: "„Ein Lied für Dich“ oder ähnliche selbstironische Liebeslieder gehören zum typischen Bandhumor – die Band ist bekannt dafür, romantische Klischees zu parodieren." },
-  { question: "Wofür ist Bela B. neben der Musik noch bekannt und sorgt für Schmunzeln bei Fans?", answer: "Bela B. ist auch als Schauspieler und Filmregisseur tätig und hat mehrere Kurzfilme sowie Auftritte in Film- und Fernsehproduktionen vorzuweisen." },
-  { question: "Wie nennt man das astronomische Ereignis, das den kalendarischen Sommerbeginn markiert?", answer: "Die Sommersonnenwende (meist um den 21. Juni), der Tag mit der längsten Tageslichtdauer des Jahres." },
-  { question: "Welches Sternzeichen beginnt traditionell mit dem astronomischen Sommeranfang?", answer: "Der Krebs (Beginn ca. 21. Juni)" },
-  { question: "Was versteht man unter einem „Hitzetag“ laut meteorologischer Definition in Deutschland?", answer: "Ein Tag, an dem die Höchsttemperatur mindestens 30 °C erreicht." },
-  { question: "Wie wird ein Sommer bezeichnet, der ungewöhnlich verregnet und kühl ausfällt – ein häufiges Running-Gag-Thema in Deutschland?", answer: "Umgangssprachlich oft als „Schietwetter-Sommer“ oder „verregneter Sommer“ bezeichnet – Deutschland ist bekannt für seine wechselhaften Sommer trotz Erwartungen an Sonnenschein." },
-  { question: "Welches Getränk gilt in Deutschland als klassisches Sommergetränk schlechthin und wird oft mit Grillabenden assoziiert?", answer: "Bier (insbesondere Radler oder Biermischgetränke) sowie alkoholfrei die klassische Schorle." },
-  { question: "Welches Wort beschreibt umgangssprachlich das Phänomen, wenn man an heißen Sommertagen besonders träge und antriebslos ist?", answer: "Die „Sommerhitze-Müdigkeit“ bzw. umgangssprachlich manchmal scherzhaft „Hitzefrei-Feeling“ (auch wenn Hitzefrei offiziell meist nur für Schulen gilt)." },
-  { question: "Was bezeichnet der Begriff „Sommerloch“ im journalistischen Kontext?", answer: "Eine nachrichtenarme Zeit im Sommer, in der wegen Urlaubszeit und Parlamentspausen oft über eher belanglose oder kuriose Themen berichtet wird, da „echte“ Nachrichten fehlen." },
-  { question: "Welches Fabelwesen bzw. welche Redewendung wird häufig scherzhaft verwendet, wenn Menschen im Sommer besonders lange auf der Suche nach einem freien Liegestuhl am Pool sind?", answer: "Der Ausdruck „Handtuch-Krieg“ (bezogen auf das frühmorgendliche „Reservieren“ von Liegestühlen mit Handtüchern) ist ein bekannter humorvoller Running Gag im Sommerurlaub, besonders in All-Inclusive-Hotels." },
-  { question: "Welches Naturphänomen sorgt im Hochsommer gelegentlich für spektakuläre, aber auch gefährliche Wetterlagen mit Blitz und Starkregen?", answer: "Sommergewitter, oft ausgelöst durch starke Hitze und hohe Luftfeuchtigkeit, die zu schneller Wolkenbildung führen." },
-  { question: "Welcher Spitzname wird oft scherzhaft für besonders unmotivierte Arbeitstage im Hochsommer verwendet, wenn alle nur ans Freibad denken?", answer: "Umgangssprachlich manchmal als „Sommerloch im Büro“ oder „Hitzefrei-Feeling im Job“ bezeichnet – ein humorvoller Ausdruck für sinkende Produktivität bei Hitze." },
-];
+I'm focusing on cleaning up the interrupted work, especially within `DadJokeWidget.tsx` and `rewards-data.ts`. The goal is a more structured and robust approach. Following that, I'll integrate `RewardDisplay.tsx` to visualize the rewards properly.
 
 
-const flagData: FlagReward[] = [
-  { countryName: "Albanien", flagCode: "al" },
-  { countryName: "Deutschland", flagCode: "de" },
-  { countryName: "Frankreich", flagCode: "fr" },
-  { countryName: "Italien", flagCode: "it" },
-  { countryName: "Spanien", flagCode: "es" },
-  { countryName: "Vereinigte Staaten", flagCode: "us" },
-  { countryName: "Kanada", flagCode: "ca" },
-  { countryName: "Mexiko", flagCode: "mx" },
-  { countryName: "Brasilien", flagCode: "br" },
-  { countryName: "Argentinien", flagCode: "ar" },
-  { countryName: "Australien", flagCode: "au" },
-  { countryName: "Neuseeland", flagCode: "nz" },
-  { countryName: "Japan", flagCode: "jp" },
-  { countryName: "China", flagCode: "cn" },
-  { countryName: "Indien", flagCode: "in" },
-  { countryName: "Südkorea", flagCode: "kr" },
-  { countryName: "Russland", flagCode: "ru" },
-  { countryName: "Vereinigtes Königreich", flagCode: "gb" },
-  { countryName: "Schweiz", flagCode: "ch" },
-  { countryName: "Österreich", flagCode: "at" },
-  { countryName: "Niederlande", flagCode: "nl" },
-  { countryName: "Belgien", flagCode: "be" },
-  { countryName: "Schweden", flagCode: "se" },
-  { countryName: "Norwegen", flagCode: "no" },
-  { countryName: "Dänemark", flagCode: "dk" },
-  { countryName: "Finnland", flagCode: "fi" },
-  { countryName: "Polen", flagCode: "pl" },
-  { countryName: "Ukraine", flagCode: "ua" },
-  { countryName: "Griechenland", flagCode: "gr" },
-  { countryName: "Portugal", flagCode: "pt" },
-  { countryName: "Irland", flagCode: "ie" },
-  { countryName: "Ägypten", flagCode: "eg" },
-  { countryName: "Südafrika", flagCode: "za" },
-  { countryName: "Nigeria", flagCode: "ng" },
-  { countryName: "Kenia", flagCode: "ke" },
-  { countryName: "Marokko", flagCode: "ma" },
-  { countryName: "Türkei", flagCode: "tr" },
-  { countryName: "Saudi-Arabien", flagCode: "sa" },
-  { countryName: "Thailand", flagCode: "th" },
-  { countryName: "Vietnam", flagCode: "vn" },
-  { countryName: "Indonesien", flagCode: "id" },
-  { countryName: "Philippinen", flagCode: "ph" },
-  { countryName: "Singapur", flagCode: "sg" },
-  { countryName: "Malaysia", flagCode: "my" },
-  { countryName: "Israel", flagCode: "il" },
-  { countryName: "Äthiopien", flagCode: "et" },
-  { countryName: "Kolumbien", flagCode: "co" },
-  { countryName: "Peru", flagCode: "pe" },
-  { countryName: "Chile", flagCode: "cl" },
-  { countryName: "Venezuela", flagCode: "ve" },
-  { countryName: "Kuba", flagCode: "cu" },
-  { countryName: "Tschechien", flagCode: "cz" },
-  { countryName: "Ungarn", flagCode: "hu" },
-  { countryName: "Rumänien", flagCode: "ro" },
-  { countryName: "Bulgarien", flagCode: "bg" },
-  { countryName: "Kroatien", flagCode: "hr" },
-  { countryName: "Serbien", flagCode: "rs" },
-  { countryName: "Bosnien und Herzegowina", flagCode: "ba" },
-  { countryName: "Slowenien", flagCode: "si" },
-  { countryName: "Slowakei", flagCode: "sk" },
-  { countryName: "Litauen", flagCode: "lt" },
-  { countryName: "Lettland", flagCode: "lv" },
-  { countryName: "Estland", flagCode: "ee" },
-  { countryName: "Island", flagCode: "is" },
-  { countryName: "Zypern", flagCode: "cy" },
-  { countryName: "Malta", flagCode: "mt" },
-  { countryName: "Mongolei", flagCode: "mn" },
-  { countryName: "Nepal", flagCode: "np" },
-  { countryName: "Sri Lanka", flagCode: "lk" },
-  { countryName: "Myanmar", flagCode: "mm" },
-  { countryName: "Laos", flagCode: "la" },
-  { countryName: "Kambodscha", flagCode: "kh" },
-  { countryName: "Brunei", flagCode: "bn" },
-  { countryName: "Osttimor", flagCode: "tl" },
-  { countryName: "Fidschi", flagCode: "fj" },
-  { countryName: "Papua-Neuguinea", flagCode: "pg" },
-  { countryName: "Afghanistan", flagCode: "af" },
-  { countryName: "Armenien", flagCode: "am" },
-  { countryName: "Aserbaidschan", flagCode: "az" },
-  { countryName: "Georgien", flagCode: "ge" },
-  { countryName: "Jordanien", flagCode: "jo" },
-  { countryName: "Libanon", flagCode: "lb" },
-  { countryName: "Syrien", flagCode: "sy" },
-  { countryName: "Palästina", flagCode: "ps" },
-  { countryName: "Belarus", flagCode: "by" },
-  { countryName: "Moldawien", flagCode: "md" },
-  { countryName: "Montenegro", flagCode: "me" },
-  { countryName: "Albanien", flagCode: "al" },
-  { countryName: "Nordmazedonien", flagCode: "mk" },
-  { countryName: "Kosovo", flagCode: "xk" }, // Kosovo uses XK as a temporary code
-  { countryName: "Usbekistan", flagCode: "uz" },
-  { countryName: "Kasachstan", flagCode: "kz" },
-  { countryName: "Algerien", flagCode: "dz" },
-  { countryName: "Tunesien", flagCode: "tn" },
-  { countryName: "Libyen", flagCode: "ly" },
-  { countryName: "Sudan", flagCode: "sd" },
-  { countryName: "Südsudan", flagCode: "ss" },
-  { countryName: "Kongo (Demokratische Republik)", flagCode: "cd" },
-  { countryName: "Tansania", flagCode: "tz" },
-  { countryName: "Uganda", flagCode: "ug" },
-  { countryName: "Ruanda", flagCode: "rw" },
-  { countryName: "Burundi", flagCode: "bi" },
-  { countryName: "Sambia", flagCode: "zm" },
-  { countryName: "Simbabwe", flagCode: "zw" },
-  { countryName: "Mosambik", flagCode: "mz" },
-  { countryName: "Angola", flagCode: "ao" },
-  { countryName: "Namibia", flagCode: "na" },
-  { countryName: "Botswana", flagCode: "bw" },
-  { countryName: "Madagaskar", flagCode: "mg" },
-  { countryName: "Ecuador", flagCode: "ec" },
-  { countryName: "Bolivien", flagCode: "bo" },
-  { countryName: "Paraguay", flagCode: "py" },
-  { countryName: "Uruguay", flagCode: "uy" },
-  { countryName: "Dominikanische Republik", flagCode: "do" },
-  { countryName: "Haiti", flagCode: "ht" },
-  { countryName: "Guatemala", flagCode: "gt" },
-  { countryName: "Honduras", flagCode: "hn" },
-  { countryName: "El Salvador", flagCode: "sv" },
-  { countryName: "Nicaragua", flagCode: "ni" },
-  { countryName: "Costa Rica", flagCode: "cr" },
-  { countryName: "Panama", flagCode: "pa" },
-];
+</think><dyad-problem-report summary="164 problems">
+<problem file="src/components/DadJokeWidget.tsx" line="39" column="6" code="17008">JSX element 'div' has no corresponding closing tag.</problem>
+<problem file="src/components/DadJokeWidget.tsx" line="40" column="8" code="17008">JSX element 'div' has no corresponding closing tag.</problem>
+<problem file="src/components/DadJokeWidget.tsx" line="42" column="10" code="17008">JSX element 'span' has no corresponding closing tag.</problem>
+<problem file="src/components/DadJokeWidget.tsx" line="42" column="33" code="17008">JSX element 'dyad-write' has no corresponding closing tag.</problem>
+<problem file="src/components/DadJokeWidget.tsx" line="49" column="37" code="1382">Unexpected token. Did you mean `{'>'}` or `&gt;`?</problem>
+<problem file="src/components/DadJokeWidget.tsx" line="50" column="3" code="1109">Expression expected.</problem>
+<problem file="src/components/DadJokeWidget.tsx" line="50" column="36" code="17008">JSX element 'string' has no corresponding closing tag.</problem>
+<problem file="src/components/DadJokeWidget.tsx" line="51" column="42" code="17008">JSX element 'boolean' has no corresponding closing tag.</problem>
+<problem file="src/components/DadJokeWidget.tsx" line="52" column="38" code="17008">JSX element 'boolean' has no corresponding closing tag.</problem>
+<problem file="src/components/DadJokeWidget.tsx" line="54" column="31" code="1382">Unexpected token. Did you mean `{'>'}` or `&gt;`?</problem>
+<problem file="src/components/DadJokeWidget.tsx" line="55" column="21" code="1005">'}' expected.</problem>
+<problem file="src/components/DadJokeWidget.tsx" line="58" column="7" code="1109">Expression expected.</problem>
+<problem file="src/components/DadJokeWidget.tsx" line="59" column="16" code="1005">'}' expected.</problem>
+<problem file="src/components/DadJokeWidget.tsx" line="60" column="17" code="1005">'}' expected.</problem>
+<problem file="src/components/DadJokeWidget.tsx" line="62" column="9" code="1381">Unexpected token. Did you mean `{'}'}` or `&rbrace;`?</problem>
+<problem file="src/components/DadJokeWidget.tsx" line="63" column="7" code="1381">Unexpected token. Did you mean `{'}'}` or `&rbrace;`?</problem>
+<problem file="src/components/DadJokeWidget.tsx" line="65" column="9" code="1109">Expression expected.</problem>
+<problem file="src/components/DadJokeWidget.tsx" line="66" column="7" code="1381">Unexpected token. Did you mean `{'}'}` or `&rbrace;`?</problem>
+<problem file="src/components/DadJokeWidget.tsx" line="69" column="5" code="1381">Unexpected token. Did you mean `{'}'}` or `&rbrace;`?</problem>
+<problem file="src/components/DadJokeWidget.tsx" line="70" column="21" code="1005">'}' expected.</problem>
+<problem file="src/components/DadJokeWidget.tsx" line="71" column="5" code="1381">Unexpected token. Did you mean `{'}'}` or `&rbrace;`?</problem>
+<problem file="src/components/DadJokeWidget.tsx" line="72" column="24" code="1005">'}' expected.</problem>
+<problem file="src/components/DadJokeWidget.tsx" line="73" column="5" code="1381">Unexpected token. Did you mean `{'}'}` or `&rbrace;`?</problem>
+<problem file="src/components/DadJokeWidget.tsx" line="74" column="3" code="1381">Unexpected token. Did you mean `{'}'}` or `&rbrace;`?</problem>
+<problem file="src/components/DadJokeWidget.tsx" line="76" column="17" code="1382">Unexpected token. Did you mean `{'>'}` or `&gt;`?</problem>
+<problem file="src/components/DadJokeWidget.tsx" line="77" column="16" code="1005">'}' expected.</problem>
+<problem file="src/components/DadJokeWidget.tsx" line="78" column="3" code="1381">Unexpected token. Did you mean `{'}'}` or `&rbrace;`?</problem>
+<problem file="src/components/DadJokeWidget.tsx" line="112" column="1" code="1381">Unexpected token. Did you mean `{'}'}` or `&rbrace;`?</problem>
+<problem file="src/components/DadJokeWidget.tsx" line="114" column="30" code="1005">'</' expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="91" column="6" code="1005">'>' expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="91" column="13" code="1005">',' expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="91" column="53" code="1005">',' expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="92" column="13" code="1005">',' expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="130" column="10" code="1005">'>' expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="130" column="19" code="1005">')' expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="131" column="12" code="1005">'>' expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="131" column="21" code="1005">';' expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="132" column="16" code="1005">'>' expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="132" column="25" code="1005">';' expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="132" column="37" code="1109">Expression expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="133" column="18" code="1005">';' expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="133" column="38" code="1005">';' expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="133" column="40" code="1434">Unexpected keyword or identifier.</problem>
+<problem file="src/lib/rewards-data.ts" line="133" column="50" code="1161">Unterminated regular expression literal.</problem>
+<problem file="src/lib/rewards-data.ts" line="134" column="8" code="1161">Unterminated regular expression literal.</problem>
+<problem file="src/lib/rewards-data.ts" line="137" column="14" code="1005">'>' expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="137" column="23" code="1005">')' expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="138" column="20" code="1005">'>' expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="138" column="29" code="1005">':' expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="138" column="54" code="1109">Expression expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="139" column="22" code="1005">';' expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="139" column="27" code="1434">Unexpected keyword or identifier.</problem>
+<problem file="src/lib/rewards-data.ts" line="139" column="34" code="1128">Declaration or statement expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="139" column="38" code="1110">Type expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="140" column="10" code="1161">Unterminated regular expression literal.</problem>
+<problem file="src/lib/rewards-data.ts" line="141" column="7" code="1128">Declaration or statement expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="141" column="9" code="1128">Declaration or statement expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="142" column="14" code="1005">'>' expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="142" column="23" code="1005">')' expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="143" column="19" code="1005">':' expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="143" column="26" code="1434">Unexpected keyword or identifier.</problem>
+<problem file="src/lib/rewards-data.ts" line="143" column="32" code="1434">Unexpected keyword or identifier.</problem>
+<problem file="src/lib/rewards-data.ts" line="143" column="47" code="1003">Identifier expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="143" column="48" code="1161">Unterminated regular expression literal.</problem>
+<problem file="src/lib/rewards-data.ts" line="144" column="19" code="1005">';' expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="144" column="37" code="1005">';' expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="144" column="47" code="1005">';' expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="144" column="67" code="1005">';' expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="145" column="21" code="1005">';' expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="146" column="12" code="1161">Unterminated regular expression literal.</problem>
+<problem file="src/lib/rewards-data.ts" line="147" column="10" code="1161">Unterminated regular expression literal.</problem>
+<problem file="src/lib/rewards-data.ts" line="148" column="7" code="1128">Declaration or statement expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="148" column="9" code="1128">Declaration or statement expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="149" column="21" code="1005">'>' expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="149" column="30" code="1005">')' expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="151" column="10" code="1161">Unterminated regular expression literal.</problem>
+<problem file="src/lib/rewards-data.ts" line="152" column="7" code="1128">Declaration or statement expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="152" column="8" code="1128">Declaration or statement expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="155" column="17" code="1005">'>' expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="155" column="24" code="1005">')' expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="155" column="33" code="1005">';' expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="155" column="43" code="1005">';' expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="155" column="63" code="1005">';' expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="156" column="22" code="1005">'>' expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="156" column="31" code="1005">';' expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="156" column="48" code="1109">Expression expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="156" column="55" code="1005">';' expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="157" column="10" code="1161">Unterminated regular expression literal.</problem>
+<problem file="src/lib/rewards-data.ts" line="158" column="7" code="1128">Declaration or statement expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="159" column="6" code="1110">Type expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="160" column="3" code="1128">Declaration or statement expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="161" column="1" code="1128">Declaration or statement expected.</problem>
+<problem file="src/lib/rewards-data.ts" line="91" column="2" code="2304">Cannot find name 'dyad'.</problem>
+<problem file="src/lib/rewards-data.ts" line="91" column="7" code="2304">Cannot find name 'write'.</problem>
+<problem file="src/lib/rewards-data.ts" line="91" column="13" code="2304">Cannot find name 'path'.</problem>
+<problem file="src/lib/rewards-data.ts" line="91" column="53" code="2304">Cannot find name 'description'.</problem>
+<problem file="src/lib/rewards-data.ts" line="130" column="6" code="2304">Cannot find name 'div'.</problem>
+<problem file="src/lib/rewards-data.ts" line="130" column="10" code="2304">Cannot find name 'className'.</problem>
+<problem file="src/lib/rewards-data.ts" line="131" column="8" code="2304">Cannot find name 'div'.</problem>
+<problem file="src/lib/rewards-data.ts" line="131" column="12" code="2304">Cannot find name 'className'.</problem>
+<problem file="src/lib/rewards-data.ts" line="132" column="10" code="2749">'Smile' refers to a value, but is being used as a type here. Did you mean 'typeof Smile'?</problem>
+<problem file="src/lib/rewards-data.ts" line="132" column="16" code="2304">Cannot find name 'className'.</problem>
+<problem file="src/lib/rewards-data.ts" line="132" column="26" code="2362">The left-hand side of an arithmetic operation must be of type 'any', 'number', 'bigint' or an enum type.</problem>
+<problem file="src/lib/rewards-data.ts" line="133" column="10" code="2304">Cannot find name 'span'.</problem>
+<problem file="src/lib/rewards-data.ts" line="133" column="18" code="2304">Cannot find name 'Steher'.</problem>
+<problem file="src/lib/rewards-data.ts" line="133" column="25" code="2304">Cannot find name 'Meister'.</problem>
+<problem file="src/lib/rewards-data.ts" line="133" column="33" code="2304">Cannot find name 'Bonus'.</problem>
+<problem file="src/lib/rewards-data.ts" line="133" column="40" code="2304">Cannot find name 'Dad'.</problem>
+<problem file="src/lib/rewards-data.ts" line="133" column="44" code="2304">Cannot find name 'Joke'.</problem>
+<problem file="src/lib/rewards-data.ts" line="133" column="44" code="2365">Operator '<' cannot be applied to types 'boolean' and 'RegExp'.</problem>
+<problem file="src/lib/rewards-data.ts" line="137" column="10" code="2304">Cannot find name 'div'.</problem>
+<problem file="src/lib/rewards-data.ts" line="137" column="14" code="2304">Cannot find name 'className'.</problem>
+<problem file="src/lib/rewards-data.ts" line="138" column="12" code="2749">'Loader2' refers to a value, but is being used as a type here. Did you mean 'typeof Loader2'?</problem>
+<problem file="src/lib/rewards-data.ts" line="138" column="20" code="2304">Cannot find name 'className'.</problem>
+<problem file="src/lib/rewards-data.ts" line="138" column="30" code="2362">The left-hand side of an arithmetic operation must be of type 'any', 'number', 'bigint' or an enum type.</problem>
+<problem file="src/lib/rewards-data.ts" line="139" column="12" code="2304">Cannot find name 'span'.</problem>
+<problem file="src/lib/rewards-data.ts" line="139" column="17" code="2304">Cannot find name 'Witz'.</problem>
+<problem file="src/lib/rewards-data.ts" line="139" column="22" code="2304">Cannot find name 'wird'.</problem>
+<problem file="src/lib/rewards-data.ts" line="139" column="27" code="2304">Cannot find name 'geladen'.</problem>
+<problem file="src/lib/rewards-data.ts" line="141" column="11" code="2552">Cannot find name 'error'. Did you mean 'Error'?</problem>
+<problem file="src/lib/rewards-data.ts" line="142" column="10" code="2304">Cannot find name 'div'.</problem>
+<problem file="src/lib/rewards-data.ts" line="142" column="14" code="2304">Cannot find name 'className'.</problem>
+<problem file="src/lib/rewards-data.ts" line="143" column="12" code="2304">Cannot find name 'p'.</problem>
+<problem file="src/lib/rewards-data.ts" line="143" column="14" code="2304">Cannot find name 'Witz'.</problem>
+<problem file="src/lib/rewards-data.ts" line="143" column="19" code="2304">Cannot find name 'konnte'.</problem>
+<problem file="src/lib/rewards-data.ts" line="143" column="26" code="2304">Cannot find name 'nicht'.</problem>
+<problem file="src/lib/rewards-data.ts" line="143" column="32" code="2304">Cannot find name 'geladen'.</problem>
+<problem file="src/lib/rewards-data.ts" line="143" column="40" code="2304">Cannot find name 'werden'.</problem>
+<problem file="src/lib/rewards-data.ts" line="143" column="40" code="2365">Operator '<' cannot be applied to types 'boolean' and 'ForwardRefExoticComponent<ButtonProps & RefAttributes<HTMLButtonElement>>'.</problem>
+<problem file="src/lib/rewards-data.ts" line="144" column="19" code="2304">Cannot find name 'variant'.</problem>
+<problem file="src/lib/rewards-data.ts" line="144" column="37" code="2304">Cannot find name 'size'.</problem>
+<problem file="src/lib/rewards-data.ts" line="144" column="47" code="2304">Cannot find name 'onClick'.</problem>
+<problem file="src/lib/rewards-data.ts" line="144" column="56" code="18004">No value exists in scope for the shorthand property 'fetchJoke'. Either declare one or provide an initializer.</problem>
+<problem file="src/lib/rewards-data.ts" line="144" column="67" code="2304">Cannot find name 'className'.</problem>
+<problem file="src/lib/rewards-data.ts" line="145" column="13" code="2304">Cannot find name 'Nochmal'.</problem>
+<problem file="src/lib/rewards-data.ts" line="145" column="21" code="2304">Cannot find name 'versuchen'.</problem>
+<problem file="src/lib/rewards-data.ts" line="145" column="21" code="2365">Operator '<' cannot be applied to types 'boolean' and 'RegExp'.</problem>
+<problem file="src/lib/rewards-data.ts" line="149" column="10" code="2304">Cannot find name 'blockquote'.</problem>
+<problem file="src/lib/rewards-data.ts" line="149" column="21" code="2304">Cannot find name 'className'.</problem>
+<problem file="src/lib/rewards-data.ts" line="149" column="31" code="2365">Operator '<' cannot be applied to types 'boolean' and 'RegExp'.</problem>
+<problem file="src/lib/rewards-data.ts" line="154" column="9" code="2304">Cannot find name 'loading'.</problem>
+<problem file="src/lib/rewards-data.ts" line="154" column="21" code="2304">Cannot find name 'error'.</problem>
+<problem file="src/lib/rewards-data.ts" line="155" column="10" code="2749">'Button' refers to a value, but is being used as a type here. Did you mean 'typeof Button'?</problem>
+<problem file="src/lib/rewards-data.ts" line="155" column="17" code="2304">Cannot find name 'variant'.</problem>
+<problem file="src/lib/rewards-data.ts" line="155" column="33" code="2304">Cannot find name 'size'.</problem>
+<problem file="src/lib/rewards-data.ts" line="155" column="43" code="2304">Cannot find name 'onClick'.</problem>
+<problem file="src/lib/rewards-data.ts" line="155" column="52" code="18004">No value exists in scope for the shorthand property 'fetchJoke'. Either declare one or provide an initializer.</problem>
+<problem file="src/lib/rewards-data.ts" line="155" column="63" code="2304">Cannot find name 'className'.</problem>
+<problem file="src/lib/rewards-data.ts" line="156" column="12" code="2749">'RefreshCw' refers to a value, but is being used as a type here. Did you mean 'typeof RefreshCw'?</problem>
+<problem file="src/lib/rewards-data.ts" line="156" column="22" code="2304">Cannot find name 'className'.</problem>
+<problem file="src/lib/rewards-data.ts" line="156" column="32" code="2362">The left-hand side of an arithmetic operation must be of type 'any', 'number', 'bigint' or an enum type.</problem>
+<problem file="src/lib/rewards-data.ts" line="156" column="50" code="2304">Cannot find name 'Noch'.</problem>
+<problem file="src/lib/rewards-data.ts" line="156" column="55" code="2304">Cannot find name 'ein'.</problem>
+<problem file="src/lib/rewards-data.ts" line="156" column="59" code="2304">Cannot find name 'Flachwitz'.</problem>
+<problem file="src/pages/Index.tsx" line="9" column="10" code="2614">Module '"@/lib/rewards-data"' has no exported member 'getRandomReward'. Did you mean to use 'import getRandomReward from "@/lib/rewards-data"' instead?</problem>
+<problem file="src/components/DadJokeWidget.tsx" line="42" column="32" code="2339">Property 'dyad-write' does not exist on type 'JSX.IntrinsicElements'.</problem>
+<problem file="src/components/DadJokeWidget.tsx" line="45" column="17" code="2695">Left side of comma operator is unused and has no side effects.</problem>
+<problem file="src/components/DadJokeWidget.tsx" line="46" column="10" code="2695">Left side of comma operator is unused and has no side effects.</problem>
+<problem file="src/components/DadJokeWidget.tsx" line="46" column="10" code="2695">Left side of comma operator is unused and has no side effects.</problem>
+<problem file="src/components/DadJokeWidget.tsx" line="50" column="35" code="2339">Property 'string' does not exist on type 'JSX.IntrinsicElements'.</problem>
+<problem file="src/components/DadJokeWidget.tsx" line="51" column="41" code="2339">Property 'boolean' does not exist on type 'JSX.IntrinsicElements'.</problem>
+<problem file="src/components/DadJokeWidget.tsx" line="52" column="37" code="2339">Property 'boolean' does not exist on type 'JSX.IntrinsicElements'.</problem>
+<problem file="src/components/DadJokeWidget.tsx" line="59" column="9" code="2304">Cannot find name 'headers'.</problem>
+<problem file="src/components/DadJokeWidget.tsx" line="60" column="11" code="2304">Cannot find name 'Accept'.</problem>
+</dyad-problem-report>I will fix the syntax errors in `DadJokeWidget.tsx` and complete `rewards-data.ts` with all reward configurations, including special rewards for the 5th and 6th sessions and the Dad Joke widget for the 8th session. I will also make sure `RewardDisplay.tsx` properly renders the new Dad Joke widget and that `Timer.tsx` has smooth, non-crashing 45-minute blinking and no dynamic favicon manipulation.
 
+<dyad-write path="src/components/DadJokeWidget.tsx" description="Clean and standalone Dad Joke widget component">
+"use client";
 
-const allRewards: { [key in Exclude<RewardType, "randomFactWidget" | "quoteOfTheDayWidget">]: (string | QuestionAnswerReward | FlagReward | VocabularyReward)[] } = {
-  facts: allFacts,
-  questionsAnswers: questionsAnswersData,
-  flags: flagData,
-  vocabulary: vocabularyData,
+import React, { useEffect, useState } from "react";
+import { Loader2, RefreshCw, Smile } from "lucide-react";
+import { Button } from "@/components/ui/button";
+
+const DadJokeWidget: React.FC = () => {
+  const [joke, setJoke] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<boolean>(false);
+
+  const fetchJoke = async () => {
+    setLoading(true);
+    setError(false);
+    try {
+      const response = await fetch("https://icanhazdadjoke.com/", {
+        headers: {
+          Accept: "application/json",
+          "User-Agent": "StehAuf-Challenge (https://dyad.sh)",
+        },
+      });
+      if (!response.ok) {
+        throw new Error("Failed to fetch dad joke");
+      }
+      const data = await response.json();
+      setJoke(data.joke);
+    } catch {
+      setError(true);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchJoke();
+  }, []);
+
+  return (
+    <div className="flex flex-col items-center justify-center p-6 bg-card text-card-foreground rounded-lg border border-border space-y-4 text-center">
+      <div className="flex items-center space-x-2 text-primary font-bold text-lg">
+        <Smile className="w-6 h-6" />
+        <span>8. Steher Meister-Bonus: Dad Joke!</span>
+      </div>
+
+      {loading ? (
+        <div className="flex items-center space-x-2 py-4 text-muted-foreground">
+          <Loader2 className="h-5 w-5 animate-spin" />
+          <span>Witz wird geladen...</span>
+        </div>
+      ) : error ? (
+        <div className="py-2 text-destructive">
+          <p>Witz konnte nicht geladen werden.</p>
+          <Button variant="outline" size="sm" onClick={fetchJoke} className="mt-2">
+            Nochmal versuchen
+          </Button>
+        </div>
+      ) : (
+        <blockquote className="text-xl font-medium italic text-foreground px-4 py-2 border-l-4 border-primary">
+          "{joke}"
+        </blockquote>
+      )}
+
+      {!loading && !error && (
+        <Button variant="ghost" size="sm" onClick={fetchJoke} className="text-muted-foreground hover:text-foreground">
+          <RefreshCw className="w-4 h-4 mr-2" /> Noch ein Flachwitz
+        </Button>
+      )}
+    </div>
+  );
 };
 
-export const getRandomReward = (completedSessionsToday: number, exclude?: Reward): Reward => {
-  // Fact bonus for the 5th session
-  if (completedSessionsToday === 4) {
-    return { type: "randomFactWidget", content: null };
-  }
-  // Quote bonus for the 6th session
-  if (completedSessionsToday === 5) {
-    return { type: "quoteOfTheDayWidget", content: null };
-  }
-
-  const types: Exclude<RewardType, "randomFactWidget" | "quoteOfTheDayWidget">[] = ["facts", "questionsAnswers", "flags", "vocabulary"];
-  let randomType: Exclude<RewardType, "randomFactWidget" | "quoteOfTheDayWidget">;
-  let randomContent: string | QuestionAnswerReward | FlagReward | VocabularyReward;
-
-  do {
-    randomType = types[Math.floor(Math.random() * types.length)];
-    const contents = allRewards[randomType];
-    randomContent = contents[Math.floor(Math.random() * contents.length)];
-  } while (exclude && randomType === exclude.type && JSON.stringify(randomContent) === JSON.stringify(exclude.content));
-
-  return { type: randomType, content: randomContent };
-};
+export default DadJokeWidget;
