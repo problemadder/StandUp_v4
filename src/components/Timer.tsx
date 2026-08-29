@@ -120,7 +120,7 @@ const Timer: React.FC<TimerProps> = ({ onSessionComplete }) => {
     };
   }, [sittingStartTime, isRunning, cooldownRemaining]);
 
-  // Apply theme classes (no blinking at 45 min mark, static red after 30 min)
+  // Apply theme classes (no blinking at 45 min mark, static red after 30 min, ugly brown after 45 min)
   useEffect(() => {
     const body = document.body;
 
@@ -128,13 +128,15 @@ const Timer: React.FC<TimerProps> = ({ onSessionComplete }) => {
     if (cooldownRemaining > 0) {
       targetTheme = "theme-cooldown";
     } else if (!isRunning && sittingStartTime !== null) {
-      if (elapsedSittingTime >= 1800) {
+      if (elapsedSittingTime >= 2700) {
+        targetTheme = "theme-sitting-brown";
+      } else if (elapsedSittingTime >= 1800) {
         targetTheme = "theme-sitting-red";
       }
     }
 
     const currentClasses = Array.from(body.classList);
-    const themeClasses = ["theme-cooldown", "theme-sitting-red"];
+    const themeClasses = ["theme-cooldown", "theme-sitting-red", "theme-sitting-brown"];
 
     themeClasses.forEach((cls) => {
       if (targetTheme.includes(cls)) {
@@ -145,7 +147,7 @@ const Timer: React.FC<TimerProps> = ({ onSessionComplete }) => {
     });
 
     return () => {
-      body.classList.remove("theme-sitting-red", "theme-cooldown");
+      body.classList.remove("theme-sitting-red", "theme-sitting-brown", "theme-cooldown");
     };
   }, [cooldownRemaining, isRunning, sittingStartTime, elapsedSittingTime]);
 

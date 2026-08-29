@@ -109,6 +109,21 @@
   --ring: 0 0% 60%;
 }
 
+/* Sitting Ugly Brown Theme Overrides (starts at 45:00) */
+.theme-sitting-brown {
+  --background: 25 40% 12%; /* Muddy brown background */
+  --card: 25 35% 16%;
+  --popover: 25 35% 16%;
+  --border: 25 30% 22%;
+  --primary: 35 40% 25%; /* Poop brown primary */
+  --primary-foreground: 0 0% 90%;
+  --secondary: 30 30% 22%;
+  --secondary-foreground: 0 0% 90%;
+  --accent: 35 40% 25%;
+  --accent-foreground: 0 0% 90%;
+  --ring: 35 40% 25%;
+}
+
 /* Cooldown Theme Overrides (Ice Vibes) */
 .theme-cooldown {
   --background: 205 70% 8%; /* Cool dark blue */
