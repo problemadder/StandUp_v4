@@ -27,36 +27,6 @@ const Timer: React.FC<TimerProps> = ({ onSessionComplete }) => {
   const [cooldownRemaining, setCooldownRemaining] = useState(0);
 
   const [sittingStartTime, setSittingStartTime] = useState<number | null>(() => {
-    const storedSittingTime = getLocalStorageItem<string | null>("stehauf_sitting<dyad-write path="src/components/Timer.＜dyad-write path="src/components/Timer.tsx" description="Remove 45-minute blinking/pulsating sitting warning and maintain standard smiley favicon">
-import React, { useState, useEffect, useRef, useCallback } from "react";
-import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
-import { Play, Pause, RotateCcw } from "lucide-react";
-import { setLocalStorageItem, removeLocalStorageItem, getLocalStorageItem } from "@/lib/local-storage";
-
-interface TimerProps {
-  onSessionComplete: () => void;
-}
-
-const SESSION_DURATION_SECONDS = 15 * 60; // 15 Minuten
-const COOLDOWN_DURATION_SECONDS = 15 * 60; // 15 Minuten
-
-const Timer: React.FC<TimerProps> = ({ onSessionComplete }) => {
-  const [timeRemaining, setTimeRemaining] = useState(SESSION_DURATION_SECONDS);
-  const [isRunning, setIsRunning] = useState(false);
-  const [cooldownEndTime, setCooldownEndTime] = useState<number | null>(() => {
-    const storedCooldown = getLocalStorageItem<string | null>("stehauf_cooldown_end_time", null);
-    if (storedCooldown) {
-      const endTime = parseInt(storedCooldown, 10);
-      if (endTime > Date.now()) {
-        return endTime;
-      }
-    }
-    return null;
-  });
-  const [cooldownRemaining, setCooldownRemaining] = useState(0);
-
-  const [sittingStartTime, setSittingStartTime] = useState<number | null>(() => {
     const storedSittingTime = getLocalStorageItem<string | null>("stehauf_sitting_start_time", null);
     if (storedSittingTime) {
       const storedDate = new Date(parseInt(storedSittingTime, 10)).toDateString();
@@ -164,7 +134,7 @@ const Timer: React.FC<TimerProps> = ({ onSessionComplete }) => {
     }
 
     const currentClasses = Array.from(body.classList);
-    const themeClasses = ["theme-cooldown", "theme-sitting-red", "theme-sitting-warning"];
+    const themeClasses = ["theme-cooldown", "theme-sitting-red"];
 
     themeClasses.forEach((cls) => {
       if (targetTheme.includes(cls)) {
@@ -175,7 +145,7 @@ const Timer: React.FC<TimerProps> = ({ onSessionComplete }) => {
     });
 
     return () => {
-      body.classList.remove("theme-sitting-red", "theme-sitting-warning", "theme-cooldown");
+      body.classList.remove("theme-sitting-red", "theme-cooldown");
     };
   }, [cooldownRemaining, isRunning, sittingStartTime, elapsedSittingTime]);
 
