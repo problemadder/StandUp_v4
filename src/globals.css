@@ -94,7 +94,7 @@
   }
 }
 
-/* Sitting Red Theme Overrides (30:00 to 45:00) */
+/* Sitting Red Theme Overrides (starts at 30:00) */
 .theme-sitting-red {
   --background: 0 75% 12%; /* Red background */
   --card: 0 65% 16%;
@@ -122,21 +122,4 @@
   --accent: 190 100% 50%;
   --accent-foreground: 205 100% 10%;
   --ring: 190 100% 50%;
-}
-
-@keyframes pulsate-red {
-  0% {
-    background-color: hsl(0, 75%, 12%);
-  }
-  50% {
-    background-color: hsl(0, 90%, 22%);
-  }
-  100% {
-    background-color: hsl(0, 75%, 12%);
-  }
-}
-
-body.theme-sitting-warning {
-  animation: pulsate-red 1.5s infinite ease-in-out !important;
-  transition: none !important; /* Disable transition to prevent animation lag/conflict */
 }
