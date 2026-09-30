@@ -1,17 +1,17 @@
 import { Session } from "@/hooks/use-session-manager";
-import { QuestionAnswerReward, FlagReward, VocabularyReward, RewardType } from "@/lib/rewards-data"; // Import new interfaces and RewardType
-import { convertIsoToEuropean, convertEuropeanToIso } from "@/lib/date-utils"; // Import date conversion utilities
-import { showSuccess, showError } from "@/utils/toast"; // Import toast utilities
+import { QuestionAnswerReward, FlagReward, VocabularyReward, RewardType } from "@/lib/rewards-data";
+import { convertIsoToEuropean, convertEuropeanToIso } from "@/lib/date-utils";
+import { showSuccess, showError } from "@/utils/toast";
 
 interface AllData {
   sessions: Session[];
   activeDays: string[];
   homeofficeDays: string[];
-  visitedDays: string[]; // Neu: Hinzufügen von visitedDays
+  visitedDays: string[];
 }
 
 export const exportAllDataToCsv = (data: AllData): void => {
-  const { sessions, activeDays, homeofficeDays, visitedDays } = data; // Destructure visitedDays
+  const { sessions, activeDays, homeofficeDays, visitedDays } = data;
 
   if (sessions.length === 0 && activeDays.length === 0 && homeofficeDays.length === 0 && visitedDays.length === 0) {
     showError("Keine Daten zum Exportieren vorhanden.");
@@ -34,24 +34,24 @@ export const exportAllDataToCsv = (data: AllData): void => {
       const flagReward = session.reward.content as FlagReward;
       content1 = flagReward.countryName;
       content2 = flagReward.flagCode;
-    } else if (session.reward.type === 'vocabulary') { // Neuer Fall für Vokabeln
+    } else if (session.reward.type === 'vocabulary') {
       const vocabReward = session.reward.content as VocabularyReward;
       content1 = vocabReward.question;
       content2 = vocabReward.answer;
-    } else if (session.reward.content !== null) { // facts, randomFactWidget, quoteOfTheDayWidget (if content is not null)
+    } else if (session.reward.content !== null) {
       content1 = session.reward.content as string;
     }
 
     csvRows.push(
       [
         "SESSION",
-        convertIsoToEuropean(session.date), // Convert to European format for export
+        convertIsoToEuropean(session.date),
         session.time,
         session.durationMinutes.toString(),
         session.completed ? "Ja" : "Nein",
         session.reward.type,
-        `"${content1.replace(/"/g, '""')}"`, // Escape double quotes
-        `"${content2.replace(/"/g, '""')}"`  // Escape double quotes
+        `"${content1.replace(/"/g, '""')}"`,
+        `"${content2.replace(/"/g, '""')}"`
       ].join(";")
     );
   });
@@ -61,13 +61,13 @@ export const exportAllDataToCsv = (data: AllData): void => {
     csvRows.push(
       [
         "ACTIVE_DAY",
-        convertIsoToEuropean(date), // Convert to European format for export
-        "", // TIME
-        "", // DURATION_MINUTES
-        "", // COMPLETED
-        "", // REWARD_TYPE
-        "", // REWARD_CONTENT1
-        ""  // REWARD_CONTENT2
+        convertIsoToEuropean(date),
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
       ].join(";")
     );
   });
@@ -77,32 +77,38 @@ export const exportAllDataToCsv = (data: AllData): void => {
     csvRows.push(
       [
         "HOMEOFFICE_DAY",
-        convertIsoToEuropean(date), // Convert to European format for export
-        "", // TIME
-        "", // DURATION_MINUTES
-        "", // COMPLETED
-        "", // REWARD_TYPE
-        "", // REWARD_CONTENT1
-        ""  // REWARD_CONTENT2
+        convertIsoToEuropean(date),
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
       ].join(";")
     );
   });
 
-  // Neu: Add visited day rows
+  // Add visited day rows
   visitedDays.forEach(date => {
     csvRows.push(
       [
-        "VISITED_DAY", // Neuer Typ für besuchte Tage
-        convertIsoToEuropean(date), // Convert to European format for export
-        "", // TIME
-        "", // DURATION_MINUTES
-        "", // COMPLETED
-        "", // REWARD_TYPE
-        "", // REWARD_CONTENT1
-        ""  // REWARD_CONTENT2
+        "VISITED_DAY",
+        convertIsoToEuropean(date),
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
       ].join(";")
     );
   });
+
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const day = String(now.getDate()).padStart(2, "0");
+  const filename = `${year}${month}${day}_stehauf_challenge_daten.csv`;
 
   const csvString = csvRows.join("\n");
   const blob = new Blob([csvString], { type: "text/csv;charset=utf-8;" });
@@ -110,12 +116,12 @@ export const exportAllDataToCsv = (data: AllData): void => {
   if (link.download !== undefined) {
     const url = URL.createObjectURL(blob);
     link.setAttribute("href", url);
-    link.setAttribute("download", "stehauf_challenge_daten.csv");
+    link.setAttribute("download", filename);
     link.style.visibility = "hidden";
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    URL.revokeObjectURL(url); // Ensure URL is revoked
+    URL.revokeObjectURL(url);
     showSuccess("Daten erfolgreich exportiert!");
   } else {
     showError("Ihr Browser unterstützt den automatischen Download nicht. Bitte kopieren Sie den Text manuell.");
@@ -127,7 +133,7 @@ export const importAllDataFromCsv = (csvString: string): AllData => {
   const lines = csvString.split("\n").filter(line => line.trim() !== "");
   if (lines.length <= 1) {
     console.warn("CSV-Datei ist leer oder enthält nur Header.");
-    return { sessions: [], activeDays: [], homeofficeDays: [], visitedDays: [] }; // Initialize visitedDays
+    return { sessions: [], activeDays: [], homeofficeDays: [], visitedDays: [] };
   }
 
   const headers = lines[0].split(";").map(h => h.trim());
@@ -136,16 +142,16 @@ export const importAllDataFromCsv = (csvString: string): AllData => {
   if (!expectedHeaders.every(h => headers.includes(h))) {
     console.error("CSV-Header stimmen nicht überein. Erwartet:", expectedHeaders, "Gefunden:", headers);
     showError("Ungültiges CSV-Format. Bitte stellen Sie sicher, dass die Header korrekt sind.");
-    return { sessions: [], activeDays: [], homeofficeDays: [], visitedDays: [] }; // Initialize visitedDays
+    return { sessions: [], activeDays: [], homeofficeDays: [], visitedDays: [] };
   }
 
   const sessions: Session[] = [];
   const activeDays: string[] = [];
   const homeofficeDays: string[] = [];
-  const visitedDays: string[] = []; // Neu: Initialize visitedDays
+  const visitedDays: string[] = [];
 
   for (let i = 1; i < lines.length; i++) {
-    const values = lines[i].split(";").map(v => v.trim().replace(/^"|"$/g, '').replace(/""/g, '"')); // Unescape quotes
+    const values = lines[i].split(";").map(v => v.trim().replace(/^"|"$/g, '').replace(/""/g, '"'));
     if (values.length !== headers.length) {
       console.warn(`Zeile ${i + 1} übersprungen: Ungültige Spaltenanzahl.`);
       continue;
@@ -169,24 +175,24 @@ export const importAllDataFromCsv = (csvString: string): AllData => {
           rewardContent = { question: content1, answer: content2 };
         } else if (rewardType === "flags") {
           rewardContent = { countryName: content1, flagCode: content2 };
-        } else if (rewardType === "vocabulary") { // Neuer Fall für Vokabeln
+        } else if (rewardType === "vocabulary") {
           rewardContent = { question: content1, answer: content2 };
         } else if (rewardType === "randomFactWidget" || rewardType === "quoteOfTheDayWidget") {
-          rewardContent = null; // Widgets have null content
-        } else { // facts
+          rewardContent = null;
+        } else {
           rewardContent = content1;
         }
 
-        const isoDate = convertEuropeanToIso(rowData["DATE"]); // Convert from European to ISO for internal use
+        const isoDate = convertEuropeanToIso(rowData["DATE"]);
 
         sessions.push({
-          id: `${isoDate}-${rowData["TIME"]}-${Math.random().toString(36).substring(2, 9)}`, // Generate a new ID
+          id: `${isoDate}-${rowData["TIME"]}-${Math.random().toString(36).substring(2, 9)}`,
           date: isoDate,
           time: rowData["TIME"],
           durationMinutes: parseInt(rowData["DURATION_MINUTES"], 10),
           completed: rowData["COMPLETED"] === "Ja",
           reward: {
-            type: rewardType as RewardType, // Type assertion
+            type: rewardType as RewardType,
             content: rewardContent,
           },
         });
@@ -196,8 +202,8 @@ export const importAllDataFromCsv = (csvString: string): AllData => {
     } else if (type === "ACTIVE_DAY") {
       const europeanDate = rowData["DATE"];
       if (europeanDate) {
-        const isoDate = convertEuropeanToIso(europeanDate); // Convert from European to ISO for internal use
-        if (isoDate && !activeDays.includes(isoDate)) { // Ensure uniqueness and valid conversion
+        const isoDate = convertEuropeanToIso(europeanDate);
+        if (isoDate && !activeDays.includes(isoDate)) {
           activeDays.push(isoDate);
         }
       }
@@ -209,7 +215,7 @@ export const importAllDataFromCsv = (csvString: string): AllData => {
           homeofficeDays.push(isoDate);
         }
       }
-    } else if (type === "VISITED_DAY") { // Neu: Handle visited days during import
+    } else if (type === "VISITED_DAY") {
       const europeanDate = rowData["DATE"];
       if (europeanDate) {
         const isoDate = convertEuropeanToIso(europeanDate);
@@ -221,5 +227,5 @@ export const importAllDataFromCsv = (csvString: string): AllData => {
       console.warn(`Unbekannter TYPE in Zeile ${i + 1}: ${type}`);
     }
   }
-  return { sessions, activeDays: activeDays.sort(), homeofficeDays: homeofficeDays.sort(), visitedDays: visitedDays.sort() }; // Return visitedDays
+  return { sessions, activeDays: activeDays.sort(), homeofficeDays: homeofficeDays.sort(), visitedDays: visitedDays.sort() };
 };
